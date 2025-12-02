@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".BookDetailsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Fundo de Destaque -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="@color/gray_bg"
+            android:gravity="center"
+            android:padding="20dp">
+            <!-- Capa -->
+            <View
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:background="#999"
+                android:elevation="8dp"/>
+        </LinearLayout>
+
+        <!-- Informações -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:orientation="vertical"
+            android:layout_marginTop="-30dp"
+            android:background="@color/white">
+
+            <TextView
+                android:text="Engenharia de Software"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/blue_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="10ª Edição - Ian Sommerville"
+                android:textSize="16sp"
+                android:textColor="@color/gray_text"
+                android:layout_marginBottom="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- Avaliação -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+                <TextView android:text="★★★★☆" android:textSize="20sp" android:textColor="@color/accent_gold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:text=" 4.5 (120 avaliações)" android:layout_gravity="center_vertical" android:layout_marginLeft="8dp" android:textColor="@color/gray_text" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ATUALIZAR STATUS DE LEITURA"
+                android:backgroundTint="@color/blue_primary"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:text="Sinopse"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="A décima edição de Engenharia de software, um clássico da área, foi totalmente atualizada e reestruturada para refletir as mudanças tecnológicas mais recentes."
+                android:textColor="@color/gray_text"
+                android:lineSpacingExtra="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <!-- Seção de Resenhas -->
+            <TextView
+                android:text="Escreva sua resenha"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="O que você achou deste livro?"
+                android:background="@color/gray_bg"
+                android:padding="16dp"
+                android:minHeight="100dp"
+                android:gravity="top"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

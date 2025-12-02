@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/white"
+    tools:context=".LoginActivity">
+
+    <!-- Logo e Título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BookMap"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/blue_primary"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Conecte-se com leitores locais"
+        android:textSize="16sp"
+        android:textColor="@color/gray_text"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- Inputs -->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="E-mail Institucional ou Pessoal"
+        android:inputType="textEmailAddress"
+        android:background="@android:drawable/edit_text"
+        android:minHeight="48dp"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Senha"
+        android:inputType="textPassword"
+        android:background="@android:drawable/edit_text"
+        android:minHeight="48dp"
+        android:layout_marginBottom="32dp"/>
+
+    <!-- Botão -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ACESSAR SISTEMA"
+        android:backgroundTint="@color/blue_primary"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:padding="12dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Novo usuário? Cadastre-se aqui"
+        android:textColor="@color/blue_primary"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"/>
+
+</LinearLayout>
