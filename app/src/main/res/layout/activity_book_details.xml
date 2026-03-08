@@ -11,14 +11,41 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Fundo de Destaque -->
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_primary"
+            android:padding="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VOLTAR"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:padding="4dp"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Detalhes do Livro"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginEnd="48dp"/>
+        </LinearLayout>
+
+        <!-- Book Cover Area -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
             android:background="@color/gray_bg"
             android:gravity="center"
             android:padding="20dp">
-            <!-- Capa -->
             <View
                 android:layout_width="100dp"
                 android:layout_height="150dp"
@@ -26,17 +53,15 @@
                 android:elevation="8dp"/>
         </LinearLayout>
 
-        <!-- Informações -->
+        <!-- Book Info -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="24dp"
-            android:orientation="vertical"
-            android:layout_marginTop="-30dp"
-            android:background="@color/white">
+            android:orientation="vertical">
 
             <TextView
-                android:text="Engenharia de Software"
+                android:id="@+id/tvTitle"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:textColor="@color/blue_dark"
@@ -44,65 +69,129 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:text="10ª Edição - Ian Sommerville"
+                android:id="@+id/tvAuthor"
                 android:textSize="16sp"
                 android:textColor="@color/gray_text"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvGenre"
+                android:textSize="14sp"
+                android:textColor="@color/blue_primary"
+                android:background="@color/gray_bg"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
                 android:layout_marginBottom="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <!-- Avaliação -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
-                <TextView android:text="★★★★☆" android:textSize="20sp" android:textColor="@color/accent_gold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <TextView android:text=" 4.5 (120 avaliações)" android:layout_gravity="center_vertical" android:layout_marginLeft="8dp" android:textColor="@color/gray_text" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            </LinearLayout>
-
             <Button
+                android:id="@+id/btnAddToShelf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ATUALIZAR STATUS DE LEITURA"
+                android:text="ADICIONAR A ESTANTE"
                 android:backgroundTint="@color/blue_primary"
                 android:textColor="@color/white"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
 
             <TextView
                 android:text="Sinopse"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:text="A décima edição de Engenharia de software, um clássico da área, foi totalmente atualizada e reestruturada para refletir as mudanças tecnológicas mais recentes."
+                android:id="@+id/tvSynopsis"
                 android:textColor="@color/gray_text"
                 android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <!-- Seção de Resenhas -->
             <TextView
-                android:text="Escreva sua resenha"
+                android:text="Resenhas"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <EditText
+            <TextView
+                android:id="@+id/tvNoReviews"
+                android:text="Nenhuma resenha ainda. Seja o primeiro!"
+                android:textColor="@color/gray_text"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerReviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="O que você achou deste livro?"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="24dp"/>
+
+            <LinearLayout
+                android:id="@+id/layoutWriteReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:background="@color/gray_bg"
                 android:padding="16dp"
-                android:minHeight="100dp"
-                android:gravity="top"/>
+                android:visibility="gone">
+
+                <TextView
+                    android:text="Escreva sua resenha"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/editReviewText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="O que voce achou deste livro?"
+                    android:background="@color/white"
+                    android:padding="16dp"
+                    android:minHeight="100dp"
+                    android:gravity="top"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:text="Avaliacao"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="1"
+                    android:rating="0"
+                    android:layout_marginBottom="12dp"
+                    style="?android:attr/ratingBarStyle"/>
+
+                <Button
+                    android:id="@+id/btnSubmitReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="PUBLICAR RESENHA"
+                    android:backgroundTint="@color/blue_primary"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

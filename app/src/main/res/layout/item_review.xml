@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gray_bg"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <TextView
+            android:id="@+id/tvReviewUser"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Usuario"
+            android:textStyle="bold"
+            android:textColor="@color/blue_dark"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvReviewRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*****"
+            android:textColor="@color/accent_gold"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvReviewText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Texto da resenha"
+        android:textColor="@color/gray_text"
+        android:textSize="13sp"
+        android:lineSpacingExtra="2dp"/>
+
+    <TextView
+        android:id="@+id/tvReviewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Data"
+        android:textColor="@color/gray_text"
+        android:textSize="11sp"
+        android:layout_marginTop="4dp"/>
+</LinearLayout>

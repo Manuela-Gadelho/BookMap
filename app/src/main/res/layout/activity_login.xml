@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,7 +10,7 @@
     android:background="@color/white"
     tools:context=".LoginActivity">
 
-    <!-- Logo e Título -->
+    <!-- Logo e Titulo -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +30,7 @@
 
     <!-- Inputs -->
     <EditText
+        android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="E-mail Institucional ou Pessoal"
@@ -38,6 +40,7 @@
         android:layout_marginBottom="16dp"/>
 
     <EditText
+        android:id="@+id/editPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Senha"
@@ -46,8 +49,9 @@
         android:minHeight="48dp"
         android:layout_marginBottom="32dp"/>
 
-    <!-- Botão -->
+    <!-- Botao -->
     <Button
+        android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ACESSAR SISTEMA"
@@ -57,11 +61,20 @@
         android:padding="12dp"/>
 
     <TextView
+        android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Novo usuário? Cadastre-se aqui"
+        android:text="Novo usuario? Cadastre-se aqui"
         android:textColor="@color/blue_primary"
         android:layout_marginTop="16dp"
         android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvGuest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Entrar como Convidado"
+        android:textColor="@color/gray_text"
+        android:layout_marginTop="12dp"/>
 
 </LinearLayout>

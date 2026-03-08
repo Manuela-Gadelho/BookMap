@@ -7,113 +7,132 @@
     android:background="@color/white"
     tools:context=".ClubActivity">
 
-    <!-- Header do Clube -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/blue_dark"/>
-        <TextView
-            android:text="CLUBE DO TERROR\nGUARULHOS"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:textSize="26sp"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </FrameLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp"
-        android:orientation="vertical">
-
-        <!-- Estatísticas -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="24dp">
-
-            <TextView
-                android:text="Grupo Público"
-                android:background="#E0E0E0"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:textSize="12sp"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:text="• 45 Membros Ativos"
-                android:layout_marginLeft="12dp"
-                android:textColor="@color/gray_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <!-- Próximo Encontro (Destaque) -->
+        android:background="@color/blue_dark"
+        android:padding="16dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
         <TextView
-            android:text="PRÓXIMO ENCONTRO PRESENCIAL"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textColor="@color/blue_primary"
+            android:id="@+id/btnBack"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="VOLTAR"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:padding="4dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Clube de Leitura"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginEnd="48dp"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray_bg"
-            android:padding="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="24dp"
+            android:padding="24dp"
             android:orientation="vertical">
 
             <TextView
-                android:text="📅 20/11/2025 às 19:00"
+                android:id="@+id/tvClubName"
+                android:textSize="24sp"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="@color/black"
+                android:textColor="@color/blue_dark"
+                android:layout_marginBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
             <TextView
-                android:text="📍 Bosque Maia - Espaço Cultural"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/black"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:text="📖 Discussão: O Iluminado (Stephen King)"
-                android:layout_marginTop="4dp"
+                android:id="@+id/tvClubDescription"
+                android:textSize="14sp"
                 android:textColor="@color/gray_text"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="12dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvClubType"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                android:background="@color/gray_bg"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginBottom="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btnJoinClub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SOLICITAR ENTRADA NO CLUBE"
+                android:backgroundTint="@color/blue_primary"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnCreateEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CRIAR EVENTO"
+                android:backgroundTint="@color/blue_dark"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                android:layout_marginBottom="24dp"/>
+
+            <TextView
+                android:text="Membros"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerMembers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="24dp"/>
+
+            <TextView
+                android:text="Eventos"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/tvNoEvents"
+                android:text="Nenhum evento agendado"
+                android:textColor="@color/gray_text"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerEvents"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
         </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="SOLICITAR ENTRADA NO CLUBE"
-            android:backgroundTint="@color/blue_primary"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:padding="14dp"/>
-
-        <TextView
-            android:text="Moderador: Andressa Santos"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:textSize="12sp"
-            android:textColor="@color/gray_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
+    </ScrollView>
 </LinearLayout>

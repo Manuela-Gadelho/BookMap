@@ -1,3 +1,166 @@
 <resources>
     <string name="app_name">BookMap</string>
+
+    <!-- General -->
+    <string name="btn_back">&lt;</string>
+    <string name="btn_save">SALVAR</string>
+    <string name="btn_cancel">CANCELAR</string>
+    <string name="loading">Carregando...</string>
+    <string name="error_generic">Ocorreu um erro. Tente novamente.</string>
+
+    <!-- Auth -->
+    <string name="login_title">BookMap</string>
+    <string name="login_subtitle">Conecte-se a leitores perto de voce</string>
+    <string name="hint_email">E-mail</string>
+    <string name="hint_password">Senha</string>
+    <string name="btn_login">ENTRAR</string>
+    <string name="btn_register">CADASTRAR</string>
+    <string name="btn_guest">ENTRAR COMO CONVIDADO</string>
+    <string name="link_register">Nao tem conta? Cadastre-se</string>
+    <string name="link_login">Ja tem conta? Faca login</string>
+    <string name="register_title">Criar Conta</string>
+    <string name="hint_name">Nome completo</string>
+    <string name="hint_confirm_password">Confirmar senha</string>
+    <string name="favorite_genres_label">Generos Favoritos</string>
+
+    <!-- Home / Shelf -->
+    <string name="home_title">Minha Estante</string>
+    <string name="filter_lendo">Lendo</string>
+    <string name="filter_quero_ler">Quero Ler</string>
+    <string name="filter_lidos">Lidos</string>
+    <string name="current_reading">Leitura Atual</string>
+    <string name="empty_shelf">Nenhum livro encontrado. Adicione livros a sua estante!</string>
+    <string name="login_required_shelf">Faca login para ver sua estante</string>
+
+    <!-- Book Details -->
+    <string name="no_synopsis">Sem sinopse disponivel</string>
+    <string name="btn_add_shelf">Adicionar a Estante</string>
+    <string name="added_to_shelf">Livro adicionado a sua estante!</string>
+    <string name="already_on_shelf">Livro ja esta na sua estante</string>
+    <string name="reviews_title">Resenhas</string>
+    <string name="no_reviews">Nenhuma resenha ainda</string>
+    <string name="write_review_hint">Escreva sua resenha...</string>
+    <string name="btn_submit_review">PUBLICAR RESENHA</string>
+    <string name="review_text_required">Escreva uma resenha antes de avaliar</string>
+    <string name="rating_required">Selecione uma avaliacao (1-5 estrelas)</string>
+    <string name="review_published">Resenha publicada!</string>
+
+    <!-- Add Book -->
+    <string name="add_book_title">Adicionar Livro</string>
+    <string name="hint_book_title">Titulo do Livro</string>
+    <string name="hint_author">Autor</string>
+    <string name="hint_synopsis">Sinopse</string>
+    <string name="hint_isbn">ISBN (opcional)</string>
+    <string name="genre_label">Genero</string>
+    <string name="reading_status_label">Status de Leitura</string>
+    <string name="status_quero_ler">Quero Ler</string>
+    <string name="status_lendo">Lendo</string>
+    <string name="status_lido">Lido</string>
+    <string name="btn_save_book">SALVAR LIVRO</string>
+    <string name="title_author_required">Titulo e autor sao obrigatorios</string>
+    <string name="book_added">Livro adicionado com sucesso!</string>
+
+    <!-- Search -->
+    <string name="search_title">Pesquisar</string>
+    <string name="search_hint">Buscar livros ou usuarios...</string>
+    <string name="btn_search">BUSCAR</string>
+    <string name="tab_books">LIVROS</string>
+    <string name="tab_users">USUARIOS</string>
+    <string name="no_results">Nenhum resultado encontrado</string>
+    <string name="search_empty">Digite algo para buscar</string>
+
+    <!-- Map -->
+    <string name="map_title">Leitores Proximos</string>
+    <string name="filter_all">Todos</string>
+    <string name="distance_label">Distancia</string>
+    <string name="no_nearby_users">Nenhum leitor encontrado nesta area</string>
+    <string name="location_enabled">Localizacao ativada</string>
+
+    <!-- Clubs -->
+    <string name="clubs_title">Clubes de Leitura</string>
+    <string name="tab_my_clubs">MEUS CLUBES</string>
+    <string name="tab_all_clubs">TODOS</string>
+    <string name="btn_create_club">+ CRIAR</string>
+    <string name="no_clubs">Nenhum clube encontrado</string>
+    <string name="club_public">Publico</string>
+    <string name="club_private">Privado</string>
+    <string name="btn_join">SOLICITAR ENTRADA</string>
+    <string name="member_label">Membro</string>
+    <string name="pending_label">Pendente</string>
+    <string name="request_sent">Solicitacao enviada!</string>
+
+    <!-- Create Club -->
+    <string name="create_club_title">Criar Clube de Leitura</string>
+    <string name="hint_club_name">Nome do Clube</string>
+    <string name="hint_club_description">Descricao do Clube</string>
+    <string name="club_public_check">Clube Publico</string>
+    <string name="invite_members_label">Convidar Membros</string>
+    <string name="invite_members_hint">Selecione usuarios para convidar ao clube (obrigatorio)</string>
+    <string name="search_member_hint">Buscar usuario por nome...</string>
+    <string name="selected_count_format">%d membro(s) selecionado(s)</string>
+    <string name="club_name_required">Nome do clube e obrigatorio</string>
+    <string name="invite_at_least_one">Convide pelo menos um membro</string>
+    <string name="club_created">Clube criado com sucesso!</string>
+
+    <!-- Events -->
+    <string name="event_title">Agendar Encontro</string>
+    <string name="hint_event_title">Titulo do Encontro</string>
+    <string name="hint_event_description">Descricao</string>
+    <string name="hint_event_location">Local do Encontro</string>
+    <string name="hint_event_book">Livro para discussao (opcional)</string>
+    <string name="date_time_label">Data e Hora</string>
+    <string name="btn_select_date">Selecionar Data</string>
+    <string name="btn_select_time">Selecionar Hora</string>
+    <string name="no_date_selected">Nenhuma data selecionada</string>
+    <string name="btn_create_event">AGENDAR ENCONTRO</string>
+    <string name="event_title_required">Titulo do evento e obrigatorio</string>
+    <string name="select_date_time">Selecione data e hora</string>
+    <string name="event_created">Evento criado com sucesso!</string>
+    <string name="no_events">Nenhum evento agendado</string>
+
+    <!-- Report -->
+    <string name="report_title">Denunciar</string>
+    <string name="report_type_label">Tipo de Denuncia</string>
+    <string name="report_user">Usuario inadequado</string>
+    <string name="report_content">Conteudo inadequado</string>
+    <string name="report_spam">Spam</string>
+    <string name="report_other">Outro</string>
+    <string name="hint_report_reason">Descreva o motivo da denuncia</string>
+    <string name="btn_submit_report">ENVIAR DENUNCIA</string>
+    <string name="select_report_type">Selecione o tipo de denuncia</string>
+    <string name="describe_reason">Descreva o motivo da denuncia</string>
+    <string name="report_sent">Denuncia enviada com sucesso!</string>
+    <string name="report_moderation_note">Sua denuncia sera analisada pela equipe de moderacao.</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Meu Perfil</string>
+    <string name="hint_bio">Bio</string>
+    <string name="hint_genres">Generos Favoritos</string>
+    <string name="language_label">Idioma</string>
+    <string name="btn_logout">SAIR</string>
+    <string name="profile_updated">Perfil atualizado!</string>
+    <string name="name_required">Nome nao pode estar vazio</string>
+    <string name="no_bio">Sem bio</string>
+    <string name="no_genres">Nenhum genero</string>
+
+    <!-- Public Profile -->
+    <string name="public_profile_title">Perfil Publico</string>
+    <string name="btn_report">DENUNCIAR</string>
+    <string name="no_reading">Nenhuma leitura no momento</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_shelf">ESTANTE</string>
+    <string name="nav_map">MAPA</string>
+    <string name="nav_clubs">CLUBES</string>
+    <string name="nav_profile">PERFIL</string>
+
+    <!-- Roles -->
+    <string name="role_reader">Leitor</string>
+    <string name="role_organizer">Organizador</string>
+    <string name="role_guest">Convidado</string>
+
+    <!-- Login Messages -->
+    <string name="login_required_books">Faca login para adicionar livros</string>
+    <string name="login_required_clubs">Faca login para criar clubes</string>
+    <string name="login_required_report">Faca login para denunciar</string>
 </resources>
