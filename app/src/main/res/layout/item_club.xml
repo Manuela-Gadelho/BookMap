@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/tvClubName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nome do Clube"
+        android:textStyle="bold"
+        android:textColor="@color/blue_dark"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tvClubDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Descricao"
+        android:textColor="@color/gray_text"
+        android:textSize="13sp"
+        android:layout_marginTop="4dp"
+        android:maxLines="2"
+        android:ellipsize="end"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvClubType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Publico"
+            android:background="#E0E0E0"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:textSize="11sp"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/tvClubMembers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 membros"
+            android:textColor="@color/gray_text"
+            android:textSize="12sp"
+            android:layout_marginLeft="12dp"/>
+    </LinearLayout>
+</LinearLayout>
