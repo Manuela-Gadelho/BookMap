@@ -817,6 +817,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return report;
     }
 
+    public boolean updateUserPassword(long userId, String newPasswordHash) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("password_hash", newPasswordHash);
+        int rows = db.update(TABLE_USERS, values, "id = ?",
+                new String[]{String.valueOf(userId)});
+        return rows > 0;
+    }
+
+    public List<ClubMember> getPendingMemberRequests(long organizerId) {
+        SQLiteDatabase db = getReadableDatabase();
+        List<ClubMember> members = new ArrayList<>();
+        Cursor cursor = db.rawQuery(
+                "SELECT cm.*, u.name as user_name, u.email as user_email, c.name as club_name " +
+                        "FROM " + TABLE_CLUB_MEMBERS + " cm " +
+                        "INNER JOIN " + TABLE_USERS + " u ON cm.user_id = u.id " +
+                        "INNER JOIN " + TABLE_CLUBS + " c ON cm.club_id = c.id " +
+                        "WHERE cm.status = 'PENDING' AND c.creator_id = ? " +
+                        "ORDER BY cm.joined_at DESC",
+                new String[]{String.valueOf(organizerId)});
+        while (cursor.moveToNext()) {
+            ClubMember member = cursorToClubMember(cursor);
+            int clubNameIdx = cursor.getColumnIndex("club_name");
+            if (clubNameIdx >= 0) {
+                member.setClubName(cursor.getString(clubNameIdx));
+            }
+            members.add(member);
+        }
+        cursor.close();
+        return members;
+    }
+
+    public boolean deleteUserBook(long userId, long bookId) {
+        SQLiteDatabase db = getWritableDatabase();
+        int rows = db.delete(TABLE_USER_BOOKS,
+                "user_id = ? AND book_id = ?",
+                new String[]{String.valueOf(userId), String.valueOf(bookId)});
+        return rows > 0;
+    }
+
+    public int getUserBookCount(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) as count FROM " + TABLE_USER_BOOKS + " WHERE user_id = ?",
+                new String[]{String.valueOf(userId)});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
+        }
+        cursor.close();
+        return count;
+    }
+
+    public int getUserBookCountByStatus(long userId, String status) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) as count FROM " + TABLE_USER_BOOKS +
+                        " WHERE user_id = ? AND status = ?",
+                new String[]{String.valueOf(userId), status});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
+        }
+        cursor.close();
+        return count;
+    }
+
     /**
      * Get the current reading book for a user (for map display).
      */

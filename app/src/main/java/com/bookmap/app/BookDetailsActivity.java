@@ -1,5 +1,6 @@
 package com.bookmap.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,16 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bookmap.app.adapter.ReviewAdapter;
 import com.bookmap.app.database.DatabaseHelper;
+import com.bookmap.app.database.FirebaseSyncHelper;
 import com.bookmap.app.model.Book;
 import com.bookmap.app.model.Review;
+import com.bookmap.app.model.UserBook;
 import com.bookmap.app.util.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * BookDetailsActivity - shows book details and reviews.
- * Constraint 1: WriteReview <<include>> RateBook - cannot rate without writing review.
+ * BookDetailsActivity - shows book details, average rating, and reviews.
+ * Constraint 1: WriteReview includes RateBook - cannot rate without writing review.
+ * Shows average rating from all users (monograph section 6.5).
  */
 public class BookDetailsActivity extends AppCompatActivity {
 
@@ -36,6 +40,8 @@ public class BookDetailsActivity extends AppCompatActivity {
     private ReviewAdapter reviewAdapter;
     private EditText editReviewText;
     private RatingBar ratingBar;
+    private RatingBar ratingBarAverage;
+    private TextView tvAverageRating, tvReviewCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +79,12 @@ public class BookDetailsActivity extends AppCompatActivity {
         tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
                 ? book.getSynopsis() : "Sem sinopse disponivel");
 
+        // Average rating display
+        ratingBarAverage = findViewById(R.id.ratingBarAverage);
+        tvAverageRating = findViewById(R.id.tvAverageRating);
+        tvReviewCount = findViewById(R.id.tvReviewCount);
+        loadAverageRating();
+
         // Reviews section
         recyclerReviews = findViewById(R.id.recyclerReviews);
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
@@ -94,23 +106,69 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         // Add to shelf button
         Button btnAddToShelf = findViewById(R.id.btnAddToShelf);
+        Button btnUpdateProgress = findViewById(R.id.btnUpdateProgress);
+
         if (session.isLoggedIn()) {
-            btnAddToShelf.setOnClickListener(v -> {
-                long result = dbHelper.insertUserBook(session.getUserId(), bookId, "QUERO_LER", 0);
-                if (result > 0) {
-                    Toast.makeText(this, "Livro adicionado a sua estante!", Toast.LENGTH_SHORT).show();
-                    btnAddToShelf.setText("Na sua estante");
-                    btnAddToShelf.setEnabled(false);
-                } else {
-                    Toast.makeText(this, "Livro ja esta na sua estante", Toast.LENGTH_SHORT).show();
-                }
-            });
+            UserBook existingUserBook = dbHelper.getUserBook(session.getUserId(), bookId);
+            if (existingUserBook != null) {
+                btnAddToShelf.setText("Na sua estante");
+                btnAddToShelf.setEnabled(false);
+                btnUpdateProgress.setVisibility(View.VISIBLE);
+                btnUpdateProgress.setOnClickListener(v -> {
+                    Intent intent = new Intent(this, UpdateProgressActivity.class);
+                    intent.putExtra(UpdateProgressActivity.EXTRA_BOOK_ID, bookId);
+                    startActivity(intent);
+                });
+            } else {
+                btnUpdateProgress.setVisibility(View.GONE);
+                btnAddToShelf.setOnClickListener(v -> {
+                    long result = dbHelper.insertUserBook(session.getUserId(), bookId, "QUERO_LER", 0);
+                    if (result > 0) {
+                        FirebaseSyncHelper syncHelper = FirebaseSyncHelper.getInstance(this);
+                        syncHelper.syncUserBookToCloud(session.getUserId(), bookId, "QUERO_LER", 0);
+                        Toast.makeText(this, "Livro adicionado a sua estante!", Toast.LENGTH_SHORT).show();
+                        btnAddToShelf.setText("Na sua estante");
+                        btnAddToShelf.setEnabled(false);
+                        btnUpdateProgress.setVisibility(View.VISIBLE);
+                        btnUpdateProgress.setOnClickListener(v2 -> {
+                            Intent intent = new Intent(this, UpdateProgressActivity.class);
+                            intent.putExtra(UpdateProgressActivity.EXTRA_BOOK_ID, bookId);
+                            startActivity(intent);
+                        });
+                    } else {
+                        Toast.makeText(this, "Livro ja esta na sua estante", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         } else {
+            btnUpdateProgress.setVisibility(View.GONE);
             btnAddToShelf.setOnClickListener(v ->
                     Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show());
         }
 
         loadReviews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadReviews();
+        loadAverageRating();
+    }
+
+    private void loadAverageRating() {
+        double avg = dbHelper.getBookAverageRating(bookId);
+        int count = dbHelper.getBookReviewCount(bookId);
+
+        if (ratingBarAverage != null) {
+            ratingBarAverage.setRating((float) avg);
+        }
+        if (tvAverageRating != null) {
+            tvAverageRating.setText(String.format("%.1f", avg));
+        }
+        if (tvReviewCount != null) {
+            tvReviewCount.setText(count + " avaliacao(oes)");
+        }
     }
 
     private void loadReviews() {
@@ -149,6 +207,7 @@ public class BookDetailsActivity extends AppCompatActivity {
             editReviewText.setText("");
             ratingBar.setRating(0);
             loadReviews();
+            loadAverageRating();
         } else {
             Toast.makeText(this, "Erro ao publicar resenha", Toast.LENGTH_SHORT).show();
         }

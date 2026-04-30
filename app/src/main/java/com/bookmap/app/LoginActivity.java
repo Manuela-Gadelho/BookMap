@@ -37,11 +37,16 @@ public class LoginActivity extends AppCompatActivity {
         Button btnLogin = findViewById(R.id.btnLogin);
         TextView tvRegister = findViewById(R.id.tvRegister);
         TextView tvGuest = findViewById(R.id.tvGuest);
+        TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
         btnLogin.setOnClickListener(v -> attemptLogin());
 
         tvRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
+        });
+
+        tvForgotPassword.setOnClickListener(v -> {
+            startActivity(new Intent(this, ForgotPasswordActivity.class));
         });
 
         tvGuest.setOnClickListener(v -> {
