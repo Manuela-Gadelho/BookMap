@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "000000000000",
-    "project_id": "bookmap-app-fatec",
-    "storage_bucket": "bookmap-app-fatec.appspot.com"
+    "project_number": "483231872757",
+    "project_id": "bookmap-ccc74",
+    "storage_bucket": "bookmap-ccc74.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+        "mobilesdk_app_id": "1:483231872757:android:bea474628a122a435df7bc",
         "android_client_info": {
           "package_name": "com.bookmap.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "PLACEHOLDER_API_KEY_REPLACE_WITH_REAL_KEY"
+          "current_key": "AIzaSyBXQy_l4o_e-Oar2q_ene31cRhwQux_Bbc"
         }
       ],
       "services": {
