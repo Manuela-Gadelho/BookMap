@@ -76,6 +76,9 @@ dependencies {
     testImplementation("androidx.test:runner:1.5.2")
     testImplementation("androidx.test.ext:junit:1.1.5")
 
+    // H2 Database for unit/integration testing
+    testImplementation("com.h2database:h2:2.2.224")
+
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation("androidx.test:rules:1.5.0")
