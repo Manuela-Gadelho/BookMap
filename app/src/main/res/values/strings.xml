@@ -163,4 +163,5 @@
     <string name="login_required_books">Faca login para adicionar livros</string>
     <string name="login_required_clubs">Faca login para criar clubes</string>
     <string name="login_required_report">Faca login para denunciar</string>
+
 </resources>
