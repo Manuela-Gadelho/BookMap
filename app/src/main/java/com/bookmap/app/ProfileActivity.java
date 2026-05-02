@@ -184,6 +184,10 @@ public class ProfileActivity extends AppCompatActivity {
             // Update user photo path in database
             User user = dbHelper.getUserById(session.getUserId());
             if (user != null) {
+                // Delete old photo file before replacing
+                if (user.getPhotoPath() != null && !user.getPhotoPath().isEmpty()) {
+                    PhotoHelper.deletePhoto(user.getPhotoPath());
+                }
                 user.setPhotoPath(photoPath);
                 dbHelper.updateUser(user);
             }
