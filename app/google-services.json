@@ -12,7 +12,20 @@
           "package_name": "com.bookmap.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "483231872757-i58a1ahk14v9c3b4el4ldbki6g2jm4lg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bookmap.app",
+            "certificate_hash": "556358b26de377c4aaa4d11fad2f116819f21646"
+          }
+        },
+        {
+          "client_id": "483231872757-b70mo5v9vndkpfcqo9qt91d52eskdmoc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBXQy_l4o_e-Oar2q_ene31cRhwQux_Bbc"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "483231872757-b70mo5v9vndkpfcqo9qt91d52eskdmoc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
