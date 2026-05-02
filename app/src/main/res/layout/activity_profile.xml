@@ -56,11 +56,13 @@
             android:padding="24dp"
             android:background="@color/gray_bg">
 
-            <View
+            <ImageView
                 android:id="@+id/imgAvatar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:background="@color/gray_text"/>
+                android:background="@color/gray_text"
+                android:scaleType="centerCrop"
+                android:contentDescription="Foto de perfil - toque para alterar" />
 
             <TextView
                 android:id="@+id/tvUserName"

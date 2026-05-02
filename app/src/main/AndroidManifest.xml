@@ -57,6 +57,17 @@
         <!-- Module E: Notifications -->
         <activity android:name=".NotificationsActivity" android:exported="false" />
 
+        <!-- FileProvider for camera photos -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <!-- Google Maps API Key placeholder -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
