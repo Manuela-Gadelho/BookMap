@@ -27,6 +27,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.UUID;
+
 /**
  * LoginActivity - handles user login with email/password and Google Sign-In.
  * Guests can skip login to browse with limited access.
@@ -67,14 +69,20 @@ public class LoginActivity extends AppCompatActivity {
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
         // Configure Google Sign-In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
+        String webClientId = getWebClientId();
+        if (webClientId != null) {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(webClientId)
+                    .requestEmail()
+                    .build();
+            googleSignInClient = GoogleSignIn.getClient(this, gso);
+            btnGoogleSignIn.setOnClickListener(v -> signInWithGoogle());
+        } else {
+            btnGoogleSignIn.setEnabled(false);
+            btnGoogleSignIn.setText("Google Sign-In nao configurado");
+        }
 
         btnLogin.setOnClickListener(v -> attemptLogin());
-        btnGoogleSignIn.setOnClickListener(v -> signInWithGoogle());
 
         tvRegister.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
@@ -137,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                     existingUser.getEmail(), existingUser.getRole());
             Toast.makeText(this, "Bem-vindo de volta, " + existingUser.getName() + "!", Toast.LENGTH_SHORT).show();
         } else {
-            String passwordHash = PasswordUtil.hashPassword("google_" + firebaseUser.getUid());
+            String passwordHash = PasswordUtil.hashPassword(UUID.randomUUID().toString());
             long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER");
             if (userId > 0) {
                 session.createLoginSession(userId, name, email, "READER");
@@ -150,6 +158,14 @@ public class LoginActivity extends AppCompatActivity {
 
         startActivity(new Intent(this, HomeActivity.class));
         finish();
+    }
+
+    private String getWebClientId() {
+        int resId = getResources().getIdentifier("default_web_client_id", "string", getPackageName());
+        if (resId == 0) return null;
+        String value = getString(resId);
+        if (value.isEmpty() || "PLACEHOLDER".equals(value)) return null;
+        return value;
     }
 
     private void attemptLogin() {
