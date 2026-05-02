@@ -16,6 +16,7 @@ public class ClubMember {
     // Joined fields
     private String userName;
     private String userEmail;
+    private String clubName;
 
     public ClubMember() {}
 
@@ -42,4 +43,7 @@ public class ClubMember {
 
     public String getUserEmail() { return userEmail; }
     public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
+
+    public String getClubName() { return clubName; }
+    public void setClubName(String clubName) { this.clubName = clubName; }
 }
