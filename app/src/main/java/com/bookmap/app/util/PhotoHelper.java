@@ -85,16 +85,18 @@ public class PhotoHelper {
 
     public String processGalleryResult(Uri imageUri) {
         if (imageUri == null) return null;
+        Bitmap bitmap = null;
+        Bitmap resized = null;
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
             if (inputStream == null) return null;
 
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            bitmap = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
             if (bitmap == null) return null;
 
-            Bitmap resized = resizeBitmap(bitmap);
+            resized = resizeBitmap(bitmap);
             File outputFile = createImageFile();
             if (outputFile == null) return null;
 
@@ -102,13 +104,13 @@ public class PhotoHelper {
             resized.compress(Bitmap.CompressFormat.JPEG, COMPRESSION_QUALITY, fos);
             fos.close();
 
-            if (bitmap != resized) bitmap.recycle();
-            resized.recycle();
-
             return currentPhotoPath;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            if (bitmap != null && bitmap != resized) bitmap.recycle();
+            if (resized != null) resized.recycle();
         }
     }
 

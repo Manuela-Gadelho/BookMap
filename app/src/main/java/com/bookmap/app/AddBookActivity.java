@@ -52,6 +52,14 @@ public class AddBookActivity extends AppCompatActivity {
         session = new SessionManager(this);
         photoHelper = new PhotoHelper(this);
 
+        if (savedInstanceState != null) {
+            String savedPath = savedInstanceState.getString("photo_path");
+            if (savedPath != null) {
+                photoHelper.setCurrentPhotoPath(savedPath);
+            }
+            coverPath = savedInstanceState.getString("cover_path", "");
+        }
+
         editTitle = findViewById(R.id.editTitle);
         editAuthor = findViewById(R.id.editAuthor);
         editSynopsis = findViewById(R.id.editSynopsis);
@@ -75,6 +83,19 @@ public class AddBookActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveBook());
         btnAddCover.setOnClickListener(v -> showCoverOptions());
         imgCover.setOnClickListener(v -> showCoverOptions());
+
+        if (!coverPath.isEmpty()) {
+            PhotoHelper.loadImageIntoView(imgCover, coverPath);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (photoHelper.getCurrentPhotoPath() != null) {
+            outState.putString("photo_path", photoHelper.getCurrentPhotoPath());
+        }
+        outState.putString("cover_path", coverPath);
     }
 
     private void showCoverOptions() {

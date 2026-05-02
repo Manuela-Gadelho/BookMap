@@ -49,6 +49,13 @@ public class ProfileActivity extends AppCompatActivity {
         session = new SessionManager(this);
         photoHelper = new PhotoHelper(this);
 
+        if (savedInstanceState != null) {
+            String savedPath = savedInstanceState.getString("photo_path");
+            if (savedPath != null) {
+                photoHelper.setCurrentPhotoPath(savedPath);
+            }
+        }
+
         editName = findViewById(R.id.editName);
         editBio = findViewById(R.id.editBio);
         editGenres = findViewById(R.id.editGenres);
@@ -83,6 +90,14 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (photoHelper.getCurrentPhotoPath() != null) {
+            outState.putString("photo_path", photoHelper.getCurrentPhotoPath());
+        }
     }
 
     private void showPhotoOptions() {
