@@ -136,7 +136,10 @@ public class LoginActivity extends AppCompatActivity {
         String email = firebaseUser.getEmail();
         String name = firebaseUser.getDisplayName();
         if (name == null || name.isEmpty()) name = "Usuario Google";
-        if (email == null) email = "";
+        if (email == null || email.isEmpty()) {
+            Toast.makeText(this, "Erro: conta Google sem e-mail. Use login com senha.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         User existingUser = dbHelper.getUserByEmail(email);
 
