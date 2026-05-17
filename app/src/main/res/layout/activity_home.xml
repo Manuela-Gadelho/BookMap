@@ -7,8 +7,6 @@
     android:orientation="vertical"
     android:background="@color/gray_bg"
     tools:context=".HomeActivity">
-
-    <!-- App Bar Personalizada -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,8 +32,6 @@
             android:textSize="14sp"
             android:textStyle="bold"/>
     </LinearLayout>
-
-    <!-- Filtros de Status -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,8 +64,6 @@
             android:text="LIDOS"
             android:textColor="@color/gray_text"/>
     </LinearLayout>
-
-    <!-- Current Reading Card -->
     <LinearLayout
         android:id="@+id/layoutCurrentReading"
         android:layout_width="match_parent"
@@ -80,12 +74,10 @@
         android:elevation="2dp"
         android:layout_margin="16dp"
         android:visibility="gone">
-
         <View
             android:layout_width="80dp"
             android:layout_height="120dp"
             android:background="#CCCCCC"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,19 +122,15 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
-
-    <!-- Books List -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerBooks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"/>
-
         <TextView
             android:id="@+id/tvEmptyMessage"
             android:layout_width="match_parent"
@@ -152,8 +140,6 @@
             android:textColor="@color/gray_text"
             android:textSize="16sp"
             android:visibility="gone"/>
-
-        <!-- FAB Add Book -->
         <Button
             android:id="@+id/fabAddBook"
             android:layout_width="56dp"
@@ -166,8 +152,6 @@
             android:textColor="@color/white"
             android:elevation="6dp"/>
     </FrameLayout>
-
-    <!-- Bottom Navigation -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"

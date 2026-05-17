@@ -1,14 +1,7 @@
 package com.bookmap.app.util;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-/**
- * Utility class for password hashing.
- * Uses SHA-256 for simple local hashing.
- */
 public class PasswordUtil {
-
     public static String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -21,10 +14,9 @@ public class PasswordUtil {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            return password; // Fallback
+            return password; 
         }
     }
-
     public static boolean verifyPassword(String password, String hash) {
         return hashPassword(password).equals(hash);
     }

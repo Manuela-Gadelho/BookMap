@@ -5,14 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".EventActivity">
-
     <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,13 +34,11 @@
                 android:textSize="20sp"
                 android:textStyle="bold"/>
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp">
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +50,6 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,7 +62,6 @@
                     android:inputType="textMultiLine"
                     android:minLines="2"/>
             </com.google.android.material.textfield.TextInputLayout>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,7 +69,6 @@
                 android:textStyle="bold"
                 android:textColor="@color/blue_dark"
                 android:layout_marginBottom="8dp"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,7 +92,6 @@
                     android:textColor="@color/blue_dark"
                     android:layout_marginLeft="8dp"/>
             </LinearLayout>
-
             <TextView
                 android:id="@+id/tvSelectedDateTime"
                 android:layout_width="match_parent"
@@ -108,7 +99,6 @@
                 android:text="Nenhuma data selecionada"
                 android:textColor="@color/gray_text"
                 android:layout_marginBottom="16dp"/>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,7 +110,6 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,7 +121,6 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
-
             <Button
                 android:id="@+id/btnCreateEvent"
                 android:layout_width="match_parent"

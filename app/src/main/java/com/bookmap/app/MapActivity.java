@@ -1,5 +1,4 @@
 package com.bookmap.app;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +11,6 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -20,28 +18,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bookmap.app.adapter.UserAdapter;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
 import com.bookmap.app.model.User;
 import com.bookmap.app.util.LocationHelper;
 import com.bookmap.app.util.SessionManager;
-
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * MapActivity - Literary Map showing nearby readers with geolocation.
- * Uses FusedLocationProviderClient for real GPS coordinates.
- * Constraint 2: ViewNearby includes ViewProfile - clicking a user opens their
- * profile.
- * Includes privacy control for location visibility (monograph section 6.4).
- */
 public class MapActivity extends AppCompatActivity {
-
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
-
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private LocationHelper locationHelper;
@@ -53,17 +39,14 @@ public class MapActivity extends AppCompatActivity {
     private SwitchCompat switchLocationVisible;
     private double currentLat = 0.0;
     private double currentLng = 0.0;
-    private int currentDistance = 50; // km
-
+    private int currentDistance = 50; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
         locationHelper = new LocationHelper(this);
-
         recyclerUsers = findViewById(R.id.recyclerUsers);
         tvDistance = findViewById(R.id.tvDistance);
         tvNoUsers = findViewById(R.id.tvNoUsers);
@@ -72,59 +55,44 @@ public class MapActivity extends AppCompatActivity {
         spinnerLanguage = findViewById(R.id.spinnerLanguage);
         seekDistance = findViewById(R.id.seekDistance);
         switchLocationVisible = findViewById(R.id.switchLocationVisible);
-
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
-
-        // Genre filter
         String[] genres = { "Todos", "Fantasia", "Terror", "Romance", "Ficcao Cientifica",
                 "Tecnologia", "Literatura Brasileira" };
         ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(genreAdapter);
-
-        // Language filter
         String[] languages = { "Todos", "Portugues", "English", "Espanol" };
         ArrayAdapter<String> langAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, languages);
         spinnerLanguage.setAdapter(langAdapter);
-
-        // Distance seekbar
         seekDistance.setMax(100);
         seekDistance.setProgress(currentDistance);
         tvDistance.setText(currentDistance + " km");
-
         seekDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 currentDistance = Math.max(1, progress);
                 tvDistance.setText(currentDistance + " km");
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 loadNearbyUsers();
             }
         });
-
-        // Filter change listeners
         AdapterView.OnItemSelectedListener filterListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 loadNearbyUsers();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         };
         spinnerGenre.setOnItemSelectedListener(filterListener);
         spinnerLanguage.setOnItemSelectedListener(filterListener);
-
-        // Location privacy toggle
         switchLocationVisible.setChecked(locationHelper.isLocationVisible());
         switchLocationVisible.setOnCheckedChangeListener((buttonView, isChecked) -> {
             locationHelper.setLocationVisible(isChecked);
@@ -136,14 +104,9 @@ public class MapActivity extends AppCompatActivity {
                 clearUserLocationInDb();
             }
         });
-
-        // Bottom navigation
         setupBottomNav();
-
-        // Request location and load users
         requestLocationAndLoad();
     }
-
     private void requestLocationAndLoad() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -154,7 +117,6 @@ public class MapActivity extends AppCompatActivity {
             getCurrentLocation();
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
@@ -168,7 +130,6 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     }
-
     private void getCurrentLocation() {
         locationHelper.requestLastLocation(new LocationHelper.LocationUpdateListener() {
             @Override
@@ -179,21 +140,19 @@ public class MapActivity extends AppCompatActivity {
                 updateUserLocationInDb();
                 loadNearbyUsers();
             }
-
             @Override
             public void onLocationError(String error) {
                 tvLocationStatus.setText("Usando localizacao aproximada");
                 currentLat = locationHelper.getLastLatitude();
                 currentLng = locationHelper.getLastLongitude();
                 if (currentLat == 0.0 && currentLng == 0.0) {
-                    currentLat = -23.4626; // Default Guarulhos
+                    currentLat = -23.4626; 
                     currentLng = -46.5322;
                 }
                 loadNearbyUsers();
             }
         });
     }
-
     private void updateUserLocationInDb() {
         if (session.isLoggedIn() && locationHelper.isLocationVisible()) {
             User user = dbHelper.getUserById(session.getUserId());
@@ -201,13 +160,11 @@ public class MapActivity extends AppCompatActivity {
                 user.setLatitude(currentLat);
                 user.setLongitude(currentLng);
                 dbHelper.updateUser(user);
-
                 FirebaseSyncHelper syncHelper = FirebaseSyncHelper.getInstance(this);
                 syncHelper.updateUserLocationInCloud(session.getUserId(), currentLat, currentLng);
             }
         }
     }
-
     private void clearUserLocationInDb() {
         if (session.isLoggedIn()) {
             User user = dbHelper.getUserById(session.getUserId());
@@ -215,25 +172,19 @@ public class MapActivity extends AppCompatActivity {
                 user.setLatitude(0.0);
                 user.setLongitude(0.0);
                 dbHelper.updateUser(user);
-
                 FirebaseSyncHelper syncHelper = FirebaseSyncHelper.getInstance(this);
                 syncHelper.updateUserLocationInCloud(session.getUserId(), 0.0, 0.0);
             }
         }
     }
-
     private void loadNearbyUsers() {
         String genre = spinnerGenre.getSelectedItem().toString();
         String language = spinnerLanguage.getSelectedItem().toString();
-
         if ("Todos".equals(genre))
             genre = null;
         if ("Todos".equals(language))
             language = null;
-
         List<User> users = dbHelper.getNearbyUsers(currentLat, currentLng, currentDistance, genre, language);
-
-        // Remove current user and users with hidden location
         if (session.isLoggedIn()) {
             long currentUserId = session.getUserId();
             List<User> filtered = new ArrayList<>();
@@ -244,7 +195,6 @@ public class MapActivity extends AppCompatActivity {
             }
             users = filtered;
         }
-
         if (users.isEmpty()) {
             tvNoUsers.setVisibility(View.VISIBLE);
             recyclerUsers.setVisibility(View.GONE);
@@ -252,7 +202,6 @@ public class MapActivity extends AppCompatActivity {
             tvNoUsers.setVisibility(View.GONE);
             recyclerUsers.setVisibility(View.VISIBLE);
         }
-
         userAdapter = new UserAdapter(users, user -> {
             try {
                 Intent intent = new Intent(this, PublicProfileActivity.class);
@@ -264,7 +213,6 @@ public class MapActivity extends AppCompatActivity {
         }, false);
         recyclerUsers.setAdapter(userAdapter);
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -272,15 +220,12 @@ public class MapActivity extends AppCompatActivity {
             locationHelper.stopLocationUpdates();
         }
     }
-
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
         TextView navClubs = findViewById(R.id.navClubs);
         TextView navProfile = findViewById(R.id.navProfile);
-
         navMap.setTextColor(getResources().getColor(R.color.blue_primary));
-
         navShelf.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, HomeActivity.class);

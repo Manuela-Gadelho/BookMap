@@ -1,5 +1,4 @@
 package com.bookmap.app;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,11 +7,9 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bookmap.app.adapter.ReviewAdapter;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
@@ -20,20 +17,10 @@ import com.bookmap.app.model.Book;
 import com.bookmap.app.model.Review;
 import com.bookmap.app.model.UserBook;
 import com.bookmap.app.util.SessionManager;
-
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * BookDetailsActivity - shows book details, average rating, and reviews.
- * Constraint 1: WriteReview includes RateBook - cannot rate without writing
- * review.
- * Shows average rating from all users (monograph section 6.5).
- */
 public class BookDetailsActivity extends AppCompatActivity {
-
     public static final String EXTRA_BOOK_ID = "book_id";
-
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private long bookId;
@@ -43,73 +30,54 @@ public class BookDetailsActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private RatingBar ratingBarAverage;
     private TextView tvAverageRating, tvReviewCount;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details);
-
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
-
         bookId = getIntent().getLongExtra(EXTRA_BOOK_ID, -1);
         if (bookId == -1) {
             finish();
             return;
         }
-
         Book book = dbHelper.getBookById(bookId);
         if (book == null) {
             finish();
             return;
         }
-
-        // Header
         TextView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
-
-        // Book info
         TextView tvTitle = findViewById(R.id.tvTitle);
         TextView tvAuthor = findViewById(R.id.tvAuthor);
         TextView tvGenre = findViewById(R.id.tvGenre);
         TextView tvSynopsis = findViewById(R.id.tvSynopsis);
-
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor());
         tvGenre.setText(book.getGenre());
         tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
                 ? book.getSynopsis()
                 : "Sem sinopse disponivel");
-
-        // Average rating display
         ratingBarAverage = findViewById(R.id.ratingBarAverage);
         tvAverageRating = findViewById(R.id.tvAverageRating);
         tvReviewCount = findViewById(R.id.tvReviewCount);
         loadAverageRating();
-
-        // Reviews section
         recyclerReviews = findViewById(R.id.recyclerReviews);
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
         reviewAdapter = new ReviewAdapter(new ArrayList<>());
         recyclerReviews.setAdapter(reviewAdapter);
-
-        // Write review section
         View layoutWriteReview = findViewById(R.id.layoutWriteReview);
         editReviewText = findViewById(R.id.editReviewText);
         ratingBar = findViewById(R.id.ratingBar);
         Button btnSubmitReview = findViewById(R.id.btnSubmitReview);
-
         if (session.isLoggedIn()) {
             layoutWriteReview.setVisibility(View.VISIBLE);
             btnSubmitReview.setOnClickListener(v -> submitReview());
         } else {
             layoutWriteReview.setVisibility(View.GONE);
         }
-
-        // Add to shelf button
         Button btnAddToShelf = findViewById(R.id.btnAddToShelf);
         Button btnUpdateProgress = findViewById(R.id.btnUpdateProgress);
-
         if (session.isLoggedIn()) {
             UserBook existingUserBook = dbHelper.getUserBook(session.getUserId(), bookId);
             if (existingUserBook != null) {
@@ -155,21 +123,17 @@ public class BookDetailsActivity extends AppCompatActivity {
             btnAddToShelf.setOnClickListener(
                     v -> Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show());
         }
-
         loadReviews();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         loadReviews();
         loadAverageRating();
     }
-
     private void loadAverageRating() {
         double avg = dbHelper.getBookAverageRating(bookId);
         int count = dbHelper.getBookReviewCount(bookId);
-
         if (ratingBarAverage != null) {
             ratingBarAverage.setRating((float) avg);
         }
@@ -180,11 +144,9 @@ public class BookDetailsActivity extends AppCompatActivity {
             tvReviewCount.setText(count + " avaliacao(oes)");
         }
     }
-
     private void loadReviews() {
         List<Review> reviews = dbHelper.getBookReviews(bookId);
         reviewAdapter.updateData(reviews);
-
         TextView tvNoReviews = findViewById(R.id.tvNoReviews);
         if (reviews.isEmpty()) {
             tvNoReviews.setVisibility(View.VISIBLE);
@@ -192,25 +154,17 @@ public class BookDetailsActivity extends AppCompatActivity {
             tvNoReviews.setVisibility(View.GONE);
         }
     }
-
-    /**
-     * Constraint 1: Cannot rate without writing a review.
-     * Both text and rating are required.
-     */
     private void submitReview() {
         String text = editReviewText.getText().toString().trim();
         int rating = (int) ratingBar.getRating();
-
         if (text.isEmpty()) {
             Toast.makeText(this, "Escreva uma resenha antes de avaliar", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (rating == 0) {
             Toast.makeText(this, "Selecione uma avaliacao (1-5 estrelas)", Toast.LENGTH_SHORT).show();
             return;
         }
-
         long result = dbHelper.insertReview(session.getUserId(), bookId, text, rating);
         if (result > 0) {
             Toast.makeText(this, "Resenha publicada!", Toast.LENGTH_SHORT).show();

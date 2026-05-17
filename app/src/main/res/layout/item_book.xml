@@ -7,19 +7,16 @@
     android:layout_marginBottom="8dp"
     android:orientation="horizontal"
     android:gravity="center_vertical">
-
     <View
         android:layout_width="40dp"
         android:layout_height="60dp"
         android:background="#CCCCCC"/>
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginLeft="12dp">
-
         <TextView
             android:id="@+id/tvBookTitle"
             android:layout_width="wrap_content"
@@ -28,7 +25,6 @@
             android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="15sp"/>
-
         <TextView
             android:id="@+id/tvBookAuthor"
             android:layout_width="wrap_content"
@@ -36,7 +32,6 @@
             android:text="Autor"
             android:textColor="@color/gray_text"
             android:textSize="13sp"/>
-
         <TextView
             android:id="@+id/tvBookGenre"
             android:layout_width="wrap_content"
@@ -46,7 +41,6 @@
             android:textSize="11sp"
             android:layout_marginTop="4dp"/>
     </LinearLayout>
-
     <TextView
         android:id="@+id/tvBookStatus"
         android:layout_width="wrap_content"
