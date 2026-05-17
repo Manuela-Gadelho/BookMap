@@ -44,12 +44,22 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             tvStatus.setText("E-mail nao encontrado no sistema");
             return;
         }
-        emailVerified = true;
-        tvStatus.setText("E-mail verificado! Digite a nova senha.");
-        editEmail.setEnabled(false);
-        editNewPassword.setEnabled(true);
-        editConfirmPassword.setEnabled(true);
-        btnResetPassword.setEnabled(true);
+
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Caixa de Entrada (Simulacao)")
+            .setMessage("Enviamos um email para " + email + ". Deseja 'clicar' no link de verificacao?")
+            .setPositiveButton("Clicar no Link", (dialog, which) -> {
+                emailVerified = true;
+                tvStatus.setText("E-mail verificado! Digite a nova senha.");
+                editEmail.setEnabled(false);
+                editNewPassword.setEnabled(true);
+                editConfirmPassword.setEnabled(true);
+                btnResetPassword.setEnabled(true);
+            })
+            .setNegativeButton("Ignorar", (dialog, which) -> {
+                tvStatus.setText("Aguardando verificacao do link enviado por e-mail...");
+            })
+            .show();
     }
     private void resetPassword() {
         if (!emailVerified || foundUser == null) {

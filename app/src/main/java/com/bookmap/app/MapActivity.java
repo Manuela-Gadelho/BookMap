@@ -1,8 +1,10 @@
 package com.bookmap.app;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +28,7 @@ import com.bookmap.app.util.LocationHelper;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+
 public class MapActivity extends AppCompatActivity {
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private DatabaseHelper dbHelper;
@@ -39,7 +42,8 @@ public class MapActivity extends AppCompatActivity {
     private SwitchCompat switchLocationVisible;
     private double currentLat = 0.0;
     private double currentLng = 0.0;
-    private int currentDistance = 50; 
+    private int currentDistance = 50;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,9 +78,11 @@ public class MapActivity extends AppCompatActivity {
                 currentDistance = Math.max(1, progress);
                 tvDistance.setText(currentDistance + " km");
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 loadNearbyUsers();
@@ -87,6 +93,7 @@ public class MapActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 loadNearbyUsers();
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -107,6 +114,7 @@ public class MapActivity extends AppCompatActivity {
         setupBottomNav();
         requestLocationAndLoad();
     }
+
     private void requestLocationAndLoad() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -117,6 +125,7 @@ public class MapActivity extends AppCompatActivity {
             getCurrentLocation();
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
@@ -130,6 +139,7 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     }
+
     private void getCurrentLocation() {
         locationHelper.requestLastLocation(new LocationHelper.LocationUpdateListener() {
             @Override
@@ -140,19 +150,21 @@ public class MapActivity extends AppCompatActivity {
                 updateUserLocationInDb();
                 loadNearbyUsers();
             }
+
             @Override
             public void onLocationError(String error) {
                 tvLocationStatus.setText("Usando localizacao aproximada");
                 currentLat = locationHelper.getLastLatitude();
                 currentLng = locationHelper.getLastLongitude();
                 if (currentLat == 0.0 && currentLng == 0.0) {
-                    currentLat = -23.4626; 
+                    currentLat = -23.4626;
                     currentLng = -46.5322;
                 }
                 loadNearbyUsers();
             }
         });
     }
+
     private void updateUserLocationInDb() {
         if (session.isLoggedIn() && locationHelper.isLocationVisible()) {
             User user = dbHelper.getUserById(session.getUserId());
@@ -165,6 +177,7 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     }
+
     private void clearUserLocationInDb() {
         if (session.isLoggedIn()) {
             User user = dbHelper.getUserById(session.getUserId());
@@ -177,6 +190,7 @@ public class MapActivity extends AppCompatActivity {
             }
         }
     }
+
     private void loadNearbyUsers() {
         String genre = spinnerGenre.getSelectedItem().toString();
         String language = spinnerLanguage.getSelectedItem().toString();
@@ -213,6 +227,7 @@ public class MapActivity extends AppCompatActivity {
         }, false);
         recyclerUsers.setAdapter(userAdapter);
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -220,6 +235,7 @@ public class MapActivity extends AppCompatActivity {
             locationHelper.stopLocationUpdates();
         }
     }
+
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);

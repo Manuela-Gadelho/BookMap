@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.UUID;
+
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private EditText editEmail, editPassword;
@@ -47,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(this, "Erro ao processar login com Google.", Toast.LENGTH_SHORT).show();
                 }
             });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,26 +127,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
     private void signInWithGoogle() {
         if (!isGoogleSignInConfigured || googleSignInClient == null) {
             Toast.makeText(this, "Google Sign-In nao esta configurado.", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
-            googleSignInClient.signOut().addOnCompleteListener(this, task -> {
-                try {
-                    Intent signInIntent = googleSignInClient.getSignInIntent();
-                    googleSignInLauncher.launch(signInIntent);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error launching Google Sign-In", e);
-                    Toast.makeText(this, "Erro ao iniciar login com Google.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            Intent signInIntent = googleSignInClient.getSignInIntent();
+            googleSignInLauncher.launch(signInIntent);
         } catch (Exception e) {
-            Log.e(TAG, "Error in signInWithGoogle", e);
+            Log.e(TAG, "Error launching Google Sign-In", e);
             Toast.makeText(this, "Erro ao iniciar login com Google.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -166,6 +164,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Erro inesperado. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void firebaseAuthWithGoogle(String idToken) {
         if (firebaseAuth == null) {
             Toast.makeText(this, "Firebase nao esta disponivel. Use login com email.", Toast.LENGTH_SHORT).show();
@@ -198,6 +197,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Erro na autenticacao. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void handleGoogleUser(FirebaseUser firebaseUser) {
         try {
             String email = firebaseUser.getEmail();
@@ -230,6 +230,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Erro ao processar login. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private String getWebClientId() {
         try {
             int resId = getResources().getIdentifier("default_web_client_id", "string", getPackageName());
@@ -244,6 +245,7 @@ public class LoginActivity extends AppCompatActivity {
             return null;
         }
     }
+
     private void attemptLogin() {
         String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
@@ -269,6 +271,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Erro ao fazer login. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void navigateToHome() {
         try {
             Intent intent = new Intent(this, HomeActivity.class);
