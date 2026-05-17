@@ -34,7 +34,8 @@ import java.util.List;
 /**
  * MapActivity - Literary Map showing nearby readers with geolocation.
  * Uses FusedLocationProviderClient for real GPS coordinates.
- * Constraint 2: ViewNearby includes ViewProfile - clicking a user opens their profile.
+ * Constraint 2: ViewNearby includes ViewProfile - clicking a user opens their
+ * profile.
  * Includes privacy control for location visibility (monograph section 6.4).
  */
 public class MapActivity extends AppCompatActivity {
@@ -75,14 +76,14 @@ public class MapActivity extends AppCompatActivity {
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
 
         // Genre filter
-        String[] genres = {"Todos", "Fantasia", "Terror", "Romance", "Ficcao Cientifica",
-                "Tecnologia", "Literatura Brasileira"};
+        String[] genres = { "Todos", "Fantasia", "Terror", "Romance", "Ficcao Cientifica",
+                "Tecnologia", "Literatura Brasileira" };
         ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(genreAdapter);
 
         // Language filter
-        String[] languages = {"Todos", "Portugues", "English", "Espanol"};
+        String[] languages = { "Todos", "Portugues", "English", "Espanol" };
         ArrayAdapter<String> langAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, languages);
         spinnerLanguage.setAdapter(langAdapter);
@@ -100,7 +101,8 @@ public class MapActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -116,7 +118,8 @@ public class MapActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         };
         spinnerGenre.setOnItemSelectedListener(filterListener);
         spinnerLanguage.setOnItemSelectedListener(filterListener);
@@ -142,10 +145,10 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void requestLocationAndLoad() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
                     LOCATION_PERMISSION_REQUEST);
         } else {
             getCurrentLocation();
@@ -154,7 +157,7 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -223,8 +226,10 @@ public class MapActivity extends AppCompatActivity {
         String genre = spinnerGenre.getSelectedItem().toString();
         String language = spinnerLanguage.getSelectedItem().toString();
 
-        if ("Todos".equals(genre)) genre = null;
-        if ("Todos".equals(language)) language = null;
+        if ("Todos".equals(genre))
+            genre = null;
+        if ("Todos".equals(language))
+            language = null;
 
         List<User> users = dbHelper.getNearbyUsers(currentLat, currentLng, currentDistance, genre, language);
 
@@ -249,9 +254,13 @@ public class MapActivity extends AppCompatActivity {
         }
 
         userAdapter = new UserAdapter(users, user -> {
-            Intent intent = new Intent(this, PublicProfileActivity.class);
-            intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
-            startActivity(intent);
+            try {
+                Intent intent = new Intent(this, PublicProfileActivity.class);
+                intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e("MapActivity", "Error opening PublicProfile", e);
+            }
         }, false);
         recyclerUsers.setAdapter(userAdapter);
     }
@@ -273,18 +282,34 @@ public class MapActivity extends AppCompatActivity {
         navMap.setTextColor(getResources().getColor(R.color.blue_primary));
 
         navShelf.setOnClickListener(v -> {
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
+            try {
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                Log.e("MapActivity", "Error navigating to HomeActivity", e);
+            }
         });
         navClubs.setOnClickListener(v -> {
-            startActivity(new Intent(this, ClubListActivity.class));
-            finish();
+            try {
+                Intent intent = new Intent(this, ClubListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                Log.e("MapActivity", "Error navigating to ClubListActivity", e);
+            }
         });
         navProfile.setOnClickListener(v -> {
-            if (session.isLoggedIn()) {
-                startActivity(new Intent(this, ProfileActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
+            try {
+                if (session.isLoggedIn()) {
+                    startActivity(new Intent(this, ProfileActivity.class));
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+            } catch (Exception e) {
+                Log.e("MapActivity", "Error navigating to ProfileActivity", e);
             }
         });
     }

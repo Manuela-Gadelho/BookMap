@@ -26,7 +26,8 @@ import java.util.List;
 
 /**
  * BookDetailsActivity - shows book details, average rating, and reviews.
- * Constraint 1: WriteReview includes RateBook - cannot rate without writing review.
+ * Constraint 1: WriteReview includes RateBook - cannot rate without writing
+ * review.
  * Shows average rating from all users (monograph section 6.5).
  */
 public class BookDetailsActivity extends AppCompatActivity {
@@ -77,7 +78,8 @@ public class BookDetailsActivity extends AppCompatActivity {
         tvAuthor.setText(book.getAuthor());
         tvGenre.setText(book.getGenre());
         tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
-                ? book.getSynopsis() : "Sem sinopse disponivel");
+                ? book.getSynopsis()
+                : "Sem sinopse disponivel");
 
         // Average rating display
         ratingBarAverage = findViewById(R.id.ratingBarAverage);
@@ -115,9 +117,13 @@ public class BookDetailsActivity extends AppCompatActivity {
                 btnAddToShelf.setEnabled(false);
                 btnUpdateProgress.setVisibility(View.VISIBLE);
                 btnUpdateProgress.setOnClickListener(v -> {
-                    Intent intent = new Intent(this, UpdateProgressActivity.class);
-                    intent.putExtra(UpdateProgressActivity.EXTRA_BOOK_ID, bookId);
-                    startActivity(intent);
+                    try {
+                        Intent intent = new Intent(this, UpdateProgressActivity.class);
+                        intent.putExtra(UpdateProgressActivity.EXTRA_BOOK_ID, bookId);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        android.util.Log.e("BookDetailsActivity", "Error opening UpdateProgress", e);
+                    }
                 });
             } else {
                 btnUpdateProgress.setVisibility(View.GONE);
@@ -131,9 +137,13 @@ public class BookDetailsActivity extends AppCompatActivity {
                         btnAddToShelf.setEnabled(false);
                         btnUpdateProgress.setVisibility(View.VISIBLE);
                         btnUpdateProgress.setOnClickListener(v2 -> {
-                            Intent intent = new Intent(this, UpdateProgressActivity.class);
-                            intent.putExtra(UpdateProgressActivity.EXTRA_BOOK_ID, bookId);
-                            startActivity(intent);
+                            try {
+                                Intent intent = new Intent(this, UpdateProgressActivity.class);
+                                intent.putExtra(UpdateProgressActivity.EXTRA_BOOK_ID, bookId);
+                                startActivity(intent);
+                            } catch (Exception e) {
+                                android.util.Log.e("BookDetailsActivity", "Error opening UpdateProgress", e);
+                            }
                         });
                     } else {
                         Toast.makeText(this, "Livro ja esta na sua estante", Toast.LENGTH_SHORT).show();
@@ -142,8 +152,8 @@ public class BookDetailsActivity extends AppCompatActivity {
             }
         } else {
             btnUpdateProgress.setVisibility(View.GONE);
-            btnAddToShelf.setOnClickListener(v ->
-                    Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show());
+            btnAddToShelf.setOnClickListener(
+                    v -> Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show());
         }
 
         loadReviews();

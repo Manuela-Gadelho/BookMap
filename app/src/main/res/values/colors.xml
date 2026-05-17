@@ -8,4 +8,5 @@
     <color name="gray_text">#666666</color>
     <color name="accent_gold">#FFD700</color>
     <color name="purple_500">#003366</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>

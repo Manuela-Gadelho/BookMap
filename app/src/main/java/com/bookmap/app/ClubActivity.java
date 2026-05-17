@@ -74,12 +74,17 @@ public class ClubActivity extends AppCompatActivity {
         List<User> memberUsers = new ArrayList<>();
         for (ClubMember cm : clubMembers) {
             User u = dbHelper.getUserById(cm.getUserId());
-            if (u != null) memberUsers.add(u);
+            if (u != null)
+                memberUsers.add(u);
         }
         UserAdapter memberAdapter = new UserAdapter(memberUsers, user -> {
-            Intent intent = new Intent(this, PublicProfileActivity.class);
-            intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
-            startActivity(intent);
+            try {
+                Intent intent = new Intent(this, PublicProfileActivity.class);
+                intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
+                startActivity(intent);
+            } catch (Exception e) {
+                android.util.Log.e("ClubActivity", "Error opening PublicProfile", e);
+            }
         }, false);
         recyclerMembers.setAdapter(memberAdapter);
 
@@ -121,9 +126,13 @@ public class ClubActivity extends AppCompatActivity {
 
             // Create event
             btnCreateEvent.setOnClickListener(v -> {
-                Intent intent = new Intent(this, EventActivity.class);
-                intent.putExtra(EventActivity.EXTRA_CLUB_ID, clubId);
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(this, EventActivity.class);
+                    intent.putExtra(EventActivity.EXTRA_CLUB_ID, clubId);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    android.util.Log.e("ClubActivity", "Error opening EventActivity", e);
+                }
             });
         } else {
             btnJoinClub.setVisibility(View.GONE);

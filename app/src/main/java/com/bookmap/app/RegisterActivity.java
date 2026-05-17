@@ -50,8 +50,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         btnRegister.setOnClickListener(v -> attemptRegister());
         tvLogin.setOnClickListener(v -> {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+            try {
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            } catch (Exception e) {
+                android.util.Log.e("RegisterActivity", "Error navigating to LoginActivity", e);
+            }
         });
     }
 
@@ -84,12 +88,18 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Collect favorite genres
         List<String> genres = new ArrayList<>();
-        if (checkFantasia.isChecked()) genres.add("Fantasia");
-        if (checkTerror.isChecked()) genres.add("Terror");
-        if (checkRomance.isChecked()) genres.add("Romance");
-        if (checkFiccao.isChecked()) genres.add("Ficcao Cientifica");
-        if (checkTecnologia.isChecked()) genres.add("Tecnologia");
-        if (checkLitBrasileira.isChecked()) genres.add("Literatura Brasileira");
+        if (checkFantasia.isChecked())
+            genres.add("Fantasia");
+        if (checkTerror.isChecked())
+            genres.add("Terror");
+        if (checkRomance.isChecked())
+            genres.add("Romance");
+        if (checkFiccao.isChecked())
+            genres.add("Ficcao Cientifica");
+        if (checkTecnologia.isChecked())
+            genres.add("Tecnologia");
+        if (checkLitBrasileira.isChecked())
+            genres.add("Literatura Brasileira");
 
         String favoriteGenres = String.join(", ", genres);
         String passwordHash = PasswordUtil.hashPassword(password);
@@ -100,8 +110,14 @@ public class RegisterActivity extends AppCompatActivity {
             SessionManager session = new SessionManager(this);
             session.createLoginSession(userId, name, email, "READER");
             Toast.makeText(this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
+            try {
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                android.util.Log.e("RegisterActivity", "Error navigating to HomeActivity", e);
+            }
         } else {
             Toast.makeText(this, "Erro ao criar conta. Tente novamente.", Toast.LENGTH_SHORT).show();
         }

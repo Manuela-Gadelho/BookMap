@@ -2,9 +2,11 @@ package com.bookmap.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -59,10 +61,15 @@ public class ClubListActivity extends AppCompatActivity {
         });
 
         btnCreateClub.setOnClickListener(v -> {
-            if (session.isLoggedIn()) {
-                startActivity(new Intent(this, CreateClubActivity.class));
-            } else {
-                android.widget.Toast.makeText(this, "Faca login para criar clubes", android.widget.Toast.LENGTH_SHORT).show();
+            try {
+                if (session.isLoggedIn()) {
+                    startActivity(new Intent(this, CreateClubActivity.class));
+                } else {
+                    Toast.makeText(this, "Faca login para criar clubes", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Log.e("ClubListActivity", "Error opening CreateClubActivity", e);
+                Toast.makeText(this, "Erro ao abrir criacao de clube", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -101,9 +108,14 @@ public class ClubListActivity extends AppCompatActivity {
         }
 
         clubAdapter = new ClubAdapter(clubs, club -> {
-            Intent intent = new Intent(this, ClubActivity.class);
-            intent.putExtra(ClubActivity.EXTRA_CLUB_ID, club.getId());
-            startActivity(intent);
+            try {
+                Intent intent = new Intent(this, ClubActivity.class);
+                intent.putExtra(ClubActivity.EXTRA_CLUB_ID, club.getId());
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e("ClubListActivity", "Error opening ClubActivity", e);
+                Toast.makeText(this, "Erro ao abrir clube", Toast.LENGTH_SHORT).show();
+            }
         });
         recyclerClubs.setAdapter(clubAdapter);
     }
@@ -117,18 +129,34 @@ public class ClubListActivity extends AppCompatActivity {
         navClubs.setTextColor(getResources().getColor(R.color.blue_primary));
 
         navShelf.setOnClickListener(v -> {
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
+            try {
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                Log.e("ClubListActivity", "Error navigating to HomeActivity", e);
+            }
         });
         navMap.setOnClickListener(v -> {
-            startActivity(new Intent(this, MapActivity.class));
-            finish();
+            try {
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                Log.e("ClubListActivity", "Error navigating to MapActivity", e);
+            }
         });
         navProfile.setOnClickListener(v -> {
-            if (session.isLoggedIn()) {
-                startActivity(new Intent(this, ProfileActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
+            try {
+                if (session.isLoggedIn()) {
+                    startActivity(new Intent(this, ProfileActivity.class));
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+            } catch (Exception e) {
+                Log.e("ClubListActivity", "Error navigating to ProfileActivity", e);
             }
         });
     }

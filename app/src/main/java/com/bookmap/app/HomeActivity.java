@@ -2,11 +2,13 @@ package com.bookmap.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,9 +64,14 @@ public class HomeActivity extends AppCompatActivity {
         recyclerBooks = findViewById(R.id.recyclerBooks);
         recyclerBooks.setLayoutManager(new LinearLayoutManager(this));
         adapter = new UserBookAdapter(userBooks, userBook -> {
-            Intent intent = new Intent(this, BookDetailsActivity.class);
-            intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, userBook.getBookId());
-            startActivity(intent);
+            try {
+                Intent intent = new Intent(this, BookDetailsActivity.class);
+                intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, userBook.getBookId());
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e("HomeActivity", "Error opening book details", e);
+                Toast.makeText(this, "Erro ao abrir detalhes do livro", Toast.LENGTH_SHORT).show();
+            }
         });
         recyclerBooks.setAdapter(adapter);
 
@@ -72,16 +79,27 @@ public class HomeActivity extends AppCompatActivity {
 
         // FAB to add book
         findViewById(R.id.fabAddBook).setOnClickListener(v -> {
-            if (session.isLoggedIn()) {
-                startActivity(new Intent(this, AddBookActivity.class));
-            } else {
-                android.widget.Toast.makeText(this, "Faca login para adicionar livros", android.widget.Toast.LENGTH_SHORT).show();
+            try {
+                if (session.isLoggedIn()) {
+                    startActivity(new Intent(this, AddBookActivity.class));
+                } else {
+                    Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Log.e("HomeActivity", "Error opening AddBookActivity", e);
+                Toast.makeText(this, "Erro ao abrir adicionar livro", Toast.LENGTH_SHORT).show();
             }
         });
 
         // Search button
-        findViewById(R.id.btnSearch).setOnClickListener(v ->
-                startActivity(new Intent(this, SearchActivity.class)));
+        findViewById(R.id.btnSearch).setOnClickListener(v -> {
+            try {
+                startActivity(new Intent(this, SearchActivity.class));
+            } catch (Exception e) {
+                Log.e("HomeActivity", "Error opening SearchActivity", e);
+                Toast.makeText(this, "Erro ao abrir busca", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Filter buttons
         btnLendo.setOnClickListener(v -> setFilter("LENDO"));
@@ -153,9 +171,13 @@ public class HomeActivity extends AppCompatActivity {
             progressCurrent.setProgress(current.getProgress());
             tvCurrentProgress.setText(current.getProgress() + "% Concluido");
             layoutCurrentReading.setOnClickListener(v -> {
-                Intent intent = new Intent(this, BookDetailsActivity.class);
-                intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, current.getBookId());
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(this, BookDetailsActivity.class);
+                    intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, current.getBookId());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.e("HomeActivity", "Error opening book details from current reading", e);
+                }
             });
         } else {
             layoutCurrentReading.setVisibility(View.GONE);
@@ -171,16 +193,35 @@ public class HomeActivity extends AppCompatActivity {
         navShelf.setTextColor(getResources().getColor(R.color.blue_primary));
 
         navMap.setOnClickListener(v -> {
-            startActivity(new Intent(this, MapActivity.class));
+            try {
+                Intent intent = new Intent(this, MapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e("HomeActivity", "Error navigating to MapActivity", e);
+                Toast.makeText(this, "Erro ao abrir mapa", Toast.LENGTH_SHORT).show();
+            }
         });
         navClubs.setOnClickListener(v -> {
-            startActivity(new Intent(this, ClubListActivity.class));
+            try {
+                Intent intent = new Intent(this, ClubListActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+            } catch (Exception e) {
+                Log.e("HomeActivity", "Error navigating to ClubListActivity", e);
+                Toast.makeText(this, "Erro ao abrir clubes", Toast.LENGTH_SHORT).show();
+            }
         });
         navProfile.setOnClickListener(v -> {
-            if (session.isLoggedIn()) {
-                startActivity(new Intent(this, ProfileActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
+            try {
+                if (session.isLoggedIn()) {
+                    startActivity(new Intent(this, ProfileActivity.class));
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+            } catch (Exception e) {
+                Log.e("HomeActivity", "Error navigating to ProfileActivity", e);
+                Toast.makeText(this, "Erro ao abrir perfil", Toast.LENGTH_SHORT).show();
             }
         });
     }

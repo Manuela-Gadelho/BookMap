@@ -70,7 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView btnLogout = findViewById(R.id.btnLogout);
 
         // Language spinner
-        String[] languages = {"Portugues", "English", "Espanol"};
+        String[] languages = { "Portugues", "English", "Espanol" };
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, languages);
         spinnerLanguage.setAdapter(adapter);
@@ -84,11 +84,21 @@ public class ProfileActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveProfile());
         btnBack.setOnClickListener(v -> finish());
         btnLogout.setOnClickListener(v -> {
-            session.logout();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            try {
+                session.logout();
+                // Also sign out from Google if possible
+                try {
+                    com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+                } catch (Exception ignored) {
+                }
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } catch (Exception e) {
+                android.util.Log.e("ProfileActivity", "Error during logout", e);
+                android.widget.Toast.makeText(this, "Erro ao sair", android.widget.Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -101,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void showPhotoOptions() {
-        String[] options = {"Tirar Foto", "Escolher da Galeria", "Remover Foto"};
+        String[] options = { "Tirar Foto", "Escolher da Galeria", "Remover Foto" };
         new AlertDialog.Builder(this)
                 .setTitle("Foto de Perfil")
                 .setItems(options, (dialog, which) -> {
@@ -121,10 +131,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+                    new String[] { Manifest.permission.CAMERA }, PERMISSION_REQUEST_CAMERA);
             return;
         }
         Intent cameraIntent = photoHelper.createCameraIntent();
@@ -154,7 +163,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -169,7 +178,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != RESULT_OK) return;
+        if (resultCode != RESULT_OK)
+            return;
 
         String photoPath = null;
 
@@ -214,9 +224,15 @@ public class ProfileActivity extends AppCompatActivity {
 
         String roleLabel;
         switch (user.getRole()) {
-            case "ORGANIZER": roleLabel = "Organizador"; break;
-            case "READER": roleLabel = "Leitor"; break;
-            default: roleLabel = "Convidado"; break;
+            case "ORGANIZER":
+                roleLabel = "Organizador";
+                break;
+            case "READER":
+                roleLabel = "Leitor";
+                break;
+            default:
+                roleLabel = "Convidado";
+                break;
         }
         tvUserRole.setText(roleLabel);
 
@@ -232,7 +248,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Set language spinner
         String lang = user.getLanguage();
         if (lang != null) {
-            String[] languages = {"Portugues", "English", "Espanol"};
+            String[] languages = { "Portugues", "English", "Espanol" };
             for (int i = 0; i < languages.length; i++) {
                 if (languages[i].equals(lang)) {
                     spinnerLanguage.setSelection(i);
@@ -254,7 +270,8 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         User user = dbHelper.getUserById(session.getUserId());
-        if (user == null) return;
+        if (user == null)
+            return;
 
         user.setName(name);
         user.setBio(bio);

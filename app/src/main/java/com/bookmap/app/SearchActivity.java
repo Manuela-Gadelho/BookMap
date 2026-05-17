@@ -98,9 +98,13 @@ public class SearchActivity extends AppCompatActivity {
             tvNoResults.setVisibility(View.GONE);
             recyclerResults.setVisibility(View.VISIBLE);
             BookAdapter adapter = new BookAdapter(books, book -> {
-                Intent intent = new Intent(this, BookDetailsActivity.class);
-                intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, book.getId());
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(this, BookDetailsActivity.class);
+                    intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, book.getId());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    android.util.Log.e("SearchActivity", "Error opening BookDetails", e);
+                }
             });
             recyclerResults.setAdapter(adapter);
         }
@@ -115,9 +119,13 @@ public class SearchActivity extends AppCompatActivity {
             tvNoResults.setVisibility(View.GONE);
             recyclerResults.setVisibility(View.VISIBLE);
             UserAdapter adapter = new UserAdapter(users, user -> {
-                Intent intent = new Intent(this, PublicProfileActivity.class);
-                intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(this, PublicProfileActivity.class);
+                    intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    android.util.Log.e("SearchActivity", "Error opening PublicProfile", e);
+                }
             }, false);
             recyclerResults.setAdapter(adapter);
         }

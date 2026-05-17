@@ -57,7 +57,8 @@ public class PublicProfileActivity extends AppCompatActivity {
         tvName.setText(user.getName());
         tvBio.setText(user.getBio() != null && !user.getBio().isEmpty() ? user.getBio() : "Sem bio");
         tvGenres.setText(user.getFavoriteGenres() != null && !user.getFavoriteGenres().isEmpty()
-                ? user.getFavoriteGenres() : "Nenhum genero");
+                ? user.getFavoriteGenres()
+                : "Nenhum genero");
 
         // Current reading
         LinearLayout layoutCurrentReading = findViewById(R.id.layoutCurrentReading);
@@ -82,9 +83,13 @@ public class PublicProfileActivity extends AppCompatActivity {
         Button btnReport = findViewById(R.id.btnReport);
         if (session.isLoggedIn()) {
             btnReport.setOnClickListener(v -> {
-                Intent intent = new Intent(this, ReportActivity.class);
-                intent.putExtra(ReportActivity.EXTRA_REPORTED_USER_ID, userId);
-                startActivity(intent);
+                try {
+                    Intent intent = new Intent(this, ReportActivity.class);
+                    intent.putExtra(ReportActivity.EXTRA_REPORTED_USER_ID, userId);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    android.util.Log.e("PublicProfileActivity", "Error opening ReportActivity", e);
+                }
             });
         } else {
             btnReport.setVisibility(View.GONE);
