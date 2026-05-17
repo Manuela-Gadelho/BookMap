@@ -1,4 +1,5 @@
 package com.bookmap.app.database;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import com.bookmap.app.model.User;
 import com.bookmap.app.model.UserBook;
 import java.util.ArrayList;
 import java.util.List;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
     private static final int DATABASE_VERSION = 1;
@@ -26,15 +28,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_EVENTS = "events";
     public static final String TABLE_REPORTS = "reports";
     private static DatabaseHelper instance;
+
     public static synchronized DatabaseHelper getInstance(Context context) {
         if (instance == null) {
             instance = new DatabaseHelper(context.getApplicationContext());
         }
         return instance;
     }
+
     private DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_USERS + " (" +
@@ -123,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (reported_user_id) REFERENCES " + TABLE_USERS + "(id))");
         seedData(db);
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
@@ -135,6 +141,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         onCreate(db);
     }
+
     private void seedData(SQLiteDatabase db) {
         insertBookDirect(db, "Engenharia de Software", "Ian Sommerville",
                 "A decima edicao de Engenharia de Software, um classico da area, foi totalmente atualizada e reestruturada para refletir as mudancas tecnologicas mais recentes.",
@@ -155,8 +162,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "Uma distopia sobre um regime totalitario que controla todos os aspectos da vida.",
                 "", "Ficcao Cientifica", "978-8535914849");
     }
+
     private void insertBookDirect(SQLiteDatabase db, String title, String author,
-                                   String synopsis, String coverPath, String genre, String isbn) {
+            String synopsis, String coverPath, String genre, String isbn) {
         ContentValues values = new ContentValues();
         values.put("title", title);
         values.put("author", author);
@@ -166,8 +174,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("isbn", isbn);
         db.insert(TABLE_BOOKS, null, values);
     }
+
     public long insertUser(String name, String email, String passwordHash,
-                           String bio, String favoriteGenres, String role) {
+            String bio, String favoriteGenres, String role) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", name);
@@ -178,10 +187,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("role", role);
         return db.insert(TABLE_USERS, null, values);
     }
+
     public User getUserByEmail(String email) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, null, "email = ?",
-                new String[]{email}, null, null, null);
+                new String[] { email }, null, null, null);
         User user = null;
         if (cursor.moveToFirst()) {
             user = cursorToUser(cursor);
@@ -189,10 +199,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return user;
     }
+
     public User getUserById(long id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, null, "id = ?",
-                new String[]{String.valueOf(id)}, null, null, null);
+                new String[] { String.valueOf(id) }, null, null, null);
         User user = null;
         if (cursor.moveToFirst()) {
             user = cursorToUser(cursor);
@@ -200,6 +211,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return user;
     }
+
     public boolean updateUser(User user) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -211,15 +223,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("longitude", user.getLongitude());
         values.put("language", user.getLanguage());
         int rows = db.update(TABLE_USERS, values, "id = ?",
-                new String[]{String.valueOf(user.getId())});
+                new String[] { String.valueOf(user.getId()) });
         return rows > 0;
     }
+
     public List<User> searchUsers(String query) {
         SQLiteDatabase db = getReadableDatabase();
         List<User> users = new ArrayList<>();
         Cursor cursor = db.query(TABLE_USERS, null,
                 "name LIKE ? OR email LIKE ?",
-                new String[]{"%" + query + "%", "%" + query + "%"},
+                new String[] { "%" + query + "%", "%" + query + "%" },
                 null, null, "name ASC");
         while (cursor.moveToNext()) {
             users.add(cursorToUser(cursor));
@@ -227,7 +240,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return users;
     }
-    public List<User> getNearbyUsers(double lat, double lng, double radiusKm, String genreFilter, String languageFilter) {
+
+    public List<User> getNearbyUsers(double lat, double lng, double radiusKm, String genreFilter,
+            String languageFilter) {
         SQLiteDatabase db = getReadableDatabase();
         List<User> users = new ArrayList<>();
         double latDiff = radiusKm / 111.0;
@@ -254,6 +269,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return users;
     }
+
     public List<User> getAllUsers() {
         SQLiteDatabase db = getReadableDatabase();
         List<User> users = new ArrayList<>();
@@ -264,6 +280,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return users;
     }
+
     private User cursorToUser(Cursor cursor) {
         User user = new User();
         user.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -280,8 +297,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         user.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return user;
     }
+
     public long insertBook(String title, String author, String synopsis,
-                           String coverPath, String genre, String isbn) {
+            String coverPath, String genre, String isbn) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", title);
@@ -292,10 +310,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("isbn", isbn);
         return db.insert(TABLE_BOOKS, null, values);
     }
+
     public Book getBookById(long id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_BOOKS, null, "id = ?",
-                new String[]{String.valueOf(id)}, null, null, null);
+                new String[] { String.valueOf(id) }, null, null, null);
         Book book = null;
         if (cursor.moveToFirst()) {
             book = cursorToBook(cursor);
@@ -303,6 +322,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return book;
     }
+
     public List<Book> getAllBooks() {
         SQLiteDatabase db = getReadableDatabase();
         List<Book> books = new ArrayList<>();
@@ -313,12 +333,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return books;
     }
+
     public List<Book> searchBooks(String query) {
         SQLiteDatabase db = getReadableDatabase();
         List<Book> books = new ArrayList<>();
         Cursor cursor = db.query(TABLE_BOOKS, null,
                 "title LIKE ? OR author LIKE ? OR genre LIKE ?",
-                new String[]{"%" + query + "%", "%" + query + "%", "%" + query + "%"},
+                new String[] { "%" + query + "%", "%" + query + "%", "%" + query + "%" },
                 null, null, "title ASC");
         while (cursor.moveToNext()) {
             books.add(cursorToBook(cursor));
@@ -326,6 +347,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return books;
     }
+
     private Book cursorToBook(Cursor cursor) {
         Book book = new Book();
         book.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -338,6 +360,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         book.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return book;
     }
+
     public long insertUserBook(long userId, long bookId, String status, int progress) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -348,6 +371,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insertWithOnConflict(TABLE_USER_BOOKS, null, values,
                 SQLiteDatabase.CONFLICT_REPLACE);
     }
+
     public boolean updateUserBookStatus(long userId, long bookId, String status, int progress) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -355,9 +379,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("progress", progress);
         int rows = db.update(TABLE_USER_BOOKS, values,
                 "user_id = ? AND book_id = ?",
-                new String[]{String.valueOf(userId), String.valueOf(bookId)});
+                new String[] { String.valueOf(userId), String.valueOf(bookId) });
         return rows > 0;
     }
+
     public List<UserBook> getUserBooksByStatus(long userId, String status) {
         SQLiteDatabase db = getReadableDatabase();
         List<UserBook> userBooks = new ArrayList<>();
@@ -380,6 +405,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return userBooks;
     }
+
     public UserBook getUserBook(long userId, long bookId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
@@ -387,7 +413,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "FROM " + TABLE_USER_BOOKS + " ub " +
                         "INNER JOIN " + TABLE_BOOKS + " b ON ub.book_id = b.id " +
                         "WHERE ub.user_id = ? AND ub.book_id = ?",
-                new String[]{String.valueOf(userId), String.valueOf(bookId)});
+                new String[] { String.valueOf(userId), String.valueOf(bookId) });
         UserBook userBook = null;
         if (cursor.moveToFirst()) {
             userBook = cursorToUserBook(cursor);
@@ -395,6 +421,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return userBook;
     }
+
     private UserBook cursorToUserBook(Cursor cursor) {
         UserBook ub = new UserBook();
         ub.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -410,9 +437,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ub.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return ub;
     }
+
     public long insertReview(long userId, long bookId, String text, int rating) {
         if (text == null || text.trim().isEmpty()) {
-            return -1; 
+            return -1;
         }
         if (rating < 1 || rating > 5) {
             return -1;
@@ -425,6 +453,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("rating", rating);
         return db.insert(TABLE_REVIEWS, null, values);
     }
+
     public List<Review> getBookReviews(long bookId) {
         SQLiteDatabase db = getReadableDatabase();
         List<Review> reviews = new ArrayList<>();
@@ -432,19 +461,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "SELECT r.*, u.name as user_name FROM " + TABLE_REVIEWS + " r " +
                         "INNER JOIN " + TABLE_USERS + " u ON r.user_id = u.id " +
                         "WHERE r.book_id = ? ORDER BY r.created_at DESC",
-                new String[]{String.valueOf(bookId)});
+                new String[] { String.valueOf(bookId) });
         while (cursor.moveToNext()) {
             reviews.add(cursorToReview(cursor));
         }
         cursor.close();
         return reviews;
     }
+
     public double getBookAverageRating(long bookId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT AVG(rating) as avg_rating, COUNT(*) as count FROM " + TABLE_REVIEWS +
                         " WHERE book_id = ?",
-                new String[]{String.valueOf(bookId)});
+                new String[] { String.valueOf(bookId) });
         double avg = 0;
         if (cursor.moveToFirst()) {
             avg = cursor.getDouble(cursor.getColumnIndexOrThrow("avg_rating"));
@@ -452,11 +482,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return avg;
     }
+
     public int getBookReviewCount(long bookId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT COUNT(*) as count FROM " + TABLE_REVIEWS + " WHERE book_id = ?",
-                new String[]{String.valueOf(bookId)});
+                new String[] { String.valueOf(bookId) });
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
@@ -464,6 +495,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
     private Review cursorToReview(Cursor cursor) {
         Review review = new Review();
         review.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -475,6 +507,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         review.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return review;
     }
+
     public long insertClub(String name, String description, boolean isPublic, long creatorId) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -493,10 +526,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return clubId;
     }
+
     public Club getClubById(long id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_CLUBS, null, "id = ?",
-                new String[]{String.valueOf(id)}, null, null, null);
+                new String[] { String.valueOf(id) }, null, null, null);
         Club club = null;
         if (cursor.moveToFirst()) {
             club = cursorToClub(cursor);
@@ -504,6 +538,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return club;
     }
+
     public List<Club> getAllClubs() {
         SQLiteDatabase db = getReadableDatabase();
         List<Club> clubs = new ArrayList<>();
@@ -514,6 +549,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return clubs;
     }
+
     public List<Club> getUserClubs(long userId) {
         SQLiteDatabase db = getReadableDatabase();
         List<Club> clubs = new ArrayList<>();
@@ -521,19 +557,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "SELECT c.* FROM " + TABLE_CLUBS + " c " +
                         "INNER JOIN " + TABLE_CLUB_MEMBERS + " cm ON c.id = cm.club_id " +
                         "WHERE cm.user_id = ? AND cm.status = 'APPROVED' ORDER BY c.name ASC",
-                new String[]{String.valueOf(userId)});
+                new String[] { String.valueOf(userId) });
         while (cursor.moveToNext()) {
             clubs.add(cursorToClub(cursor));
         }
         cursor.close();
         return clubs;
     }
+
     public int getClubMemberCount(long clubId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT COUNT(*) as count FROM " + TABLE_CLUB_MEMBERS +
                         " WHERE club_id = ? AND status = 'APPROVED'",
-                new String[]{String.valueOf(clubId)});
+                new String[] { String.valueOf(clubId) });
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
@@ -541,6 +578,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
     private Club cursorToClub(Cursor cursor) {
         Club club = new Club();
         club.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -552,6 +590,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         club.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return club;
     }
+
     public long addClubMember(long clubId, long userId, String role, String status) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -562,20 +601,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insertWithOnConflict(TABLE_CLUB_MEMBERS, null, values,
                 SQLiteDatabase.CONFLICT_REPLACE);
     }
+
     public boolean updateMemberStatus(long clubId, long userId, String status) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("status", status);
         int rows = db.update(TABLE_CLUB_MEMBERS, values,
                 "club_id = ? AND user_id = ?",
-                new String[]{String.valueOf(clubId), String.valueOf(userId)});
+                new String[] { String.valueOf(clubId), String.valueOf(userId) });
         return rows > 0;
     }
+
     public ClubMember getClubMember(long clubId, long userId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_CLUB_MEMBERS, null,
                 "club_id = ? AND user_id = ?",
-                new String[]{String.valueOf(clubId), String.valueOf(userId)},
+                new String[] { String.valueOf(clubId), String.valueOf(userId) },
                 null, null, null);
         ClubMember member = null;
         if (cursor.moveToFirst()) {
@@ -584,6 +625,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return member;
     }
+
     public List<ClubMember> getClubMembers(long clubId) {
         SQLiteDatabase db = getReadableDatabase();
         List<ClubMember> members = new ArrayList<>();
@@ -591,13 +633,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "SELECT cm.*, u.name as user_name, u.email as user_email FROM " +
                         TABLE_CLUB_MEMBERS + " cm INNER JOIN " + TABLE_USERS +
                         " u ON cm.user_id = u.id WHERE cm.club_id = ? ORDER BY cm.role, u.name",
-                new String[]{String.valueOf(clubId)});
+                new String[] { String.valueOf(clubId) });
         while (cursor.moveToNext()) {
             members.add(cursorToClubMember(cursor));
         }
         cursor.close();
         return members;
     }
+
     private ClubMember cursorToClubMember(Cursor cursor) {
         ClubMember member = new ClubMember();
         member.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -616,8 +659,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return member;
     }
+
     public long insertEvent(long clubId, String title, String description,
-                            String dateTime, String location, long bookId, long createdBy) {
+            String dateTime, String location, long bookId, long createdBy) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("club_id", clubId);
@@ -631,17 +675,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("created_by", createdBy);
         return db.insert(TABLE_EVENTS, null, values);
     }
+
     public List<Event> getClubEvents(long clubId) {
         SQLiteDatabase db = getReadableDatabase();
         List<Event> events = new ArrayList<>();
         Cursor cursor = db.query(TABLE_EVENTS, null, "club_id = ?",
-                new String[]{String.valueOf(clubId)}, null, null, "date_time ASC");
+                new String[] { String.valueOf(clubId) }, null, null, "date_time ASC");
         while (cursor.moveToNext()) {
             events.add(cursorToEvent(cursor));
         }
         cursor.close();
         return events;
     }
+
     private Event cursorToEvent(Cursor cursor) {
         Event event = new Event();
         event.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -658,8 +704,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         event.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return event;
     }
+
     public long insertReport(long reporterId, long reportedUserId,
-                              long reportedContentId, String contentType, String reason) {
+            long reportedContentId, String contentType, String reason) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("reporter_id", reporterId);
@@ -671,6 +718,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("reason", reason);
         return db.insert(TABLE_REPORTS, null, values);
     }
+
     public List<Report> getAllReports() {
         SQLiteDatabase db = getReadableDatabase();
         List<Report> reports = new ArrayList<>();
@@ -681,14 +729,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return reports;
     }
+
     public boolean updateReportStatus(long reportId, String status) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("status", status);
         int rows = db.update(TABLE_REPORTS, values, "id = ?",
-                new String[]{String.valueOf(reportId)});
+                new String[] { String.valueOf(reportId) });
         return rows > 0;
     }
+
     private Report cursorToReport(Cursor cursor) {
         Report report = new Report();
         report.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
@@ -707,14 +757,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         report.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return report;
     }
+
     public boolean updateUserPassword(long userId, String newPasswordHash) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("password_hash", newPasswordHash);
         int rows = db.update(TABLE_USERS, values, "id = ?",
-                new String[]{String.valueOf(userId)});
+                new String[] { String.valueOf(userId) });
         return rows > 0;
     }
+
     public List<ClubMember> getPendingMemberRequests(long organizerId) {
         SQLiteDatabase db = getReadableDatabase();
         List<ClubMember> members = new ArrayList<>();
@@ -725,7 +777,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "INNER JOIN " + TABLE_CLUBS + " c ON cm.club_id = c.id " +
                         "WHERE cm.status = 'PENDING' AND c.creator_id = ? " +
                         "ORDER BY cm.joined_at DESC",
-                new String[]{String.valueOf(organizerId)});
+                new String[] { String.valueOf(organizerId) });
         while (cursor.moveToNext()) {
             ClubMember member = cursorToClubMember(cursor);
             int clubNameIdx = cursor.getColumnIndex("club_name");
@@ -737,18 +789,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return members;
     }
+
     public boolean deleteUserBook(long userId, long bookId) {
         SQLiteDatabase db = getWritableDatabase();
         int rows = db.delete(TABLE_USER_BOOKS,
                 "user_id = ? AND book_id = ?",
-                new String[]{String.valueOf(userId), String.valueOf(bookId)});
+                new String[] { String.valueOf(userId), String.valueOf(bookId) });
         return rows > 0;
     }
+
     public int getUserBookCount(long userId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT COUNT(*) as count FROM " + TABLE_USER_BOOKS + " WHERE user_id = ?",
-                new String[]{String.valueOf(userId)});
+                new String[] { String.valueOf(userId) });
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
@@ -756,12 +810,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
     public int getUserBookCountByStatus(long userId, String status) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
                 "SELECT COUNT(*) as count FROM " + TABLE_USER_BOOKS +
                         " WHERE user_id = ? AND status = ?",
-                new String[]{String.valueOf(userId), status});
+                new String[] { String.valueOf(userId), status });
         int count = 0;
         if (cursor.moveToFirst()) {
             count = cursor.getInt(cursor.getColumnIndexOrThrow("count"));
@@ -769,6 +824,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return count;
     }
+
     public UserBook getCurrentReading(long userId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
@@ -777,7 +833,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "INNER JOIN " + TABLE_BOOKS + " b ON ub.book_id = b.id " +
                         "WHERE ub.user_id = ? AND ub.status = 'LENDO' " +
                         "ORDER BY ub.created_at DESC LIMIT 1",
-                new String[]{String.valueOf(userId)});
+                new String[] { String.valueOf(userId) });
         UserBook userBook = null;
         if (cursor.moveToFirst()) {
             userBook = cursorToUserBook(cursor);
