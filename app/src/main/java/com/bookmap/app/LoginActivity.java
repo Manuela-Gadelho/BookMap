@@ -53,6 +53,30 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            android.content.SharedPreferences crashPrefs = getSharedPreferences("CrashLog", MODE_PRIVATE);
+            String lastCrash = crashPrefs.getString("last_crash", null);
+            if (lastCrash != null) {
+                crashPrefs.edit().remove("last_crash").apply();
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Relatorio de Erro (Crash Log)")
+                        .setMessage("O aplicativo crashou no último teste com o seguinte erro:\n\n" + lastCrash)
+                        .setPositiveButton("Ok", null)
+                        .setNeutralButton("Copiar Erro", (dialog, which) -> {
+                            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(
+                                    android.content.Context.CLIPBOARD_SERVICE);
+                            android.content.ClipData clip = android.content.ClipData.newPlainText("Crash Log",
+                                    lastCrash);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(this, "Erro copiado!", Toast.LENGTH_SHORT).show();
+                        })
+                        .show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to check or show crash log", e);
+        }
+
         SessionManager quickCheck = new SessionManager(this);
         if (quickCheck.isLoggedIn()) {
             try {

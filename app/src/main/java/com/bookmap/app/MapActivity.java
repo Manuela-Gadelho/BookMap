@@ -113,6 +113,15 @@ public class MapActivity extends AppCompatActivity {
         });
         setupBottomNav();
         requestLocationAndLoad();
+        try {
+            FirebaseSyncHelper.getInstance(this).pullUsersFromCloud(success -> {
+                if (success) {
+                    runOnUiThread(this::loadNearbyUsers);
+                }
+            });
+        } catch (Exception e) {
+            Log.w("MapActivity", "Could not start user cloud pull", e);
+        }
     }
 
     private void requestLocationAndLoad() {
@@ -146,7 +155,8 @@ public class MapActivity extends AppCompatActivity {
             public void onLocationUpdated(double latitude, double longitude) {
                 currentLat = latitude;
                 currentLng = longitude;
-                tvLocationStatus.setText(String.format("Localizacao: %.4f, %.4f", latitude, longitude));
+                tvLocationStatus
+                        .setText(String.format(java.util.Locale.US, "Localizacao: %.4f, %.4f", latitude, longitude));
                 updateUserLocationInDb();
                 loadNearbyUsers();
             }

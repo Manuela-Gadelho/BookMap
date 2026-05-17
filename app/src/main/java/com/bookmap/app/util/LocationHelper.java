@@ -1,4 +1,5 @@
 package com.bookmap.app.util;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+
 public class LocationHelper {
     private static final String TAG = "LocationHelper";
     private static final String PREFS_LOCATION = "BookMapLocation";
@@ -25,40 +27,49 @@ public class LocationHelper {
     private final SharedPreferences prefs;
     private LocationCallback locationCallback;
     private LocationUpdateListener listener;
+
     public LocationHelper(Context context) {
         this.context = context;
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         this.prefs = context.getSharedPreferences(PREFS_LOCATION, Context.MODE_PRIVATE);
     }
+
     public boolean isLocationVisible() {
         return prefs.getBoolean(KEY_LOCATION_VISIBLE, true);
     }
+
     public void setLocationVisible(boolean visible) {
         prefs.edit().putBoolean(KEY_LOCATION_VISIBLE, visible).apply();
     }
+
     public double getLastLatitude() {
         return Double.longBitsToDouble(prefs.getLong(KEY_LAST_LAT, Double.doubleToLongBits(0.0)));
     }
+
     public double getLastLongitude() {
         return Double.longBitsToDouble(prefs.getLong(KEY_LAST_LNG, Double.doubleToLongBits(0.0)));
     }
+
     private void saveLastLocation(double lat, double lng) {
         prefs.edit()
                 .putLong(KEY_LAST_LAT, Double.doubleToRawLongBits(lat))
                 .putLong(KEY_LAST_LNG, Double.doubleToRawLongBits(lng))
                 .apply();
     }
+
     public boolean hasLocationPermission() {
         return ActivityCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
+
     public void requestLastLocation(LocationUpdateListener listener) {
         this.listener = listener;
         if (!hasLocationPermission()) {
             Log.w(TAG, "Location permission not granted");
-            if (listener != null) listener.onLocationError("Permissao de localizacao nao concedida");
+            if (listener != null)
+                listener.onLocationError("Permissao de localizacao nao concedida");
             return;
         }
         try {
@@ -75,17 +86,21 @@ public class LocationHelper {
                     })
                     .addOnFailureListener(e -> {
                         Log.w(TAG, "Failed to get last location", e);
-                        if (listener != null) listener.onLocationError("Erro ao obter localizacao");
+                        if (listener != null)
+                            listener.onLocationError("Erro ao obter localizacao");
                     });
-        } catch (SecurityException e) {
-            Log.w(TAG, "Security exception getting location", e);
-            if (listener != null) listener.onLocationError("Permissao negada");
+        } catch (Exception e) {
+            Log.w(TAG, "Exception getting location", e);
+            if (listener != null)
+                listener.onLocationError("Permissao negada");
         }
     }
+
     public void requestLocationUpdates(LocationUpdateListener listener) {
         this.listener = listener;
         if (!hasLocationPermission()) {
-            if (listener != null) listener.onLocationError("Permissao de localizacao nao concedida");
+            if (listener != null)
+                listener.onLocationError("Permissao de localizacao nao concedida");
             return;
         }
         LocationRequest locationRequest = new LocationRequest.Builder(
@@ -109,29 +124,34 @@ public class LocationHelper {
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest,
                     locationCallback, Looper.getMainLooper());
-        } catch (SecurityException e) {
-            Log.w(TAG, "Security exception requesting location updates", e);
-            if (listener != null) listener.onLocationError("Permissao negada");
+        } catch (Exception e) {
+            Log.w(TAG, "Exception requesting location updates", e);
+            if (listener != null)
+                listener.onLocationError("Permissao negada");
         }
     }
+
     public void stopLocationUpdates() {
         if (locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
             locationCallback = null;
         }
     }
+
     public static double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
         double earthRadius = 6371.0;
         double dLat = Math.toRadians(lat2 - lat1);
         double dLng = Math.toRadians(lng2 - lng1);
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+                        * Math.sin(dLng / 2) * Math.sin(dLng / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return earthRadius * c;
     }
+
     public interface LocationUpdateListener {
         void onLocationUpdated(double latitude, double longitude);
+
         void onLocationError(String error);
     }
 }

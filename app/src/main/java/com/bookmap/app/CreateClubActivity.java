@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +18,7 @@ import com.bookmap.app.util.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
+
 public class CreateClubActivity extends AppCompatActivity {
     private TextInputEditText editClubName, editClubDescription;
     private CheckBox checkPublic;
@@ -26,6 +28,7 @@ public class CreateClubActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private DatabaseHelper dbHelper;
     private SessionManager session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,19 +45,37 @@ public class CreateClubActivity extends AppCompatActivity {
         TextView btnBack = findViewById(R.id.btnBack);
         recyclerMembers.setLayoutManager(new LinearLayoutManager(this));
         loadUsers("");
+        try {
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).pullUsersFromCloud(success -> {
+                if (success) {
+                    runOnUiThread(() -> {
+                        if (editSearchMembers != null) {
+                            loadUsers(editSearchMembers.getText().toString());
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+            android.util.Log.w("CreateClubActivity", "Could not start user cloud pull", e);
+        }
         editSearchMembers.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 loadUsers(s.toString());
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
         btnBack.setOnClickListener(v -> finish());
         btnCreate.setOnClickListener(v -> createClub());
     }
+
     private void loadUsers(String query) {
         List<User> users;
         if (query.isEmpty()) {
@@ -73,12 +94,14 @@ public class CreateClubActivity extends AppCompatActivity {
         }, true);
         recyclerMembers.setAdapter(userAdapter);
     }
+
     private void updateSelectedCount() {
         if (userAdapter != null) {
             int count = userAdapter.getSelectedCount();
             tvSelectedCount.setText(count + " membro(s) selecionado(s)");
         }
     }
+
     private void createClub() {
         String name = editClubName.getText().toString().trim();
         String description = editClubDescription.getText().toString().trim();
@@ -87,10 +110,7 @@ public class CreateClubActivity extends AppCompatActivity {
             Toast.makeText(this, "Nome do clube e obrigatorio", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (userAdapter == null || userAdapter.getSelectedCount() == 0) {
-            Toast.makeText(this, "Convide pelo menos um membro", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Member invitation is optional
         long clubId = dbHelper.insertClub(name, description, isPublic, session.getUserId());
         if (clubId > 0) {
             dbHelper.addClubMember(clubId, session.getUserId(), "ORGANIZER", "APPROVED");

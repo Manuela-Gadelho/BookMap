@@ -1,4 +1,5 @@
 package com.bookmap.app.database;
+
 import android.content.Context;
 import android.util.Log;
 import com.bookmap.app.model.Book;
@@ -11,6 +12,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 public class FirebaseSyncHelper {
     private static final String TAG = "FirebaseSyncHelper";
     private static final String COLLECTION_USERS = "users";
@@ -23,12 +25,14 @@ public class FirebaseSyncHelper {
     private final DatabaseHelper dbHelper;
     private boolean isFirebaseAvailable;
     private static FirebaseSyncHelper instance;
+
     public static synchronized FirebaseSyncHelper getInstance(Context context) {
         if (instance == null) {
             instance = new FirebaseSyncHelper(context);
         }
         return instance;
     }
+
     private FirebaseSyncHelper(Context context) {
         this.dbHelper = DatabaseHelper.getInstance(context);
         FirebaseFirestore fs;
@@ -42,11 +46,14 @@ public class FirebaseSyncHelper {
         }
         this.firestore = fs;
     }
+
     public boolean isFirebaseAvailable() {
         return isFirebaseAvailable && firestore != null;
     }
+
     public void syncUserToCloud(User user) {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         Map<String, Object> userData = new HashMap<>();
         userData.put("name", user.getName());
         userData.put("email", user.getEmail());
@@ -60,13 +67,13 @@ public class FirebaseSyncHelper {
         firestore.collection(COLLECTION_USERS)
                 .document(String.valueOf(user.getId()))
                 .set(userData, SetOptions.merge())
-                .addOnSuccessListener(aVoid ->
-                        Log.d(TAG, "User synced to cloud: " + user.getName()))
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Failed to sync user to cloud", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "User synced to cloud: " + user.getName()))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to sync user to cloud", e));
     }
+
     public void syncBookToCloud(Book book) {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         Map<String, Object> bookData = new HashMap<>();
         bookData.put("title", book.getTitle());
         bookData.put("author", book.getAuthor());
@@ -77,13 +84,13 @@ public class FirebaseSyncHelper {
         firestore.collection(COLLECTION_BOOKS)
                 .document(String.valueOf(book.getId()))
                 .set(bookData, SetOptions.merge())
-                .addOnSuccessListener(aVoid ->
-                        Log.d(TAG, "Book synced to cloud: " + book.getTitle()))
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Failed to sync book to cloud", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Book synced to cloud: " + book.getTitle()))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to sync book to cloud", e));
     }
+
     public void syncReviewToCloud(Review review) {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         Map<String, Object> reviewData = new HashMap<>();
         reviewData.put("user_id", review.getUserId());
         reviewData.put("book_id", review.getBookId());
@@ -93,13 +100,13 @@ public class FirebaseSyncHelper {
         firestore.collection(COLLECTION_REVIEWS)
                 .document(String.valueOf(review.getId()))
                 .set(reviewData, SetOptions.merge())
-                .addOnSuccessListener(aVoid ->
-                        Log.d(TAG, "Review synced to cloud"))
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Failed to sync review to cloud", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Review synced to cloud"))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to sync review to cloud", e));
     }
+
     public void syncClubToCloud(Club club) {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         Map<String, Object> clubData = new HashMap<>();
         clubData.put("name", club.getName());
         clubData.put("description", club.getDescription() != null ? club.getDescription() : "");
@@ -109,13 +116,13 @@ public class FirebaseSyncHelper {
         firestore.collection(COLLECTION_CLUBS)
                 .document(String.valueOf(club.getId()))
                 .set(clubData, SetOptions.merge())
-                .addOnSuccessListener(aVoid ->
-                        Log.d(TAG, "Club synced to cloud: " + club.getName()))
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Failed to sync club to cloud", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Club synced to cloud: " + club.getName()))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to sync club to cloud", e));
     }
+
     public void syncUserBookToCloud(long userId, long bookId, String status, int progress) {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         Map<String, Object> data = new HashMap<>();
         data.put("user_id", userId);
         data.put("book_id", bookId);
@@ -125,13 +132,13 @@ public class FirebaseSyncHelper {
         firestore.collection(COLLECTION_USER_BOOKS)
                 .document(docId)
                 .set(data, SetOptions.merge())
-                .addOnSuccessListener(aVoid ->
-                        Log.d(TAG, "UserBook synced to cloud"))
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Failed to sync user book to cloud", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "UserBook synced to cloud"))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to sync user book to cloud", e));
     }
+
     public void syncAllDataToCloud() {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         List<User> users = dbHelper.getAllUsers();
         for (User user : users) {
             syncUserToCloud(user);
@@ -146,9 +153,11 @@ public class FirebaseSyncHelper {
         }
         Log.d(TAG, "Full sync initiated");
     }
+
     public void pullBooksFromCloud(SyncCallback callback) {
         if (!isFirebaseAvailable()) {
-            if (callback != null) callback.onComplete(false);
+            if (callback != null)
+                callback.onComplete(false);
             return;
         }
         firestore.collection(COLLECTION_BOOKS)
@@ -179,26 +188,124 @@ public class FirebaseSyncHelper {
                             }
                         }
                     }
-                    if (callback != null) callback.onComplete(true);
+                    if (callback != null)
+                        callback.onComplete(true);
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Failed to pull books from cloud", e);
-                    if (callback != null) callback.onComplete(false);
+                    if (callback != null)
+                        callback.onComplete(false);
                 });
     }
+
     public void updateUserLocationInCloud(long userId, double latitude, double longitude) {
-        if (!isFirebaseAvailable()) return;
+        if (!isFirebaseAvailable())
+            return;
         Map<String, Object> locationData = new HashMap<>();
         locationData.put("latitude", latitude);
         locationData.put("longitude", longitude);
         firestore.collection(COLLECTION_USERS)
                 .document(String.valueOf(userId))
                 .set(locationData, SetOptions.merge())
-                .addOnSuccessListener(aVoid ->
-                        Log.d(TAG, "User location updated in cloud"))
-                .addOnFailureListener(e ->
-                        Log.w(TAG, "Failed to update user location in cloud", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "User location updated in cloud"))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to update user location in cloud", e));
     }
+
+    public void pullUsersFromCloud(SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null)
+                callback.onComplete(false);
+            return;
+        }
+        firestore.collection(COLLECTION_USERS)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        try {
+                            String docId = doc.getId();
+                            long id;
+                            try {
+                                id = Long.parseLong(docId);
+                            } catch (NumberFormatException e) {
+                                continue;
+                            }
+                            String name = doc.getString("name");
+                            String email = doc.getString("email");
+                            String bio = doc.getString("bio");
+                            String favoriteGenres = doc.getString("favorite_genres");
+                            String role = doc.getString("role");
+                            Double latitude = doc.getDouble("latitude");
+                            Double longitude = doc.getDouble("longitude");
+                            String language = doc.getString("language");
+                            String photoPath = doc.getString("photo_path");
+                            if (name != null && email != null) {
+                                dbHelper.insertUserWithId(id, name, email, "google_or_synced_pass",
+                                        bio != null ? bio : "",
+                                        photoPath != null ? photoPath : "",
+                                        favoriteGenres != null ? favoriteGenres : "",
+                                        role != null ? role : "READER",
+                                        latitude != null ? latitude : 0.0,
+                                        longitude != null ? longitude : 0.0,
+                                        language != null ? language : "Portugues");
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing synced user", e);
+                        }
+                    }
+                    if (callback != null)
+                        callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to pull users from cloud", e);
+                    if (callback != null)
+                        callback.onComplete(false);
+                });
+    }
+
+    public void pullClubsFromCloud(SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null)
+                callback.onComplete(false);
+            return;
+        }
+        firestore.collection(COLLECTION_CLUBS)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        try {
+                            String docId = doc.getId();
+                            long id;
+                            try {
+                                id = Long.parseLong(docId);
+                            } catch (NumberFormatException e) {
+                                continue;
+                            }
+                            String name = doc.getString("name");
+                            String description = doc.getString("description");
+                            Boolean isPublic = doc.getBoolean("is_public");
+                            Long creatorId = doc.getLong("creator_id");
+                            String bannerPath = doc.getString("banner_path");
+                            if (name != null && creatorId != null) {
+                                dbHelper.insertClubWithId(id, name,
+                                        description != null ? description : "",
+                                        isPublic != null ? isPublic : true,
+                                        creatorId,
+                                        bannerPath != null ? bannerPath : "");
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing synced club", e);
+                        }
+                    }
+                    if (callback != null)
+                        callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to pull clubs from cloud", e);
+                    if (callback != null)
+                        callback.onComplete(false);
+                });
+    }
+
     public interface SyncCallback {
         void onComplete(boolean success);
     }

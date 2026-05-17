@@ -188,6 +188,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_USERS, null, values);
     }
 
+    public long insertUserWithId(long id, String name, String email, String passwordHash,
+            String bio, String photoPath, String favoriteGenres, String role,
+            double latitude, double longitude, String language) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("name", name);
+        values.put("email", email);
+        values.put("password_hash", passwordHash);
+        values.put("bio", bio);
+        values.put("photo_path", photoPath);
+        values.put("favorite_genres", favoriteGenres);
+        values.put("role", role);
+        values.put("latitude", latitude);
+        values.put("longitude", longitude);
+        values.put("language", language);
+        return db.insertWithOnConflict(TABLE_USERS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
     public User getUserByEmail(String email) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, null, "email = ?",
@@ -525,6 +544,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.insert(TABLE_CLUB_MEMBERS, null, memberValues);
         }
         return clubId;
+    }
+
+    public long insertClubWithId(long id, String name, String description, boolean isPublic, long creatorId,
+            String bannerPath) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("name", name);
+        values.put("description", description);
+        values.put("is_public", isPublic ? 1 : 0);
+        values.put("creator_id", creatorId);
+        values.put("banner_path", bannerPath != null ? bannerPath : "");
+        return db.insertWithOnConflict(TABLE_CLUBS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public Club getClubById(long id) {

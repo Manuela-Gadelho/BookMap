@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.model.Club;
 import com.bookmap.app.util.SessionManager;
 import java.util.List;
+
 public class ClubListActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private SessionManager session;
@@ -22,6 +24,7 @@ public class ClubListActivity extends AppCompatActivity {
     private TextView tvNoClubs;
     private Button btnMyClubs, btnAllClubs;
     private boolean showingMyClubs = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,17 +62,29 @@ public class ClubListActivity extends AppCompatActivity {
         setupBottomNav();
         updateTabUI();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         loadClubs();
+        try {
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).pullClubsFromCloud(success -> {
+                if (success) {
+                    runOnUiThread(this::loadClubs);
+                }
+            });
+        } catch (Exception e) {
+            Log.w("ClubListActivity", "Could not start club cloud pull", e);
+        }
     }
+
     private void updateTabUI() {
         btnMyClubs.setTextColor(getResources().getColor(
                 showingMyClubs ? R.color.blue_primary : R.color.gray_text));
         btnAllClubs.setTextColor(getResources().getColor(
                 showingMyClubs ? R.color.gray_text : R.color.blue_primary));
     }
+
     private void loadClubs() {
         List<Club> clubs;
         if (showingMyClubs && session.isLoggedIn()) {
@@ -96,6 +111,7 @@ public class ClubListActivity extends AppCompatActivity {
         });
         recyclerClubs.setAdapter(clubAdapter);
     }
+
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
