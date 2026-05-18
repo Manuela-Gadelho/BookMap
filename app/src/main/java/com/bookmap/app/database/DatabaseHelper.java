@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
@@ -34,6 +34,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             instance = new DatabaseHelper(context.getApplicationContext());
         }
         return instance;
+    }
+
+    public static synchronized void resetInstance() {
+        if (instance != null) {
+            instance.close();
+            instance = null;
+        }
     }
 
     private DatabaseHelper(Context context) {

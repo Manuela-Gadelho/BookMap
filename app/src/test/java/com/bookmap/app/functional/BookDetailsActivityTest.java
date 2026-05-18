@@ -34,6 +34,7 @@ public class BookDetailsActivityTest {
 
     @Before
     public void setUp() {
+        com.bookmap.app.database.DatabaseHelper.resetInstance();
         DatabaseHelper dbHelper = DatabaseHelper.getInstance(
                 androidx.test.core.app.ApplicationProvider.getApplicationContext());
         List<Book> books = dbHelper.getAllBooks();

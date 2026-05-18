@@ -103,8 +103,8 @@ public class ClubActivity extends AppCompatActivity {
         } else {
             tvNoEvents.setVisibility(View.GONE);
         }
-        Button btnJoinClub = findViewById(R.id.btnJoinClub);
-        Button btnCreateEvent = findViewById(R.id.btnCreateEvent);
+        TextView btnJoinClub = findViewById(R.id.btnJoinClub);
+        TextView btnCreateEvent = findViewById(R.id.btnCreateEvent);
         if (session.isLoggedIn()) {
             boolean isMember = dbHelper.getClubMember(clubId, session.getUserId()) != null;
             if (isMember) {

@@ -1,20 +1,23 @@
 package com.bookmap.app;
+
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.model.User;
 import com.bookmap.app.util.PasswordUtil;
-import com.google.android.material.textfield.TextInputEditText;
+
 public class ForgotPasswordActivity extends AppCompatActivity {
-    private TextInputEditText editEmail, editNewPassword, editConfirmPassword;
+    private EditText editEmail, editNewPassword, editConfirmPassword;
     private Button btnResetPassword;
     private TextView tvStatus;
     private DatabaseHelper dbHelper;
     private boolean emailVerified = false;
     private User foundUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +36,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         btnResetPassword.setOnClickListener(v -> resetPassword());
         btnBack.setOnClickListener(v -> finish());
     }
+
     private void verifyEmail() {
         String email = editEmail.getText().toString().trim();
         if (email.isEmpty()) {
@@ -46,21 +50,22 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
 
         new android.app.AlertDialog.Builder(this)
-            .setTitle("Caixa de Entrada (Simulacao)")
-            .setMessage("Enviamos um email para " + email + ". Deseja 'clicar' no link de verificacao?")
-            .setPositiveButton("Clicar no Link", (dialog, which) -> {
-                emailVerified = true;
-                tvStatus.setText("E-mail verificado! Digite a nova senha.");
-                editEmail.setEnabled(false);
-                editNewPassword.setEnabled(true);
-                editConfirmPassword.setEnabled(true);
-                btnResetPassword.setEnabled(true);
-            })
-            .setNegativeButton("Ignorar", (dialog, which) -> {
-                tvStatus.setText("Aguardando verificacao do link enviado por e-mail...");
-            })
-            .show();
+                .setTitle("Caixa de Entrada (Simulacao)")
+                .setMessage("Enviamos um email para " + email + ". Deseja 'clicar' no link de verificacao?")
+                .setPositiveButton("Clicar no Link", (dialog, which) -> {
+                    emailVerified = true;
+                    tvStatus.setText("E-mail verificado! Digite a nova senha.");
+                    editEmail.setEnabled(false);
+                    editNewPassword.setEnabled(true);
+                    editConfirmPassword.setEnabled(true);
+                    btnResetPassword.setEnabled(true);
+                })
+                .setNegativeButton("Ignorar", (dialog, which) -> {
+                    tvStatus.setText("Aguardando verificacao do link enviado por e-mail...");
+                })
+                .show();
     }
+
     private void resetPassword() {
         if (!emailVerified || foundUser == null) {
             Toast.makeText(this, "Verifique seu e-mail primeiro", Toast.LENGTH_SHORT).show();

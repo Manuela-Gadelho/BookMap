@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -9,13 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.PasswordUtil;
 import com.bookmap.app.util.SessionManager;
-import com.google.android.material.textfield.TextInputEditText;
+import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
+
 public class RegisterActivity extends AppCompatActivity {
-    private TextInputEditText editName, editEmail, editPassword, editConfirmPassword;
+    private EditText editName, editEmail, editPassword, editConfirmPassword;
     private CheckBox checkFantasia, checkTerror, checkRomance, checkFiccao, checkTecnologia, checkLitBrasileira;
     private DatabaseHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
     private void attemptRegister() {
         String name = editName.getText().toString().trim();
         String email = editEmail.getText().toString().trim();

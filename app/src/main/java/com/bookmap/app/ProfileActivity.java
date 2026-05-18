@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -20,16 +21,18 @@ import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.model.User;
 import com.bookmap.app.util.PhotoHelper;
 import com.bookmap.app.util.SessionManager;
-import com.google.android.material.textfield.TextInputEditText;
+import android.widget.EditText;
+
 public class ProfileActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3001;
-    private TextInputEditText editName, editBio, editGenres;
+    private EditText editName, editBio, editGenres;
     private Spinner spinnerLanguage;
     private TextView tvUserName, tvUserEmail, tvUserRole;
     private ImageView imgAvatar;
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private PhotoHelper photoHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +82,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -86,6 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
             outState.putString("photo_path", photoHelper.getCurrentPhotoPath());
         }
     }
+
     private void showPhotoOptions() {
         String[] options = { "Tirar Foto", "Escolher da Galeria", "Remover Foto" };
         new AlertDialog.Builder(this)
@@ -105,6 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
     private void openCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
@@ -118,10 +124,12 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Erro ao abrir camera", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void openGallery() {
         Intent galleryIntent = photoHelper.createGalleryIntent();
         startActivityForResult(galleryIntent, PhotoHelper.REQUEST_GALLERY);
     }
+
     private void removePhoto() {
         User user = dbHelper.getUserById(session.getUserId());
         if (user != null && user.getPhotoPath() != null) {
@@ -133,6 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Foto removida", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
@@ -145,6 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -170,6 +180,7 @@ public class ProfileActivity extends AppCompatActivity {
             Toast.makeText(this, "Foto atualizada!", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void loadUserData() {
         if (!session.isLoggedIn()) {
             finish();
@@ -212,6 +223,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
+
     private void saveProfile() {
         String name = editName.getText().toString().trim();
         String bio = editBio.getText().toString().trim();

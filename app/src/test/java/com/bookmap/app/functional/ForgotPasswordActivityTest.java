@@ -1,11 +1,11 @@
 package com.bookmap.app.functional;
 
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bookmap.app.ForgotPasswordActivity;
 import com.bookmap.app.R;
-import com.google.android.material.textfield.TextInputEditText;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +35,7 @@ public class ForgotPasswordActivityTest {
     public void testEmailFieldExists() {
         ForgotPasswordActivity activity = Robolectric.buildActivity(ForgotPasswordActivity.class)
                 .create().resume().get();
-        TextInputEditText editEmail = activity.findViewById(R.id.editEmail);
+        EditText editEmail = activity.findViewById(R.id.editEmail);
         assertNotNull("Campo de email deve existir", editEmail);
     }
 
@@ -51,8 +51,8 @@ public class ForgotPasswordActivityTest {
     public void testPasswordFieldsDisabledInitially() {
         ForgotPasswordActivity activity = Robolectric.buildActivity(ForgotPasswordActivity.class)
                 .create().resume().get();
-        TextInputEditText editNewPwd = activity.findViewById(R.id.editNewPassword);
-        TextInputEditText editConfirm = activity.findViewById(R.id.editConfirmPassword);
+        EditText editNewPwd = activity.findViewById(R.id.editNewPassword);
+        EditText editConfirm = activity.findViewById(R.id.editConfirmPassword);
 
         assertFalse("Campo de nova senha deve estar desabilitado", editNewPwd.isEnabled());
         assertFalse("Campo de confirmar senha deve estar desabilitado", editConfirm.isEnabled());

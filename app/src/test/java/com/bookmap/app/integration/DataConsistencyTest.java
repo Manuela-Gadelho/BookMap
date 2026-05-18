@@ -35,6 +35,7 @@ public class DataConsistencyTest {
 
     @Before
     public void setUp() {
+        DatabaseHelper.resetInstance();
         Context context = ApplicationProvider.getApplicationContext();
         dbHelper = DatabaseHelper.getInstance(context);
     }

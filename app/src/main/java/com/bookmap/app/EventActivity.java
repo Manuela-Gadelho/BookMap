@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -8,18 +9,20 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.SessionManager;
-import com.google.android.material.textfield.TextInputEditText;
+import android.widget.EditText;
 import java.util.Calendar;
 import java.util.Locale;
+
 public class EventActivity extends AppCompatActivity {
     public static final String EXTRA_CLUB_ID = "club_id";
-    private TextInputEditText editTitle, editDescription, editLocation, editBook;
+    private EditText editTitle, editDescription, editLocation, editBook;
     private TextView tvSelectedDate, tvSelectedTime;
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private long clubId;
     private String selectedDate = "";
     private String selectedTime = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,7 @@ public class EventActivity extends AppCompatActivity {
         });
         btnCreateEvent.setOnClickListener(v -> createEvent());
     }
+
     private void createEvent() {
         String title = editTitle.getText().toString().trim();
         String description = editDescription.getText().toString().trim();

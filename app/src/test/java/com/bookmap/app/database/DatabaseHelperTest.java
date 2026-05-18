@@ -36,12 +36,14 @@ public class DatabaseHelperTest {
 
     @Before
     public void setUp() {
+        DatabaseHelper.resetInstance();
         Context context = ApplicationProvider.getApplicationContext();
         dbHelper = DatabaseHelper.getInstance(context);
     }
 
     @After
     public void tearDown() {
+        DatabaseHelper.resetInstance();
     }
 
     // ==================== USER OPERATIONS ====================
@@ -144,7 +146,8 @@ public class DatabaseHelperTest {
         assertTrue("Busca por 'Engenharia' deve encontrar resultados", results.size() > 0);
     }
 
-    // ==================== USER_BOOK OPERATIONS (ESTANTE VIRTUAL) ====================
+    // ==================== USER_BOOK OPERATIONS (ESTANTE VIRTUAL)
+    // ====================
 
     @Test
     public void testInsertUserBook() {
@@ -388,8 +391,10 @@ public class DatabaseHelperTest {
         boolean hasTecnologia = false;
         boolean hasFantasia = false;
         for (Book b : books) {
-            if ("Tecnologia".equals(b.getGenre())) hasTecnologia = true;
-            if ("Fantasia".equals(b.getGenre())) hasFantasia = true;
+            if ("Tecnologia".equals(b.getGenre()))
+                hasTecnologia = true;
+            if ("Fantasia".equals(b.getGenre()))
+                hasFantasia = true;
         }
         assertTrue("Deve haver livro de Tecnologia", hasTecnologia);
         assertTrue("Deve haver livro de Fantasia", hasFantasia);

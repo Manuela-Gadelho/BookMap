@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,17 +10,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.SessionManager;
+
 public class ReportActivity extends AppCompatActivity {
     public static final String EXTRA_REPORTED_USER_ID = "reported_user_id";
     public static final String EXTRA_REPORTED_CONTENT_ID = "reported_content_id";
     public static final String EXTRA_CONTENT_TYPE = "content_type";
     private RadioGroup radioReportType;
-    private com.google.android.material.textfield.TextInputEditText editReason;
+    private EditText editReason;
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private long reportedUserId;
     private long reportedContentId;
     private String contentType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +32,8 @@ public class ReportActivity extends AppCompatActivity {
         reportedUserId = getIntent().getLongExtra(EXTRA_REPORTED_USER_ID, -1);
         reportedContentId = getIntent().getLongExtra(EXTRA_REPORTED_CONTENT_ID, 0);
         contentType = getIntent().getStringExtra(EXTRA_CONTENT_TYPE);
-        if (contentType == null) contentType = "USER";
+        if (contentType == null)
+            contentType = "USER";
         radioReportType = findViewById(R.id.radioReportType);
         editReason = findViewById(R.id.editReason);
         Button btnSubmit = findViewById(R.id.btnSubmitReport);
@@ -37,6 +41,7 @@ public class ReportActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
         btnSubmit.setOnClickListener(v -> submitReport());
     }
+
     private void submitReport() {
         if (!session.isLoggedIn()) {
             Toast.makeText(this, "Faca login para denunciar", Toast.LENGTH_SHORT).show();
@@ -59,8 +64,7 @@ public class ReportActivity extends AppCompatActivity {
                 reportedUserId,
                 reportedContentId,
                 contentType,
-                type + ": " + reason
-        );
+                type + ": " + reason);
         if (result > 0) {
             Toast.makeText(this, "Denuncia enviada com sucesso!", Toast.LENGTH_SHORT).show();
             finish();

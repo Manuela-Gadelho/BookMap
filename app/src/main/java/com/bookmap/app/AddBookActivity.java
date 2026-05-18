@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -21,10 +22,11 @@ import androidx.core.content.ContextCompat;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.PhotoHelper;
 import com.bookmap.app.util.SessionManager;
-import com.google.android.material.textfield.TextInputEditText;
+import android.widget.EditText;
+
 public class AddBookActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3002;
-    private TextInputEditText editTitle, editAuthor, editSynopsis, editIsbn;
+    private EditText editTitle, editAuthor, editSynopsis, editIsbn;
     private Spinner spinnerGenre;
     private RadioGroup radioStatus;
     private ImageView imgCover;
@@ -32,6 +34,7 @@ public class AddBookActivity extends AppCompatActivity {
     private SessionManager session;
     private PhotoHelper photoHelper;
     private String coverPath = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,8 +59,8 @@ public class AddBookActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSaveBook);
         Button btnAddCover = findViewById(R.id.btnAddCover);
         TextView btnBack = findViewById(R.id.btnBack);
-        String[] genres = {"Fantasia", "Terror", "Romance", "Ficcao Cientifica",
-                "Tecnologia", "Literatura Brasileira", "Historia", "Autoajuda", "Outro"};
+        String[] genres = { "Fantasia", "Terror", "Romance", "Ficcao Cientifica",
+                "Tecnologia", "Literatura Brasileira", "Historia", "Autoajuda", "Outro" };
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(adapter);
@@ -69,6 +72,7 @@ public class AddBookActivity extends AppCompatActivity {
             PhotoHelper.loadImageIntoView(imgCover, coverPath);
         }
     }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -77,8 +81,9 @@ public class AddBookActivity extends AppCompatActivity {
         }
         outState.putString("cover_path", coverPath);
     }
+
     private void showCoverOptions() {
-        String[] options = {"Tirar Foto", "Escolher da Galeria"};
+        String[] options = { "Tirar Foto", "Escolher da Galeria" };
         new AlertDialog.Builder(this)
                 .setTitle("Capa do Livro")
                 .setItems(options, (dialog, which) -> {
@@ -90,11 +95,11 @@ public class AddBookActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
     private void openCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+                    new String[] { Manifest.permission.CAMERA }, PERMISSION_REQUEST_CAMERA);
             return;
         }
         Intent cameraIntent = photoHelper.createCameraIntent();
@@ -104,13 +109,15 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(this, "Erro ao abrir camera", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void openGallery() {
         Intent galleryIntent = photoHelper.createGalleryIntent();
         startActivityForResult(galleryIntent, PhotoHelper.REQUEST_GALLERY);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -120,10 +127,12 @@ public class AddBookActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) return;
+        if (resultCode != RESULT_OK)
+            return;
         String photoPath = null;
         if (requestCode == PhotoHelper.REQUEST_CAMERA) {
             photoPath = photoHelper.processCameraResult();
@@ -137,6 +146,7 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(this, "Capa adicionada!", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void saveBook() {
         String title = editTitle.getText().toString().trim();
         String author = editAuthor.getText().toString().trim();
@@ -148,13 +158,16 @@ public class AddBookActivity extends AppCompatActivity {
             return;
         }
         int selectedId = radioStatus.getCheckedRadioButtonId();
-        String status = "QUERO_LER"; 
+        String status = "QUERO_LER";
         if (selectedId != -1) {
             RadioButton selected = findViewById(selectedId);
             String selectedText = selected.getText().toString();
-            if (selectedText.contains("Lendo")) status = "LENDO";
-            else if (selectedText.contains("Lido")) status = "LIDO";
-            else status = "QUERO_LER";
+            if (selectedText.contains("Lendo"))
+                status = "LENDO";
+            else if (selectedText.contains("Lido"))
+                status = "LIDO";
+            else
+                status = "QUERO_LER";
         }
         long bookId = dbHelper.insertBook(title, author, synopsis, coverPath, genre, isbn);
         if (bookId > 0) {

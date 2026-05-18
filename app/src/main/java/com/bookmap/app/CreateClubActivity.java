@@ -15,12 +15,11 @@ import com.bookmap.app.adapter.UserAdapter;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.model.User;
 import com.bookmap.app.util.SessionManager;
-import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CreateClubActivity extends AppCompatActivity {
-    private TextInputEditText editClubName, editClubDescription;
+    private EditText editClubName, editClubDescription;
     private CheckBox checkPublic;
     private EditText editSearchMembers;
     private RecyclerView recyclerMembers;
