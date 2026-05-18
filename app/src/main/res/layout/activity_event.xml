@@ -39,29 +39,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp">
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editEventTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Titulo do Encontro">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editEventTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Titulo do Encontro"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editEventDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Descricao">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editEventDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:minLines="2"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Descricao"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:minLines="2"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,22 +78,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSelectDate"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Selecionar Data"
-                    android:backgroundTint="@color/gray_bg"
-                    android:textColor="@color/blue_dark"/>
-                <Button
+                    android:background="@drawable/btn_google_bg"
+                    android:textColor="@color/blue_primary"
+                    android:textStyle="bold"
+                    android:padding="12dp"/>
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSelectTime"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Selecionar Hora"
-                    android:backgroundTint="@color/gray_bg"
-                    android:textColor="@color/blue_dark"
+                    android:background="@drawable/btn_google_bg"
+                    android:textColor="@color/blue_primary"
+                    android:textStyle="bold"
+                    android:padding="12dp"
                     android:layout_marginLeft="8dp"/>
             </LinearLayout>
             <TextView
@@ -98,38 +106,44 @@
                 android:layout_height="wrap_content"
                 android:text="Nenhuma data selecionada"
                 android:textColor="@color/gray_text"
+                android:textStyle="bold"
                 android:layout_marginBottom="16dp"/>
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editEventLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Local do Encontro">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editEventLocation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Local do Encontro"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editEventBook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:hint="Livro para discussao (opcional)">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editEventBook"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <Button
+                android:hint="Livro para discussao (opcional)"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="24dp"/>
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCreateEvent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="AGENDAR ENCONTRO"
-                android:backgroundTint="@color/blue_primary"
+                android:background="@drawable/btn_primary_bg"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:padding="12dp"/>
+                android:textSize="15sp"
+                android:padding="16dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

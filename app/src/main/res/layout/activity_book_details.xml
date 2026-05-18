@@ -109,23 +109,27 @@
                     android:textColor="@color/gray_text"
                     android:layout_marginStart="8dp"/>
             </LinearLayout>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAddToShelf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="ADICIONAR A ESTANTE"
-                android:backgroundTint="@color/blue_primary"
+                android:background="@drawable/btn_primary_bg"
                 android:textColor="@color/white"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:padding="16dp"
                 android:layout_marginBottom="8dp"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnUpdateProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="ATUALIZAR PROGRESSO"
-                android:backgroundTint="@color/blue_dark"
+                android:background="@drawable/btn_primary_bg"
                 android:textColor="@color/white"
+                android:textSize="15sp"
                 android:textStyle="bold"
+                android:padding="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"/>
             <TextView
@@ -178,13 +182,16 @@
                     android:layout_marginBottom="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/editReviewText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="O que voce achou deste livro?"
-                    android:background="@color/white"
+                    android:background="@drawable/edit_text_bg"
                     android:padding="16dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/black"
+                    android:textColorHint="#999999"
                     android:minHeight="100dp"
                     android:gravity="top"
                     android:layout_marginBottom="12dp"/>
@@ -204,14 +211,16 @@
                     android:rating="0"
                     android:layout_marginBottom="12dp"
                     style="?android:attr/ratingBarStyle"/>
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSubmitReview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="PUBLICAR RESENHA"
-                    android:backgroundTint="@color/blue_primary"
+                    android:background="@drawable/btn_primary_bg"
                     android:textColor="@color/white"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:padding="16dp"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

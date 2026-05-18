@@ -77,27 +77,30 @@
                     android:text="Outro"
                     android:textColor="@color/gray_text"/>
             </RadioGroup>
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:hint="Descreva o motivo da denuncia">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:minLines="4"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <Button
+                android:hint="Descreva o motivo da denuncia"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:minLines="4"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:layout_marginBottom="24dp"/>
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSubmitReport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="ENVIAR DENUNCIA"
-                android:backgroundTint="#CC0000"
+                android:background="@drawable/btn_danger_bg"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:padding="12dp"/>
+                android:textSize="15sp"
+                android:padding="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

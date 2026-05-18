@@ -38,22 +38,25 @@
         android:background="@color/white"
         android:orientation="horizontal"
         android:gravity="center_vertical">
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/editSearch"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:hint="Buscar livros ou usuarios..."
-            android:background="@color/gray_bg"
+            android:background="@drawable/edit_text_bg"
             android:paddingHorizontal="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="#999999"
             android:textSize="14sp"/>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:text="BUSCAR"
-            android:backgroundTint="@color/blue_primary"
+            android:background="@drawable/btn_primary_bg"
             android:textColor="@color/white"
+            android:textStyle="bold"
             android:layout_marginLeft="8dp"/>
     </LinearLayout>
     <LinearLayout

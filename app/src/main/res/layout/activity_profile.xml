@@ -91,29 +91,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp">
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Nome">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Nome"
+                android:inputType="textPersonName"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editBio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Bio">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editBio"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:minLines="3"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Bio"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:minLines="3"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -121,17 +125,19 @@
                 android:textStyle="bold"
                 android:textColor="@color/blue_dark"
                 android:layout_marginBottom="8dp"/>
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editGenres"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Ex: Fantasia, Terror, Romance">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editGenres"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Ex: Fantasia, Terror, Romance"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,19 +148,20 @@
             <Spinner
                 android:id="@+id/spinnerLanguage"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@color/gray_bg"
-                android:padding="8dp"
+                android:layout_height="52dp"
+                android:background="@drawable/edit_text_bg"
+                android:padding="12dp"
                 android:layout_marginBottom="24dp"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="SALVAR ALTERACOES"
-                android:backgroundTint="@color/blue_primary"
+                android:background="@drawable/btn_primary_bg"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:padding="12dp"/>
+                android:textSize="15sp"
+                android:padding="16dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

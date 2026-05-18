@@ -140,7 +140,7 @@
             android:textColor="@color/gray_text"
             android:textSize="16sp"
             android:visibility="gone"/>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/fabAddBook"
             android:layout_width="56dp"
             android:layout_height="56dp"
@@ -148,7 +148,7 @@
             android:layout_margin="16dp"
             android:text="+"
             android:textSize="24sp"
-            android:backgroundTint="@color/blue_primary"
+            android:background="@drawable/fab_bg"
             android:textColor="@color/white"
             android:elevation="6dp"/>
     </FrameLayout>

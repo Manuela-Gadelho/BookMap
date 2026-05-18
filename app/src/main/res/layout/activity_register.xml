@@ -28,50 +28,58 @@
             android:textSize="16sp"
             android:textColor="@color/gray_text"
             android:layout_marginBottom="32dp"/>
-        <com.google.android.material.textfield.TextInputLayout
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Nome Completo">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"/>
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+            android:hint="Nome Completo"
+            android:inputType="textPersonName"
+            android:background="@drawable/edit_text_bg"
+            android:padding="16dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textColorHint="#999999"
+            android:minHeight="52dp"
+            android:layout_marginBottom="16dp"/>
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="E-mail">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"/>
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+            android:hint="E-mail"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/edit_text_bg"
+            android:padding="16dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textColorHint="#999999"
+            android:minHeight="52dp"
+            android:layout_marginBottom="16dp"/>
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Senha">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
+            android:hint="Senha"
+            android:inputType="textPassword"
+            android:background="@drawable/edit_text_bg"
+            android:padding="16dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textColorHint="#999999"
+            android:minHeight="52dp"
+            android:layout_marginBottom="16dp"/>
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Confirmar Senha">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editConfirmPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            android:hint="Confirmar Senha"
+            android:inputType="textPassword"
+            android:background="@drawable/edit_text_bg"
+            android:padding="16dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textColorHint="#999999"
+            android:minHeight="52dp"
+            android:layout_marginBottom="16dp"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,54 +98,61 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fantasia"
+                android:textStyle="bold"
                 android:textColor="@color/gray_text"/>
             <CheckBox
                 android:id="@+id/checkTerror"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Terror"
+                android:textStyle="bold"
                 android:textColor="@color/gray_text"/>
             <CheckBox
                 android:id="@+id/checkRomance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Romance"
+                android:textStyle="bold"
                 android:textColor="@color/gray_text"/>
             <CheckBox
                 android:id="@+id/checkFiccao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ficcao Cientifica"
+                android:textStyle="bold"
                 android:textColor="@color/gray_text"/>
             <CheckBox
                 android:id="@+id/checkTecnologia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tecnologia"
+                android:textStyle="bold"
                 android:textColor="@color/gray_text"/>
             <CheckBox
                 android:id="@+id/checkLitBrasileira"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Literatura Brasileira"
+                android:textStyle="bold"
                 android:textColor="@color/gray_text"/>
         </LinearLayout>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="CRIAR CONTA"
-            android:backgroundTint="@color/blue_primary"
+            android:background="@drawable/btn_primary_bg"
             android:textColor="@color/white"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:padding="12dp"/>
+            android:padding="16dp"/>
         <TextView
             android:id="@+id/tvLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ja tem uma conta? Faca login"
             android:textColor="@color/blue_primary"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:textStyle="bold"/>
     </LinearLayout>

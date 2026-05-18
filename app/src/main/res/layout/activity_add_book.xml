@@ -55,50 +55,59 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="Capa do livro - toque para adicionar"
                 android:layout_marginBottom="8dp"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnAddCover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="ADICIONAR CAPA"
-                android:backgroundTint="@color/blue_dark"
-                android:textColor="@color/white"
+                android:background="@drawable/btn_google_bg"
+                android:textColor="@color/blue_primary"
+                android:textStyle="bold"
                 android:textSize="12sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
                 android:layout_marginBottom="16dp"/>
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Titulo do Livro">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Titulo do Livro"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editAuthor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Autor">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editAuthor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Autor"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editSynopsis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Sinopse">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editSynopsis"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:minLines="3"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Sinopse"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:minLines="3"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,21 +118,23 @@
             <Spinner
                 android:id="@+id/spinnerGenre"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@color/gray_bg"
-                android:padding="8dp"
-                android:layout_marginBottom="12dp"/>
-            <com.google.android.material.textfield.TextInputLayout
+                android:layout_height="52dp"
+                android:background="@drawable/edit_text_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editIsbn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="ISBN (opcional)">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editIsbn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:hint="ISBN (opcional)"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -141,6 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Quero Ler"
+                    android:textStyle="bold"
                     android:textColor="@color/gray_text"
                     android:checked="true"/>
                 <RadioButton
@@ -148,23 +160,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lendo"
+                    android:textStyle="bold"
                     android:textColor="@color/gray_text"/>
                 <RadioButton
                     android:id="@+id/radioLido"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lido"
+                    android:textStyle="bold"
                     android:textColor="@color/gray_text"/>
             </RadioGroup>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSaveBook"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="SALVAR LIVRO"
-                android:backgroundTint="@color/blue_primary"
+                android:background="@drawable/btn_primary_bg"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:padding="12dp"/>
+                android:textSize="15sp"
+                android:padding="16dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -24,76 +24,87 @@
         android:textSize="16sp"
         android:textColor="@color/gray_text"
         android:layout_marginBottom="48dp"/>
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="E-mail Institucional ou Pessoal"
         android:inputType="textEmailAddress"
-        android:background="@android:drawable/edit_text"
-        android:minHeight="48dp"
+        android:background="@drawable/edit_text_bg"
+        android:padding="16dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:textColorHint="#999999"
+        android:minHeight="52dp"
         android:layout_marginBottom="16dp"/>
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/editPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Senha"
         android:inputType="textPassword"
-        android:background="@android:drawable/edit_text"
-        android:minHeight="48dp"
+        android:background="@drawable/edit_text_bg"
+        android:padding="16dp"
+        android:textSize="15sp"
+        android:textColor="@color/black"
+        android:textColorHint="#999999"
+        android:minHeight="52dp"
         android:layout_marginBottom="32dp"/>
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ACESSAR SISTEMA"
-        android:backgroundTint="@color/blue_primary"
+        android:background="@drawable/btn_primary_bg"
         android:textColor="@color/white"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:padding="12dp"/>
+        android:padding="16dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp">
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="#CCCCCC"/>
+            android:background="#E0E0E0"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="  ou  "
             android:textColor="@color/gray_text"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:textStyle="bold"/>
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:background="#CCCCCC"/>
+            android:background="#E0E0E0"/>
     </LinearLayout>
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnGoogleSignIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ENTRAR COM GOOGLE"
-        android:backgroundTint="#FFFFFF"
+        android:background="@drawable/btn_google_bg"
         android:textColor="#333333"
+        android:textSize="15sp"
         android:textStyle="bold"
-        android:padding="12dp"
+        android:padding="16dp"
         android:drawableStart="@android:drawable/ic_menu_search"
-        android:drawablePadding="8dp"
-        style="@style/Widget.Material3.Button.OutlinedButton"/>
+        android:drawablePadding="12dp"/>
     <TextView
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Novo usuario? Cadastre-se aqui"
         android:textColor="@color/blue_primary"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:textSize="15sp"
         android:textStyle="bold"/>
     <TextView
         android:id="@+id/tvForgotPassword"
@@ -101,12 +112,16 @@
         android:layout_height="wrap_content"
         android:text="Esqueceu a senha?"
         android:textColor="@color/blue_primary"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="16dp"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
     <TextView
         android:id="@+id/tvGuest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Entrar como Convidado"
         android:textColor="@color/gray_text"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="16dp"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
 </LinearLayout>

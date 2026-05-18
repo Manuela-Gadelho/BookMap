@@ -39,35 +39,40 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="24dp">
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editClubName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Nome do Clube">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editClubName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
+                android:hint="Nome do Clube"
+                android:inputType="text"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:minHeight="52dp"
+                android:layout_marginBottom="16dp"/>
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/editClubDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:hint="Descricao do Clube">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editClubDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:minLines="3"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Descricao do Clube"
+                android:inputType="textMultiLine"
+                android:gravity="top"
+                android:minLines="3"
+                android:background="@drawable/edit_text_bg"
+                android:padding="16dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textColorHint="#999999"
+                android:layout_marginBottom="16dp"/>
             <CheckBox
                 android:id="@+id/checkPublic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Clube Publico"
                 android:textColor="@color/gray_text"
+                android:textStyle="bold"
                 android:checked="true"
                 android:layout_marginBottom="16dp"/>
             <TextView
@@ -80,9 +85,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Selecione usuarios para convidar ao clube (obrigatorio)"
+                android:text="Selecione usuarios para convidar ao clube (opcional)"
                 android:textColor="@color/gray_text"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -90,29 +96,32 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/editSearchMember"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="48dp"
+                    android:layout_height="52dp"
                     android:hint="Buscar usuario por nome..."
-                    android:background="@color/gray_bg"
-                    android:paddingHorizontal="12dp"
+                    android:background="@drawable/edit_text_bg"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="#999999"
                     android:textSize="14sp"/>
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSearchMember"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="52dp"
                     android:text="BUSCAR"
-                    android:backgroundTint="@color/blue_primary"
+                    android:background="@drawable/btn_primary_bg"
                     android:textColor="@color/white"
+                    android:textStyle="bold"
                     android:layout_marginLeft="8dp"/>
             </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerMembers"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="@color/gray_bg"
+                android:background="@drawable/edit_text_bg"
                 android:padding="8dp"
                 android:layout_marginBottom="16dp"/>
             <TextView
@@ -123,15 +132,16 @@
                 android:textColor="@color/blue_primary"
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnCreateClub"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="CRIAR CLUBE"
-                android:backgroundTint="@color/blue_primary"
+                android:background="@drawable/btn_primary_bg"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:padding="12dp"/>
+                android:textSize="15sp"
+                android:padding="16dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

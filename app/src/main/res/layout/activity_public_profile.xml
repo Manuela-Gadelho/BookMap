@@ -136,16 +136,17 @@
                 android:text="Nenhuma leitura em andamento"
                 android:textColor="@color/gray_text"
                 android:visibility="visible"/>
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnReport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="DENUNCIAR USUARIO"
-                android:backgroundTint="#CC0000"
+                android:background="@drawable/btn_danger_bg"
                 android:textColor="@color/white"
                 android:textStyle="bold"
+                android:textSize="15sp"
                 android:layout_marginTop="32dp"
-                android:padding="12dp"/>
+                android:padding="16dp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

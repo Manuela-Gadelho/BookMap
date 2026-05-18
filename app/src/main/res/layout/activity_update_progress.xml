@@ -63,9 +63,9 @@
         <Spinner
             android:id="@+id/spinnerStatus"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@color/gray_bg"
-            android:padding="8dp"
+            android:layout_height="52dp"
+            android:background="@drawable/edit_text_bg"
+            android:padding="12dp"
             android:layout_marginBottom="32dp"/>
         <TextView
             android:layout_width="wrap_content"
@@ -92,13 +92,15 @@
             android:textColor="@color/blue_primary"
             android:gravity="center"
             android:layout_marginBottom="48dp"/>
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SALVAR PROGRESSO"
-            android:backgroundTint="@color/blue_primary"
+            android:background="@drawable/btn_primary_bg"
             android:textColor="@color/white"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:padding="16dp"/>
     </LinearLayout>
 </LinearLayout>
