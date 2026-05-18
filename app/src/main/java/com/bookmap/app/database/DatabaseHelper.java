@@ -556,7 +556,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("is_public", isPublic ? 1 : 0);
         values.put("creator_id", creatorId);
         values.put("banner_path", bannerPath != null ? bannerPath : "");
-        return db.insertWithOnConflict(TABLE_CLUBS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        long result = db.insertWithOnConflict(TABLE_CLUBS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        if (result > 0) {
+            ContentValues memberValues = new ContentValues();
+            memberValues.put("club_id", id);
+            memberValues.put("user_id", creatorId);
+            memberValues.put("role", "ORGANIZER");
+            memberValues.put("status", "APPROVED");
+            db.insertWithOnConflict(TABLE_CLUB_MEMBERS, null, memberValues, SQLiteDatabase.CONFLICT_REPLACE);
+        }
+        return result;
     }
 
     public Club getClubById(long id) {

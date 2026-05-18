@@ -118,6 +118,20 @@ public class CreateClubActivity extends AppCompatActivity {
             for (Long userId : selectedIds) {
                 dbHelper.addClubMember(clubId, userId, "MEMBER", "PENDING");
             }
+            try {
+                com.bookmap.app.model.Club club = dbHelper.getClubById(clubId);
+                if (club != null) {
+                    com.bookmap.app.database.FirebaseSyncHelper syncHelper = com.bookmap.app.database.FirebaseSyncHelper
+                            .getInstance(this);
+                    syncHelper.syncClubToCloud(club);
+                    syncHelper.syncClubMemberToCloud(clubId, session.getUserId(), "ORGANIZER", "APPROVED");
+                    for (Long userId : selectedIds) {
+                        syncHelper.syncClubMemberToCloud(clubId, userId, "MEMBER", "PENDING");
+                    }
+                }
+            } catch (Exception e) {
+                android.util.Log.w("CreateClubActivity", "Could not sync club and members to cloud", e);
+            }
             Toast.makeText(this, "Clube criado com sucesso!", Toast.LENGTH_SHORT).show();
             finish();
         } else {

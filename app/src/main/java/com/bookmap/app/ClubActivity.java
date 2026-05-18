@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,11 +19,13 @@ import com.bookmap.app.model.User;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+
 public class ClubActivity extends AppCompatActivity {
     public static final String EXTRA_CLUB_ID = "club_id";
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private long clubId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +69,29 @@ public class ClubActivity extends AppCompatActivity {
             }
         }, false);
         recyclerMembers.setAdapter(memberAdapter);
+
+        try {
+            com.bookmap.app.database.FirebaseSyncHelper syncHelper = com.bookmap.app.database.FirebaseSyncHelper
+                    .getInstance(this);
+            syncHelper.pullUsersFromCloud(usersSuccess -> {
+                syncHelper.pullClubMembersFromCloud(clubId, membersSuccess -> {
+                    if (membersSuccess) {
+                        runOnUiThread(() -> {
+                            List<ClubMember> updatedMembers = dbHelper.getClubMembers(clubId);
+                            List<User> updatedUsers = new ArrayList<>();
+                            for (ClubMember cm : updatedMembers) {
+                                User u = dbHelper.getUserById(cm.getUserId());
+                                if (u != null)
+                                    updatedUsers.add(u);
+                            }
+                            memberAdapter.updateData(updatedUsers);
+                        });
+                    }
+                });
+            });
+        } catch (Exception e) {
+            android.util.Log.w("ClubActivity", "Could not sync club members", e);
+        }
         RecyclerView recyclerEvents = findViewById(R.id.recyclerEvents);
         recyclerEvents.setLayoutManager(new LinearLayoutManager(this));
         List<Event> events = dbHelper.getClubEvents(clubId);
@@ -92,6 +118,12 @@ public class ClubActivity extends AppCompatActivity {
                         Toast.makeText(this, "Solicitacao enviada!", Toast.LENGTH_SHORT).show();
                         btnJoinClub.setText("Pendente");
                         btnJoinClub.setEnabled(false);
+                        try {
+                            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this)
+                                    .syncClubMemberToCloud(clubId, session.getUserId(), "MEMBER", "PENDING");
+                        } catch (Exception e) {
+                            android.util.Log.e("ClubActivity", "Error syncing join request", e);
+                        }
                     }
                 });
                 btnCreateEvent.setVisibility(View.GONE);

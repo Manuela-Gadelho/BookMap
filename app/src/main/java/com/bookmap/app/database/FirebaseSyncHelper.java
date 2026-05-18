@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import com.bookmap.app.model.Book;
 import com.bookmap.app.model.Club;
+import com.bookmap.app.model.ClubMember;
 import com.bookmap.app.model.Review;
 import com.bookmap.app.model.User;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -301,6 +302,60 @@ public class FirebaseSyncHelper {
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Failed to pull clubs from cloud", e);
+                    if (callback != null)
+                        callback.onComplete(false);
+                });
+    }
+
+    public void syncClubMemberToCloud(long clubId, long userId, String role, String status) {
+        if (!isFirebaseAvailable())
+            return;
+        Map<String, Object> memberData = new HashMap<>();
+        memberData.put("club_id", clubId);
+        memberData.put("user_id", userId);
+        memberData.put("role", role);
+        memberData.put("status", status);
+
+        String docId = clubId + "_" + userId;
+        firestore.collection("club_members")
+                .document(docId)
+                .set(memberData, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Club member synced to cloud"))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to sync club member to cloud", e));
+    }
+
+    public void pullClubMembersFromCloud(long clubId, SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null)
+                callback.onComplete(false);
+            return;
+        }
+        firestore.collection("club_members")
+                .whereEqualTo("club_id", clubId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        try {
+                            Long uId = doc.getLong("user_id");
+                            String role = doc.getString("role");
+                            String status = doc.getString("status");
+                            if (uId != null && role != null && status != null) {
+                                ClubMember existing = dbHelper.getClubMember(clubId, uId);
+                                if (existing == null) {
+                                    dbHelper.addClubMember(clubId, uId, role, status);
+                                } else {
+                                    dbHelper.updateMemberStatus(clubId, uId, status);
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing club member sync", e);
+                        }
+                    }
+                    if (callback != null)
+                        callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to pull club members", e);
                     if (callback != null)
                         callback.onComplete(false);
                 });
