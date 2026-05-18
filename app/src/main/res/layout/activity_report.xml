@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Denunciar"
+                android:text="Denúnciar"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
@@ -81,7 +81,7 @@
                 android:id="@+id/editReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Descreva o motivo da denuncia"
+                android:hint="Descreva o motivo da denúncia"
                 android:inputType="textMultiLine"
                 android:gravity="top"
                 android:minLines="4"
@@ -112,5 +112,6 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+
 
 

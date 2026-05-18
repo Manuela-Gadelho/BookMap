@@ -61,7 +61,7 @@
                 android:id="@+id/tvUserName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nome do Usuario"
+                android:text="Nome do Usuário"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/blue_dark"
@@ -164,5 +164,6 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+
 
 

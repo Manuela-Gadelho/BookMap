@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="52dp"
-            android:hint="Buscar livros ou usuarios..."
+            android:hint="Buscar livros ou usuários..."
             android:background="@drawable/edit_text_bg"
             android:paddingHorizontal="16dp"
             android:textColor="@color/black"
@@ -101,5 +101,6 @@
         android:textSize="16sp"
         android:visibility="gone"/>
 </LinearLayout>
+
 
 

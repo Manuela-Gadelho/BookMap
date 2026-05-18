@@ -30,7 +30,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ClubMember member = notifications.get(position);
-        holder.tvUserName.setText(member.getUserName() != null ? member.getUserName() : "Usuario");
+        holder.tvUserName.setText(member.getUserName() != null ? member.getUserName() : "Usuário");
         holder.tvClubName.setText("Clube: " + (member.getClubName() != null ? member.getClubName() : ""));
         holder.tvStatus.setText("Solicitacao pendente");
         holder.btnApprove.setOnClickListener(v -> {
@@ -57,3 +57,4 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
     }
 }
+

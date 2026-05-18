@@ -44,7 +44,7 @@ public class ReportActivity extends AppCompatActivity {
 
     private void submitReport() {
         if (!session.isLoggedIn()) {
-            Toast.makeText(this, "Faça login para denunciar.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Faça login para denúnciar.", Toast.LENGTH_SHORT).show();
             return;
         }
         String reason = editReason.getText().toString().trim();
@@ -73,3 +73,4 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 }
+

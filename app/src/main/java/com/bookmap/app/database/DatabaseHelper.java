@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "role TEXT DEFAULT 'READER', " +
                 "latitude REAL DEFAULT 0.0, " +
                 "longitude REAL DEFAULT 0.0, " +
-                "language TEXT DEFAULT 'Portugues', " +
+                "language TEXT DEFAULT 'Português', " +
                 "created_at TEXT DEFAULT (datetime('now')))");
         db.execSQL("CREATE TABLE " + TABLE_BOOKS + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -151,7 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private void seedData(SQLiteDatabase db) {
         insertBookDirect(db, "Engenharia de Software", "Ian Sommerville",
-                "A decima edicao de Engenharia de Software, um classico da area, foi totalmente atualizada e reestruturada para refletir as mudancas tecnologicas mais recentes.",
+                "A decima edicao de Engenharia de Software, um classico da área, foi totalmente atualizada e reestruturada para refletir as mudancas tecnologicas mais recentes.",
                 "", "Tecnologia", "978-8543024974");
         insertBookDirect(db, "O Senhor dos Aneis: A Sociedade do Anel", "J.R.R. Tolkien",
                 "A primeira parte da trilogia O Senhor dos Aneis, que conta a historia do hobbit Frodo e a Sociedade formada para destruir o Um Anel.",
@@ -167,7 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "", "Terror", "978-8556510761");
         insertBookDirect(db, "1984", "George Orwell",
                 "Uma distopia sobre um regime totalitario que controla todos os aspectos da vida.",
-                "", "Ficcao Cientifica", "978-8535914849");
+                "", "Ficção Científica", "978-8535914849");
     }
 
     private void insertBookDirect(SQLiteDatabase db, String title, String author,
@@ -890,3 +890,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userBook;
     }
 }
+

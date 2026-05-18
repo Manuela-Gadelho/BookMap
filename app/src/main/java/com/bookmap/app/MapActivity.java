@@ -67,12 +67,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         seekDistance = findViewById(R.id.seekDistance);
         switchLocationVisible = findViewById(R.id.switchLocationVisible);
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
-        String[] genres = { "Todos", "Fantasia", "Terror", "Romance", "Ficcao Cientifica",
+        String[] genres = { "Todos", "Fantasia", "Terror", "Romance", "Ficção Científica",
                 "Tecnologia", "Literatura Brasileira" };
         ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(genreAdapter);
-        String[] languages = { "Todos", "Portugues", "English", "Espanol" };
+        String[] languages = { "Todos", "Português", "English", "Español" };
         ArrayAdapter<String> langAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, languages);
         spinnerLanguage.setAdapter(langAdapter);
@@ -325,3 +325,4 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 }
+

@@ -49,7 +49,7 @@ public class ClubActivity extends AppCompatActivity {
         TextView tvClubType = findViewById(R.id.tvClubType);
         tvClubName.setText(club.getName());
         tvClubDescription.setText(club.getDescription());
-        tvClubType.setText(club.isPublic() ? "Publico" : "Privado");
+        tvClubType.setText(club.isPublic() ? "Público" : "Privado");
         RecyclerView recyclerMembers = findViewById(R.id.recyclerMembers);
         recyclerMembers.setLayoutManager(new LinearLayoutManager(this));
         List<ClubMember> clubMembers = dbHelper.getClubMembers(clubId);
@@ -143,3 +143,4 @@ public class ClubActivity extends AppCompatActivity {
         }
     }
 }
+

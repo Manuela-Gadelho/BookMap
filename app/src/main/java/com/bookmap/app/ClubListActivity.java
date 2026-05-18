@@ -52,7 +52,7 @@ public class ClubListActivity extends AppCompatActivity {
                 if (session.isLoggedIn()) {
                     startActivity(new Intent(this, CreateClubActivity.class));
                 } else {
-                    Toast.makeText(this, "Faca login para criar clubes", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Faça login para criar clubes", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 Log.e("ClubListActivity", "Error opening CreateClubActivity", e);
@@ -151,3 +151,4 @@ public class ClubListActivity extends AppCompatActivity {
         });
     }
 }
+

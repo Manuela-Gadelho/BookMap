@@ -45,7 +45,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
         foundUser = dbHelper.getUserByEmail(email);
         if (foundUser == null) {
-            tvStatus.setText("E-mail nao encontrado no sistema");
+            tvStatus.setText("E-mail não encontrado no sistema");
             return;
         }
 
@@ -82,7 +82,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
         if (!newPassword.equals(confirmPassword)) {
-            Toast.makeText(this, "As senhas nao coincidem", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "As senhas não coincidem", Toast.LENGTH_SHORT).show();
             return;
         }
         String newHash = PasswordUtil.hashPassword(newPassword);
@@ -95,3 +95,4 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
     }
 }
+

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -72,7 +72,7 @@
                 android:id="@+id/editTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo do Livro"
+                android:hint="Título do Livro"
                 android:inputType="text"
                 android:background="@drawable/edit_text_bg"
                 android:padding="16dp"
@@ -111,7 +111,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Genero"
+                android:text="Gênero"
                 android:textStyle="bold"
                 android:textColor="@color/blue_dark"
                 android:layout_marginBottom="8dp"/>
@@ -183,4 +183,5 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+
 

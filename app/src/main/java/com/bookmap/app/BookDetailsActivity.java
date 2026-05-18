@@ -57,7 +57,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         tvGenre.setText(book.getGenre());
         tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
                 ? book.getSynopsis()
-                : "Sem sinopse disponivel");
+                : "Sem sinopse disponível");
         ratingBarAverage = findViewById(R.id.ratingBarAverage);
         tvAverageRating = findViewById(R.id.tvAverageRating);
         tvReviewCount = findViewById(R.id.tvReviewCount);
@@ -121,7 +121,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         } else {
             btnUpdateProgress.setVisibility(View.GONE);
             btnAddToShelf.setOnClickListener(
-                    v -> Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show());
+                    v -> Toast.makeText(this, "Faça login para adicionar livros", Toast.LENGTH_SHORT).show());
         }
         loadReviews();
     }
@@ -141,7 +141,7 @@ public class BookDetailsActivity extends AppCompatActivity {
             tvAverageRating.setText(String.format("%.1f", avg));
         }
         if (tvReviewCount != null) {
-            tvReviewCount.setText(count + " avaliacao(oes)");
+            tvReviewCount.setText(count + " avaliação(oes)");
         }
     }
     private void loadReviews() {
@@ -162,7 +162,7 @@ public class BookDetailsActivity extends AppCompatActivity {
             return;
         }
         if (rating == 0) {
-            Toast.makeText(this, "Selecione uma avaliacao (1-5 estrelas)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Selecione uma avaliação (1-5 estrelas)", Toast.LENGTH_SHORT).show();
             return;
         }
         long result = dbHelper.insertReview(session.getUserId(), bookId, text, rating);
@@ -177,3 +177,4 @@ public class BookDetailsActivity extends AppCompatActivity {
         }
     }
 }
+

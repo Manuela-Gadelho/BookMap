@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:id="@+id/editEventTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Titulo do Encontro"
+                android:hint="Título do Encontro"
                 android:inputType="text"
                 android:background="@drawable/edit_text_bg"
                 android:padding="16dp"
@@ -147,5 +147,6 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+
 
 

@@ -97,7 +97,7 @@
     <string name="select_date_time">Selecione data e hora</string>
     <string name="event_created">Evento criado com sucesso!</string>
     <string name="no_events">Nenhum evento agendado</string>
-    <string name="report_title">Denunciar</string>
+    <string name="report_title">Denúnciar</string>
     <string name="report_type_label">Tipo de Denúncia</string>
     <string name="report_user">Usuário inadequado</string>
     <string name="report_content">Conteúdo inadequado</string>
@@ -132,3 +132,4 @@
     <string name="login_required_clubs">Faça login para criar clubes</string>
     <string name="login_required_report">Faça login para denunciar</string>
 </resources>
+

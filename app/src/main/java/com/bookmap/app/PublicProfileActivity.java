@@ -40,7 +40,7 @@ public class PublicProfileActivity extends AppCompatActivity {
         tvBio.setText(user.getBio() != null && !user.getBio().isEmpty() ? user.getBio() : "Sem bio");
         tvGenres.setText(user.getFavoriteGenres() != null && !user.getFavoriteGenres().isEmpty()
                 ? user.getFavoriteGenres()
-                : "Nenhum genero");
+                : "Nenhum gênero");
         LinearLayout layoutCurrentReading = findViewById(R.id.layoutCurrentReading);
         TextView tvCurrentBookTitle = findViewById(R.id.tvCurrentBookTitle);
         TextView tvCurrentBookAuthor = findViewById(R.id.tvCurrentBookAuthor);
@@ -73,3 +73,4 @@ public class PublicProfileActivity extends AppCompatActivity {
         }
     }
 }
+

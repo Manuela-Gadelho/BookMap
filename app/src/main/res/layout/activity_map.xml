@@ -41,7 +41,7 @@
                 android:orientation="vertical"
                 android:layout_marginEnd="8dp">
                 <TextView
-                    android:text="Genero"
+                    android:text="Gênero"
                     android:textSize="12sp"
                     android:textColor="@color/gray_text"
                     android:layout_marginBottom="4dp"
@@ -81,7 +81,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
             <TextView
-                android:text="Distancia: "
+                android:text="Distância: "
                 android:textSize="12sp"
                 android:textColor="@color/gray_text"
                 android:layout_width="wrap_content"
@@ -120,7 +120,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Compartilhar minha localizacao"
+                android:text="Compartilhar minha localização"
                 android:textSize="14sp"
                 android:textColor="@color/blue_dark"/>
             <androidx.appcompat.widget.SwitchCompat
@@ -133,7 +133,7 @@
             android:id="@+id/tvLocationStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Obtendo localizacao..."
+            android:text="Obtendo localização..."
             android:textSize="12sp"
             android:textColor="@color/gray_text"
             android:layout_marginTop="4dp"/>
@@ -182,4 +182,5 @@
         <TextView android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PERFIL" android:textColor="@color/gray_text" android:gravity="center" android:padding="16dp"/>
     </LinearLayout>
 </LinearLayout>
+
 

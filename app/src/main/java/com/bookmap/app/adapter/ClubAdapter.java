@@ -30,7 +30,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ViewHolder> {
         Club club = clubs.get(position);
         holder.tvName.setText(club.getName());
         holder.tvDescription.setText(club.getDescription());
-        holder.tvType.setText(club.isPublic() ? "Publico" : "Privado");
+        holder.tvType.setText(club.isPublic() ? "Público" : "Privado");
         holder.tvMembers.setText(club.getMemberCount() + " membros");
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onClubClick(club);
@@ -56,3 +56,4 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ViewHolder> {
         }
     }
 }
+

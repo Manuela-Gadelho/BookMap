@@ -69,7 +69,7 @@ public class LocationHelper {
         if (!hasLocationPermission()) {
             Log.w(TAG, "Location permission not granted");
             if (listener != null)
-                listener.onLocationError("Permissao de localizacao nao concedida");
+                listener.onLocationError("Permissao de localização não concedida");
             return;
         }
         try {
@@ -98,7 +98,7 @@ public class LocationHelper {
         this.listener = listener;
         if (!hasLocationPermission()) {
             if (listener != null)
-                listener.onLocationError("Permissao de localizacao nao concedida");
+                listener.onLocationError("Permissao de localização não concedida");
             return;
         }
         try {
@@ -167,7 +167,7 @@ public class LocationHelper {
         }
 
         if (listener != null) {
-            listener.onLocationError("Usando localizacao aproximada");
+            listener.onLocationError("Usando localização aproximada");
         }
     }
 
@@ -199,3 +199,4 @@ public class LocationHelper {
         void onLocationError(String error);
     }
 }
+

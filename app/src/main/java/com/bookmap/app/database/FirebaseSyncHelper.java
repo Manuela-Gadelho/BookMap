@@ -63,7 +63,7 @@ public class FirebaseSyncHelper {
         userData.put("role", user.getRole());
         userData.put("latitude", user.getLatitude());
         userData.put("longitude", user.getLongitude());
-        userData.put("language", user.getLanguage() != null ? user.getLanguage() : "Portugues");
+        userData.put("language", user.getLanguage() != null ? user.getLanguage() : "Português");
         userData.put("photo_path", user.getPhotoPath() != null ? user.getPhotoPath() : "");
         firestore.collection(COLLECTION_USERS)
                 .document(String.valueOf(user.getId()))
@@ -247,7 +247,7 @@ public class FirebaseSyncHelper {
                                         role != null ? role : "READER",
                                         latitude != null ? latitude : 0.0,
                                         longitude != null ? longitude : 0.0,
-                                        language != null ? language : "Portugues");
+                                        language != null ? language : "Português");
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Error parsing synced user", e);
@@ -365,3 +365,4 @@ public class FirebaseSyncHelper {
         void onComplete(boolean success);
     }
 }
+
