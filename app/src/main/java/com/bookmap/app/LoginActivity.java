@@ -319,26 +319,9 @@ public class LoginActivity extends AppCompatActivity {
                             Log.e(TAG, "Error logging in local db after Firebase success", e);
                         }
                     } else {
-                        try {
-                            User user = dbHelper.getUserByEmail(email);
-                            if (user != null && PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
-                                firebaseAuth.createUserWithEmailAndPassword(email, password)
-                                        .addOnCompleteListener(migrationTask -> {
-                                            session.createLoginSession(user.getId(), user.getName(), user.getEmail(),
-                                                    user.getRole());
-                                            Toast.makeText(this, "Conta migrada e conectada!", Toast.LENGTH_SHORT)
-                                                    .show();
-                                            navigateToHome();
-                                        });
-                            } else {
-                                String errMsg = task.getException() != null ? task.getException().getMessage()
-                                        : "Usuário ou senha incorretos.";
-                                Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error in migration fallback", e);
-                            Toast.makeText(this, "Erro de autenticação.", Toast.LENGTH_SHORT).show();
-                        }
+                        String errMsg = task.getException() != null ? task.getException().getMessage()
+                                : "Usuário ou senha incorretos.";
+                        Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
                     }
                 });
     }
