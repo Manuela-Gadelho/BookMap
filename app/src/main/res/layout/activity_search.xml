@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -16,7 +16,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
         <TextView
-            android:id="@+id/btnBack"
+            android:id="@+id/btnBack" android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&lt;"
@@ -81,7 +81,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:text="USUARIOS"
+            android:text="USUÁRIOS"
             android:textColor="@color/gray_text"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
@@ -101,3 +101,5 @@
         android:textSize="16sp"
         android:visibility="gone"/>
 </LinearLayout>
+
+

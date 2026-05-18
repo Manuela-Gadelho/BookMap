@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
             <TextView
-                android:id="@+id/btnBack"
+                android:id="@+id/btnBack" android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="&lt;"
@@ -56,7 +56,7 @@
                 android:id="@+id/editClubDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Descricao do Clube"
+                android:hint="Descrição do Clube"
                 android:inputType="textMultiLine"
                 android:gravity="top"
                 android:minLines="3"
@@ -70,8 +70,9 @@
                 android:id="@+id/checkPublic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clube Publico"
-                android:textColor="@color/gray_text"
+                android:text="Clube Público"
+                android:textColor="@color/black"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:checked="true"
                 android:layout_marginBottom="16dp"/>
@@ -85,7 +86,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Selecione usuarios para convidar ao clube (opcional)"
+                android:text="Selecione usuários para convidar ao clube (opcional)"
                 android:textColor="@color/gray_text"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -101,7 +102,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="52dp"
-                    android:hint="Buscar usuario por nome..."
+                    android:hint="Buscar usuário por nome..."
                     android:background="@drawable/edit_text_bg"
                     android:paddingHorizontal="16dp"
                     android:textColor="@color/black"
@@ -145,3 +146,4 @@
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
+

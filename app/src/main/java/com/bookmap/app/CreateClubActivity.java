@@ -106,7 +106,7 @@ public class CreateClubActivity extends AppCompatActivity {
         String description = editClubDescription.getText().toString().trim();
         boolean isPublic = checkPublic.isChecked();
         if (name.isEmpty()) {
-            Toast.makeText(this, "Nome do clube e obrigatorio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "O nome do clube é obrigatório.", Toast.LENGTH_SHORT).show();
             return;
         }
         // Member invitation is optional

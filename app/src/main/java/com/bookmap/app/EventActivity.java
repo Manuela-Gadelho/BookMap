@@ -67,11 +67,11 @@ public class EventActivity extends AppCompatActivity {
         String description = editDescription.getText().toString().trim();
         String location = editLocation.getText().toString().trim();
         if (title.isEmpty()) {
-            Toast.makeText(this, "Titulo do evento e obrigatorio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "O título do evento é obrigatório.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (selectedDate.isEmpty() || selectedTime.isEmpty()) {
-            Toast.makeText(this, "Selecione data e hora", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Selecione a data e a hora.", Toast.LENGTH_SHORT).show();
             return;
         }
         String dateTime = selectedDate + " " + selectedTime;
@@ -80,7 +80,7 @@ public class EventActivity extends AppCompatActivity {
             Toast.makeText(this, "Evento criado com sucesso!", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            Toast.makeText(this, "Erro ao criar evento", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao criar o evento.", Toast.LENGTH_SHORT).show();
         }
     }
 }

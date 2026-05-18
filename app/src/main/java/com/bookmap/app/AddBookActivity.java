@@ -59,8 +59,8 @@ public class AddBookActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSaveBook);
         Button btnAddCover = findViewById(R.id.btnAddCover);
         TextView btnBack = findViewById(R.id.btnBack);
-        String[] genres = { "Fantasia", "Terror", "Romance", "Ficcao Cientifica",
-                "Tecnologia", "Literatura Brasileira", "Historia", "Autoajuda", "Outro" };
+        String[] genres = { "Fantasia", "Terror", "Romance", "Ficção Científica",
+                "Tecnologia", "Literatura Brasileira", "História", "Autoajuda", "Outro" };
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(adapter);
@@ -106,7 +106,7 @@ public class AddBookActivity extends AppCompatActivity {
         if (cameraIntent != null) {
             startActivityForResult(cameraIntent, PhotoHelper.REQUEST_CAMERA);
         } else {
-            Toast.makeText(this, "Erro ao abrir camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao abrir a câmera.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -123,7 +123,7 @@ public class AddBookActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Permissao da camera negada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permissão da câmera negada.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -154,7 +154,7 @@ public class AddBookActivity extends AppCompatActivity {
         String isbn = editIsbn.getText().toString().trim();
         String genre = spinnerGenre.getSelectedItem().toString();
         if (title.isEmpty() || author.isEmpty()) {
-            Toast.makeText(this, "Titulo e autor sao obrigatorios", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Título e autor são obrigatórios.", Toast.LENGTH_SHORT).show();
             return;
         }
         int selectedId = radioStatus.getCheckedRadioButtonId();
@@ -177,7 +177,7 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(this, "Livro adicionado com sucesso!", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            Toast.makeText(this, "Erro ao adicionar livro", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao adicionar o livro.", Toast.LENGTH_SHORT).show();
         }
     }
 }

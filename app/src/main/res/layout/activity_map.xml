@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Leitores Proximos"
+            android:text="Leitores Próximos"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -152,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Nenhum leitor encontrado nesta area"
+            android:text="Nenhum leitor encontrado nesta área"
             android:textColor="@color/gray_text"
             android:textSize="16sp"
             android:visibility="gone"/>
@@ -170,3 +170,4 @@
         <TextView android:id="@+id/navProfile" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="PERFIL" android:textColor="@color/gray_text" android:gravity="center" android:padding="16dp"/>
     </LinearLayout>
 </LinearLayout>
+
