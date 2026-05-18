@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -138,25 +138,37 @@
             android:textColor="@color/gray_text"
             android:layout_marginTop="4dp"/>
     </LinearLayout>
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerUsers"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/mapFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="16dp"/>
-        <TextView
-            android:id="@+id/tvNoUsers"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Nenhum leitor encontrado nesta área"
-            android:textColor="@color/gray_text"
-            android:textSize="16sp"
-            android:visibility="gone"/>
-    </FrameLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerUsers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"/>
+            <TextView
+                android:id="@+id/tvNoUsers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Nenhum leitor encontrado nesta área"
+                android:textColor="@color/gray_text"
+                android:textSize="14sp"
+                android:visibility="gone"/>
+        </FrameLayout>
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"

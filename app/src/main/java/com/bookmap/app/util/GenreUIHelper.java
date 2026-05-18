@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenreUIHelper {
-    public static void setupGenreSpinner(Context context, Spinner spinner, ChipGroup chipGroup, List<String> selectedGenres) {
+    public static void setupGenreSpinner(Context context, Spinner spinner, ChipGroup chipGroup,
+            List<String> selectedGenres) {
         List<String> options = new ArrayList<>();
         options.add("Selecione os gêneros...");
         options.addAll(GenreUtil.getGenres());
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item,
+                options);
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -31,10 +33,12 @@ public class GenreUIHelper {
                     spinner.setSelection(0);
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
-        
+
         // Load initial
         chipGroup.removeAllViews();
         for (String g : selectedGenres) {
@@ -42,7 +46,8 @@ public class GenreUIHelper {
         }
     }
 
-    private static void addChipToGroup(Context context, ChipGroup chipGroup, String genre, List<String> selectedGenres) {
+    private static void addChipToGroup(Context context, ChipGroup chipGroup, String genre,
+            List<String> selectedGenres) {
         Chip chip = new Chip(context);
         chip.setText(genre);
         chip.setCloseIconVisible(true);

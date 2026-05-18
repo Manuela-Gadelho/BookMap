@@ -28,8 +28,15 @@ import com.bookmap.app.util.LocationHelper;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends AppCompatActivity {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private DatabaseHelper dbHelper;
     private SessionManager session;
@@ -104,14 +111,19 @@ public class MapActivity extends AppCompatActivity {
         switchLocationVisible.setOnCheckedChangeListener((buttonView, isChecked) -> {
             locationHelper.setLocationVisible(isChecked);
             if (isChecked) {
-                tvLocationStatus.setText("Sua localizacao esta visivel para outros leitores");
+                tvLocationStatus.setText("Sua localização está visível para outros leitores");
                 updateUserLocationInDb();
             } else {
-                tvLocationStatus.setText("Sua localizacao esta oculta");
+                tvLocationStatus.setText("Sua localização está oculta");
                 clearUserLocationInDb();
             }
         });
         setupBottomNav();
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapFragment);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
         requestLocationAndLoad();
         try {
             FirebaseSyncHelper.getInstance(this).pullUsersFromCloud(success -> {
@@ -143,7 +155,7 @@ public class MapActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation();
             } else {
-                tvLocationStatus.setText("Permissao de localizacao negada");
+                tvLocationStatus.setText("Permissão de localização negada");
                 loadNearbyUsers();
             }
         }
@@ -156,14 +168,14 @@ public class MapActivity extends AppCompatActivity {
                 currentLat = latitude;
                 currentLng = longitude;
                 tvLocationStatus
-                        .setText(String.format(java.util.Locale.US, "Localizacao: %.4f, %.4f", latitude, longitude));
+                        .setText(String.format(java.util.Locale.US, "Localização: %.4f, %.4f", latitude, longitude));
                 updateUserLocationInDb();
                 loadNearbyUsers();
             }
 
             @Override
             public void onLocationError(String error) {
-                tvLocationStatus.setText("Usando localizacao aproximada");
+                tvLocationStatus.setText("Usando localização aproximada");
                 currentLat = locationHelper.getLastLatitude();
                 currentLng = locationHelper.getLastLongitude();
                 if (currentLat == 0.0 && currentLng == 0.0) {
@@ -236,6 +248,34 @@ public class MapActivity extends AppCompatActivity {
             }
         }, false);
         recyclerUsers.setAdapter(userAdapter);
+        updateMapMarkers(users);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        loadNearbyUsers(); // initial update if location was already ready
+    }
+
+    private void updateMapMarkers(List<User> users) {
+        if (mMap == null)
+            return;
+        mMap.clear();
+
+        if (currentLat != 0.0 && currentLng != 0.0) {
+            LatLng myLocation = new LatLng(currentLat, currentLng);
+            mMap.addMarker(new MarkerOptions().position(myLocation).title("Você"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12f));
+        }
+
+        if (users != null) {
+            for (User u : users) {
+                if (u.getLatitude() != 0.0 && u.getLongitude() != 0.0) {
+                    LatLng pos = new LatLng(u.getLatitude(), u.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(pos).title(u.getName()));
+                }
+            }
+        }
     }
 
     @Override

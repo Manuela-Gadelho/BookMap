@@ -39,7 +39,7 @@ public class GenreUtil {
     public static List<String> getGenres() {
         return Arrays.asList(GENRES);
     }
-    
+
     public static String[] getGenresArray() {
         return GENRES;
     }
