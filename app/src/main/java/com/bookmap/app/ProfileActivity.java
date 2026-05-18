@@ -10,7 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import com.google.android.material.chip.ChipGroup;
+import com.bookmap.app.util.GenreUIHelper;
 import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +29,10 @@ import android.widget.EditText;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3001;
-    private EditText editName, editBio, editGenres;
+    private EditText editName, editBio;
+    private Spinner spinnerGenres;
+    private ChipGroup chipGroupGenres;
+    private List<String> selectedGenres = new ArrayList<>();
     private Spinner spinnerLanguage;
     private TextView tvUserName, tvUserEmail, tvUserRole;
     private ImageView imgAvatar;
@@ -48,7 +55,8 @@ public class ProfileActivity extends AppCompatActivity {
         }
         editName = findViewById(R.id.editName);
         editBio = findViewById(R.id.editBio);
-        editGenres = findViewById(R.id.editGenres);
+        spinnerGenres = findViewById(R.id.spinnerGenres);
+        chipGroupGenres = findViewById(R.id.chipGroupGenres);
         spinnerLanguage = findViewById(R.id.spinnerLanguage);
         tvUserName = findViewById(R.id.tvUserName);
         tvUserEmail = findViewById(R.id.tvUserEmail);
@@ -62,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item, languages);
         spinnerLanguage.setAdapter(adapter);
         loadUserData();
+        GenreUIHelper.setupGenreSpinner(this, spinnerGenres, chipGroupGenres, selectedGenres);
         imgAvatar.setOnClickListener(v -> showPhotoOptions());
         btnSave.setOnClickListener(v -> saveProfile());
         btnBack.setOnClickListener(v -> finish());
@@ -208,7 +217,12 @@ public class ProfileActivity extends AppCompatActivity {
         tvUserRole.setText(roleLabel);
         editName.setText(user.getName());
         editBio.setText(user.getBio());
-        editGenres.setText(user.getFavoriteGenres());
+        if (user.getFavoriteGenres() != null && !user.getFavoriteGenres().isEmpty()) {
+            selectedGenres.clear();
+            for (String g : user.getFavoriteGenres().split(",")) {
+                selectedGenres.add(g.trim());
+            }
+        }
         if (user.getPhotoPath() != null && !user.getPhotoPath().isEmpty()) {
             PhotoHelper.loadImageIntoView(imgAvatar, user.getPhotoPath());
         }
@@ -227,7 +241,11 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveProfile() {
         String name = editName.getText().toString().trim();
         String bio = editBio.getText().toString().trim();
-        String genres = editGenres.getText().toString().trim();
+        if (selectedGenres.isEmpty()) {
+            Toast.makeText(this, "Selecione pelo menos um gênero literário.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String genres = String.join(", ", selectedGenres);
         String language = spinnerLanguage.getSelectedItem().toString();
         if (name.isEmpty()) {
             Toast.makeText(this, "O nome não pode estar vazio.", Toast.LENGTH_SHORT).show();

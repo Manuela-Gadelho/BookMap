@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -125,18 +125,17 @@
                 android:textStyle="bold"
                 android:textColor="@color/blue_dark"
                 android:layout_marginBottom="8dp"/>
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editGenres"
+            <Spinner
+                android:id="@+id/spinnerGenres"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/edit_text_bg"
+                android:padding="12dp"
+                android:layout_marginBottom="8dp"/>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupGenres"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ex: Fantasia, Terror, Romance"
-                android:inputType="text"
-                android:background="@drawable/edit_text_bg"
-                android:padding="16dp"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:textColorHint="#999999"
-                android:minHeight="52dp"
                 android:layout_marginBottom="16dp"/>
             <TextView
                 android:layout_width="match_parent"

@@ -59,8 +59,7 @@ public class AddBookActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSaveBook);
         Button btnAddCover = findViewById(R.id.btnAddCover);
         TextView btnBack = findViewById(R.id.btnBack);
-        String[] genres = { "Fantasia", "Terror", "Romance", "Ficção Científica",
-                "Tecnologia", "Literatura Brasileira", "História", "Autoajuda", "Outro" };
+        String[] genres = com.bookmap.app.util.GenreUtil.getGenresArray();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(adapter);

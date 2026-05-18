@@ -3,7 +3,9 @@ package com.bookmap.app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.Spinner;
+import com.google.android.material.chip.ChipGroup;
+import com.bookmap.app.util.GenreUIHelper;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +18,9 @@ import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editName, editEmail, editPassword, editConfirmPassword;
-    private CheckBox checkFantasia, checkTerror, checkRomance, checkFiccao, checkTecnologia, checkLitBrasileira;
+    private Spinner spinnerGenres;
+    private ChipGroup chipGroupGenres;
+    private List<String> selectedGenres = new ArrayList<>();
     private DatabaseHelper dbHelper;
 
     @Override
@@ -28,12 +32,9 @@ public class RegisterActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
-        checkFantasia = findViewById(R.id.checkFantasia);
-        checkTerror = findViewById(R.id.checkTerror);
-        checkRomance = findViewById(R.id.checkRomance);
-        checkFiccao = findViewById(R.id.checkFiccao);
-        checkTecnologia = findViewById(R.id.checkTecnologia);
-        checkLitBrasileira = findViewById(R.id.checkLitBrasileira);
+        spinnerGenres = findViewById(R.id.spinnerGenres);
+        chipGroupGenres = findViewById(R.id.chipGroupGenres);
+        GenreUIHelper.setupGenreSpinner(this, spinnerGenres, chipGroupGenres, selectedGenres);
         Button btnRegister = findViewById(R.id.btnRegister);
         TextView tvLogin = findViewById(R.id.tvLogin);
         btnRegister.setOnClickListener(v -> attemptRegister());
@@ -68,20 +69,11 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(this, "Este e-mail já está cadastrado.", Toast.LENGTH_SHORT).show();
             return;
         }
-        List<String> genres = new ArrayList<>();
-        if (checkFantasia.isChecked())
-            genres.add("Fantasia");
-        if (checkTerror.isChecked())
-            genres.add("Terror");
-        if (checkRomance.isChecked())
-            genres.add("Romance");
-        if (checkFiccao.isChecked())
-            genres.add("Ficção Científica");
-        if (checkTecnologia.isChecked())
-            genres.add("Tecnologia");
-        if (checkLitBrasileira.isChecked())
-            genres.add("Literatura Brasileira");
-        String favoriteGenres = String.join(", ", genres);
+        if (selectedGenres.isEmpty()) {
+            Toast.makeText(this, "Selecione pelo menos um gênero literário.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String favoriteGenres = String.join(", ", selectedGenres);
         String passwordHash = PasswordUtil.hashPassword(password);
         long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER");
         if (userId > 0) {
