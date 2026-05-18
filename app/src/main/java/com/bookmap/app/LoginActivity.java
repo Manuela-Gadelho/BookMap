@@ -180,7 +180,8 @@ public class LoginActivity extends AppCompatActivity {
             if (e.getStatusCode() == 12501) {
                 Toast.makeText(this, "Login com Google cancelado.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Erro ao entrar com o Google (código: " + e.getStatusCode() + "). Tente novamente.",
+                Toast.makeText(this,
+                        "Erro ao entrar com o Google (código: " + e.getStatusCode() + "). Tente novamente.",
                         Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
