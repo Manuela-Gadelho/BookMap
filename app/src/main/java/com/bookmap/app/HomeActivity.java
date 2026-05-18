@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,21 +18,46 @@ import com.bookmap.app.model.UserBook;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+
 public class HomeActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private RecyclerView recyclerBooks;
     private UserBookAdapter adapter;
     private List<UserBook> userBooks = new ArrayList<>();
-    private String currentFilter = null; 
+    private String currentFilter = null;
     private Button btnLendo, btnQueroLer, btnLidos;
     private LinearLayout layoutCurrentReading;
     private TextView tvCurrentTitle, tvCurrentAuthor, tvCurrentProgress;
     private ProgressBar progressCurrent;
     private TextView tvEmptyMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            android.content.SharedPreferences crashPrefs = getSharedPreferences("CrashLog", MODE_PRIVATE);
+            String lastCrash = crashPrefs.getString("last_crash", null);
+            if (lastCrash != null) {
+                crashPrefs.edit().remove("last_crash").apply();
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Relatorio de Erro (Crash Log)")
+                        .setMessage("O aplicativo crashou no ultimo teste com o seguinte erro:\n\n" + lastCrash)
+                        .setPositiveButton("Ok", null)
+                        .setNeutralButton("Copiar Erro", (dialog, which) -> {
+                            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(
+                                    android.content.Context.CLIPBOARD_SERVICE);
+                            android.content.ClipData clip = android.content.ClipData.newPlainText("Crash Log",
+                                    lastCrash);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(this, "Erro copiado!", Toast.LENGTH_SHORT).show();
+                        })
+                        .show();
+            }
+        } catch (Exception e) {
+            Log.e("HomeActivity", "Failed to check or show crash log", e);
+        }
+
         setContentView(R.layout.activity_home);
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
@@ -82,21 +108,24 @@ public class HomeActivity extends AppCompatActivity {
         btnLidos.setOnClickListener(v -> setFilter("LIDO"));
         setupBottomNav();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         loadBooks();
         loadCurrentReading();
     }
+
     private void setFilter(String filter) {
         if (filter.equals(currentFilter)) {
-            currentFilter = null; 
+            currentFilter = null;
         } else {
             currentFilter = filter;
         }
         updateFilterUI();
         loadBooks();
     }
+
     private void updateFilterUI() {
         btnLendo.setTextColor(getResources().getColor(
                 "LENDO".equals(currentFilter) ? R.color.blue_primary : R.color.gray_text));
@@ -105,6 +134,7 @@ public class HomeActivity extends AppCompatActivity {
         btnLidos.setTextColor(getResources().getColor(
                 "LIDO".equals(currentFilter) ? R.color.blue_primary : R.color.gray_text));
     }
+
     private void loadBooks() {
         if (!session.isLoggedIn()) {
             tvEmptyMessage.setVisibility(View.VISIBLE);
@@ -123,6 +153,7 @@ public class HomeActivity extends AppCompatActivity {
             recyclerBooks.setVisibility(View.VISIBLE);
         }
     }
+
     private void loadCurrentReading() {
         if (!session.isLoggedIn()) {
             layoutCurrentReading.setVisibility(View.GONE);
@@ -148,6 +179,7 @@ public class HomeActivity extends AppCompatActivity {
             layoutCurrentReading.setVisibility(View.GONE);
         }
     }
+
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
@@ -157,8 +189,9 @@ public class HomeActivity extends AppCompatActivity {
         navMap.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, MapActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error navigating to MapActivity", e);
                 Toast.makeText(this, "Erro ao abrir mapa", Toast.LENGTH_SHORT).show();
@@ -167,8 +200,9 @@ public class HomeActivity extends AppCompatActivity {
         navClubs.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, ClubListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error navigating to ClubListActivity", e);
                 Toast.makeText(this, "Erro ao abrir clubes", Toast.LENGTH_SHORT).show();

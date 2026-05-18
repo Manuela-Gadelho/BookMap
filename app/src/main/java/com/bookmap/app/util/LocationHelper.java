@@ -85,14 +85,12 @@ public class LocationHelper {
                         }
                     })
                     .addOnFailureListener(e -> {
-                        Log.w(TAG, "Failed to get last location", e);
-                        if (listener != null)
-                            listener.onLocationError("Erro ao obter localizacao");
+                        Log.w(TAG, "Failed to get last location, trying fallback", e);
+                        useLocationManagerFallback(listener);
                     });
         } catch (Exception e) {
-            Log.w(TAG, "Exception getting location", e);
-            if (listener != null)
-                listener.onLocationError("Permissao negada");
+            Log.w(TAG, "Exception getting location, trying fallback", e);
+            useLocationManagerFallback(listener);
         }
     }
 
@@ -103,37 +101,77 @@ public class LocationHelper {
                 listener.onLocationError("Permissao de localizacao nao concedida");
             return;
         }
-        LocationRequest locationRequest = new LocationRequest.Builder(
-                Priority.PRIORITY_BALANCED_POWER_ACCURACY, 30000)
-                .setMinUpdateIntervalMillis(15000)
-                .setMaxUpdates(1)
-                .build();
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                Location location = locationResult.getLastLocation();
+        try {
+            LocationRequest locationRequest = new LocationRequest.Builder(
+                    Priority.PRIORITY_BALANCED_POWER_ACCURACY, 30000)
+                    .setMinUpdateIntervalMillis(15000)
+                    .setMaxUpdates(1)
+                    .build();
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
+                    if (location != null) {
+                        saveLastLocation(location.getLatitude(), location.getLongitude());
+                        if (listener != null) {
+                            listener.onLocationUpdated(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                    stopLocationUpdates();
+                }
+            };
+            fusedLocationClient.requestLocationUpdates(locationRequest,
+                    locationCallback, Looper.getMainLooper());
+        } catch (Exception e) {
+            Log.w(TAG, "Exception requesting location updates, trying fallback", e);
+            useLocationManagerFallback(listener);
+        }
+    }
+
+    private void useLocationManagerFallback(LocationUpdateListener listener) {
+        try {
+            android.location.LocationManager locationManager = (android.location.LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            if (locationManager != null) {
+                boolean isGpsEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
+                boolean isNetworkEnabled = locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
+                
+                android.location.Location location = null;
+                if (isNetworkEnabled) {
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        location = locationManager.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER);
+                    }
+                }
+                if (location == null && isGpsEnabled) {
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        location = locationManager.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER);
+                    }
+                }
+                
                 if (location != null) {
                     saveLastLocation(location.getLatitude(), location.getLongitude());
                     if (listener != null) {
                         listener.onLocationUpdated(location.getLatitude(), location.getLongitude());
                     }
+                    return;
                 }
-                stopLocationUpdates();
             }
-        };
-        try {
-            fusedLocationClient.requestLocationUpdates(locationRequest,
-                    locationCallback, Looper.getMainLooper());
         } catch (Exception e) {
-            Log.w(TAG, "Exception requesting location updates", e);
-            if (listener != null)
-                listener.onLocationError("Permissao negada");
+            Log.w(TAG, "LocationManager fallback failed", e);
+        }
+        
+        if (listener != null) {
+            listener.onLocationError("Usando localizacao aproximada");
         }
     }
 
     public void stopLocationUpdates() {
         if (locationCallback != null) {
-            fusedLocationClient.removeLocationUpdates(locationCallback);
+            try {
+                fusedLocationClient.removeLocationUpdates(locationCallback);
+            } catch (Exception e) {
+                Log.w(TAG, "Exception removing location updates", e);
+            }
             locationCallback = null;
         }
     }

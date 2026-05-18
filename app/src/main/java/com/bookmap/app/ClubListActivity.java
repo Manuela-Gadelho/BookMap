@@ -121,9 +121,9 @@ public class ClubListActivity extends AppCompatActivity {
         navShelf.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish();
+                overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("ClubListActivity", "Error navigating to HomeActivity", e);
             }
@@ -131,9 +131,9 @@ public class ClubListActivity extends AppCompatActivity {
         navMap.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, MapActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish();
+                overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("ClubListActivity", "Error navigating to MapActivity", e);
             }
