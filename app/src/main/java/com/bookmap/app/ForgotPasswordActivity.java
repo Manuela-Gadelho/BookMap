@@ -6,93 +6,55 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.bookmap.app.database.DatabaseHelper;
-import com.bookmap.app.model.User;
-import com.bookmap.app.util.PasswordUtil;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
-    private EditText editEmail, editNewPassword, editConfirmPassword;
+    private EditText editEmail;
     private Button btnResetPassword;
     private TextView tvStatus;
-    private DatabaseHelper dbHelper;
-    private boolean emailVerified = false;
-    private User foundUser;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
-        dbHelper = DatabaseHelper.getInstance(this);
+        
+        mAuth = FirebaseAuth.getInstance();
+        
         editEmail = findViewById(R.id.editEmail);
-        editNewPassword = findViewById(R.id.editNewPassword);
-        editConfirmPassword = findViewById(R.id.editConfirmPassword);
         btnResetPassword = findViewById(R.id.btnResetPassword);
         tvStatus = findViewById(R.id.tvStatus);
         TextView btnBack = findViewById(R.id.btnBack);
-        editNewPassword.setEnabled(false);
-        editConfirmPassword.setEnabled(false);
-        Button btnVerifyEmail = findViewById(R.id.btnVerifyEmail);
-        btnVerifyEmail.setOnClickListener(v -> verifyEmail());
-        btnResetPassword.setOnClickListener(v -> resetPassword());
+        
+        btnResetPassword.setOnClickListener(v -> sendResetEmail());
         btnBack.setOnClickListener(v -> finish());
     }
 
-    private void verifyEmail() {
+    private void sendResetEmail() {
         String email = editEmail.getText().toString().trim();
         if (email.isEmpty()) {
             Toast.makeText(this, "Digite seu e-mail", Toast.LENGTH_SHORT).show();
             return;
         }
-        foundUser = dbHelper.getUserByEmail(email);
-        if (foundUser == null) {
-            tvStatus.setText("E-mail não encontrado no sistema");
-            return;
-        }
+        
+        tvStatus.setText("Enviando e-mail de recuperação...");
+        btnResetPassword.setEnabled(false);
 
-        new android.app.AlertDialog.Builder(this)
-                .setTitle("Caixa de Entrada (Simulacao)")
-                .setMessage("Enviamos um email para " + email + ". Deseja 'clicar' no link de verificacao?")
-                .setPositiveButton("Clicar no Link", (dialog, which) -> {
-                    emailVerified = true;
-                    tvStatus.setText("E-mail verificado! Digite a nova senha.");
-                    editEmail.setEnabled(false);
-                    editNewPassword.setEnabled(true);
-                    editConfirmPassword.setEnabled(true);
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
                     btnResetPassword.setEnabled(true);
-                })
-                .setNegativeButton("Ignorar", (dialog, which) -> {
-                    tvStatus.setText("Aguardando verificacao do link enviado por e-mail...");
-                })
-                .show();
-    }
-
-    private void resetPassword() {
-        if (!emailVerified || foundUser == null) {
-            Toast.makeText(this, "Verifique seu e-mail primeiro", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String newPassword = editNewPassword.getText().toString().trim();
-        String confirmPassword = editConfirmPassword.getText().toString().trim();
-        if (newPassword.isEmpty()) {
-            Toast.makeText(this, "Digite a nova senha", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (newPassword.length() < 6) {
-            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!newPassword.equals(confirmPassword)) {
-            Toast.makeText(this, "As senhas não coincidem", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String newHash = PasswordUtil.hashPassword(newPassword);
-        boolean updated = dbHelper.updateUserPassword(foundUser.getId(), newHash);
-        if (updated) {
-            Toast.makeText(this, "Senha alterada com sucesso!", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            Toast.makeText(this, "Erro ao alterar senha. Tente novamente.", Toast.LENGTH_SHORT).show();
-        }
+                    if (task.isSuccessful()) {
+                        tvStatus.setText("Link de redefinição enviado! Verifique seu e-mail.");
+                        Toast.makeText(ForgotPasswordActivity.this, 
+                                "E-mail de recuperação enviado com sucesso!", Toast.LENGTH_LONG).show();
+                    } else {
+                        String errorMessage = task.getException() != null ? 
+                                task.getException().getMessage() : "Erro desconhecido";
+                        tvStatus.setText("Erro ao enviar: " + errorMessage);
+                        Toast.makeText(ForgotPasswordActivity.this, 
+                                "Falha ao enviar e-mail: " + errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }
 

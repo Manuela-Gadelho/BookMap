@@ -278,23 +278,65 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
             return;
         }
-        try {
-            User user = dbHelper.getUserByEmail(email);
-            if (user == null) {
-                Toast.makeText(this, "Usuário não encontrado.", Toast.LENGTH_SHORT).show();
-                return;
+        if (firebaseAuth == null) {
+            try {
+                User user = dbHelper.getUserByEmail(email);
+                if (user != null && PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
+                    session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
+                    Toast.makeText(this, "Bem-vindo, " + user.getName() + "!", Toast.LENGTH_SHORT).show();
+                    navigateToHome();
+                } else {
+                    Toast.makeText(this, "Usuário não encontrado ou senha incorreta.", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error during login attempt fallback", e);
+                Toast.makeText(this, "Erro ao fazer login. Tente novamente.", Toast.LENGTH_SHORT).show();
             }
-            if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
-                Toast.makeText(this, "Senha incorreta.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
-            Toast.makeText(this, "Bem-vindo, " + user.getName() + "!", Toast.LENGTH_SHORT).show();
-            navigateToHome();
-        } catch (Exception e) {
-            Log.e(TAG, "Error during login attempt", e);
-            Toast.makeText(this, "Erro ao fazer login. Tente novamente.", Toast.LENGTH_SHORT).show();
+            return;
         }
+        
+        Toast.makeText(this, "Autenticando...", Toast.LENGTH_SHORT).show();
+        
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        try {
+                            User user = dbHelper.getUserByEmail(email);
+                            if (user != null) {
+                                session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
+                                Toast.makeText(this, "Bem-vindo, " + user.getName() + "!", Toast.LENGTH_SHORT).show();
+                                navigateToHome();
+                            } else {
+                                String name = email.split("@")[0];
+                                String passwordHash = PasswordUtil.hashPassword(password);
+                                long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER");
+                                session.createLoginSession(userId, name, email, "READER");
+                                Toast.makeText(this, "Bem-vindo, " + name + "!", Toast.LENGTH_SHORT).show();
+                                navigateToHome();
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error logging in local db after Firebase success", e);
+                        }
+                    } else {
+                        try {
+                            User user = dbHelper.getUserByEmail(email);
+                            if (user != null && PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
+                                firebaseAuth.createUserWithEmailAndPassword(email, password)
+                                        .addOnCompleteListener(migrationTask -> {
+                                            session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
+                                            Toast.makeText(this, "Conta migrada e conectada!", Toast.LENGTH_SHORT).show();
+                                            navigateToHome();
+                                        });
+                            } else {
+                                String errMsg = task.getException() != null ? task.getException().getMessage() : "Usuário ou senha incorretos.";
+                                Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error in migration fallback", e);
+                            Toast.makeText(this, "Erro de autenticação.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void navigateToHome() {

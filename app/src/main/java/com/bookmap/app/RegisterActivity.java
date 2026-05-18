@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.PasswordUtil;
 import com.bookmap.app.util.SessionManager;
+import com.google.firebase.auth.FirebaseAuth;
 import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +23,14 @@ public class RegisterActivity extends AppCompatActivity {
     private ChipGroup chipGroupGenres;
     private List<String> selectedGenres = new ArrayList<>();
     private DatabaseHelper dbHelper;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         dbHelper = DatabaseHelper.getInstance(this);
+        mAuth = FirebaseAuth.getInstance();
         editName = findViewById(R.id.editName);
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
@@ -75,21 +78,32 @@ public class RegisterActivity extends AppCompatActivity {
         }
         String favoriteGenres = String.join(", ", selectedGenres);
         String passwordHash = PasswordUtil.hashPassword(password);
-        long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER");
-        if (userId > 0) {
-            SessionManager session = new SessionManager(this);
-            session.createLoginSession(userId, name, email, "READER");
-            Toast.makeText(this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
-            try {
-                Intent intent = new Intent(this, HomeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            } catch (Exception e) {
-                android.util.Log.e("RegisterActivity", "Error navigating to HomeActivity", e);
-            }
-        } else {
-            Toast.makeText(this, "Erro ao criar conta. Tente novamente.", Toast.LENGTH_SHORT).show();
-        }
+        
+        Toast.makeText(this, "Criando conta...", Toast.LENGTH_SHORT).show();
+        
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER");
+                        if (userId > 0) {
+                            SessionManager session = new SessionManager(RegisterActivity.this);
+                            session.createLoginSession(userId, name, email, "READER");
+                            Toast.makeText(RegisterActivity.this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
+                            try {
+                                Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            } catch (Exception e) {
+                                android.util.Log.e("RegisterActivity", "Error navigating to HomeActivity", e);
+                            }
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Erro ao salvar perfil no banco local.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        String errMsg = task.getException() != null ? task.getException().getMessage() : "Erro desconhecido";
+                        Toast.makeText(RegisterActivity.this, "Erro ao criar conta no Firebase: " + errMsg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
