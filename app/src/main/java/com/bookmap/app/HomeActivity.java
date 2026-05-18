@@ -41,8 +41,8 @@ public class HomeActivity extends AppCompatActivity {
             if (lastCrash != null) {
                 crashPrefs.edit().remove("last_crash").apply();
                 new androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setTitle("Relatorio de Erro (Crash Log)")
-                        .setMessage("O aplicativo crashou no ultimo teste com o seguinte erro:\n\n" + lastCrash)
+                        .setTitle("Relatório de Erro (Crash Log)")
+                        .setMessage("O aplicativo crashou no último teste com o seguinte erro:\n\n" + lastCrash)
                         .setPositiveButton("Ok", null)
                         .setNeutralButton("Copiar Erro", (dialog, which) -> {
                             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(
@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error opening book details", e);
-                Toast.makeText(this, "Erro ao abrir detalhes do livro", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir detalhes do livro.", Toast.LENGTH_SHORT).show();
             }
         });
         recyclerBooks.setAdapter(adapter);
@@ -88,11 +88,11 @@ public class HomeActivity extends AppCompatActivity {
                 if (session.isLoggedIn()) {
                     startActivity(new Intent(this, AddBookActivity.class));
                 } else {
-                    Toast.makeText(this, "Faca login para adicionar livros", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Faça login para adicionar livros.", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error opening AddBookActivity", e);
-                Toast.makeText(this, "Erro ao abrir adicionar livro", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir tela de adicionar livro.", Toast.LENGTH_SHORT).show();
             }
         });
         findViewById(R.id.btnSearch).setOnClickListener(v -> {
@@ -100,7 +100,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(this, SearchActivity.class));
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error opening SearchActivity", e);
-                Toast.makeText(this, "Erro ao abrir busca", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir a busca.", Toast.LENGTH_SHORT).show();
             }
         });
         btnLendo.setOnClickListener(v -> setFilter("LENDO"));
@@ -138,7 +138,7 @@ public class HomeActivity extends AppCompatActivity {
     private void loadBooks() {
         if (!session.isLoggedIn()) {
             tvEmptyMessage.setVisibility(View.VISIBLE);
-            tvEmptyMessage.setText("Faca login para ver sua estante");
+            tvEmptyMessage.setText(R.string.login_required_shelf);
             recyclerBooks.setVisibility(View.GONE);
             return;
         }
@@ -146,7 +146,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.updateData(books);
         if (books.isEmpty()) {
             tvEmptyMessage.setVisibility(View.VISIBLE);
-            tvEmptyMessage.setText("Nenhum livro encontrado. Adicione livros a sua estante!");
+            tvEmptyMessage.setText(R.string.empty_shelf);
             recyclerBooks.setVisibility(View.GONE);
         } else {
             tvEmptyMessage.setVisibility(View.GONE);
@@ -165,7 +165,7 @@ public class HomeActivity extends AppCompatActivity {
             tvCurrentTitle.setText(current.getBookTitle());
             tvCurrentAuthor.setText(current.getBookAuthor());
             progressCurrent.setProgress(current.getProgress());
-            tvCurrentProgress.setText(current.getProgress() + "% Concluido");
+            tvCurrentProgress.setText(current.getProgress() + "% Concluído");
             layoutCurrentReading.setOnClickListener(v -> {
                 try {
                     Intent intent = new Intent(this, BookDetailsActivity.class);
@@ -194,7 +194,7 @@ public class HomeActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error navigating to MapActivity", e);
-                Toast.makeText(this, "Erro ao abrir mapa", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir o mapa.", Toast.LENGTH_SHORT).show();
             }
         });
         navClubs.setOnClickListener(v -> {
@@ -205,7 +205,7 @@ public class HomeActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error navigating to ClubListActivity", e);
-                Toast.makeText(this, "Erro ao abrir clubes", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir clubes.", Toast.LENGTH_SHORT).show();
             }
         });
         navProfile.setOnClickListener(v -> {
@@ -217,7 +217,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 Log.e("HomeActivity", "Error navigating to ProfileActivity", e);
-                Toast.makeText(this, "Erro ao abrir perfil", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir perfil.", Toast.LENGTH_SHORT).show();
             }
         });
     }

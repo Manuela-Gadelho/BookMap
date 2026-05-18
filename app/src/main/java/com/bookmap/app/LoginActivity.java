@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
             if (lastCrash != null) {
                 crashPrefs.edit().remove("last_crash").apply();
                 new androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setTitle("Relatorio de Erro (Crash Log)")
+                        .setTitle("Relatório de Erro (Crash Log)")
                         .setMessage("O aplicativo crashou no último teste com o seguinte erro:\n\n" + lastCrash)
                         .setPositiveButton("Ok", null)
                         .setNeutralButton("Copiar Erro", (dialog, which) -> {
@@ -117,12 +117,12 @@ public class LoginActivity extends AppCompatActivity {
                 btnGoogleSignIn.setOnClickListener(v -> signInWithGoogle());
             } else {
                 btnGoogleSignIn.setEnabled(false);
-                btnGoogleSignIn.setText("Google Sign-In nao configurado");
+                btnGoogleSignIn.setText("Google Sign-In não configurado");
             }
         } catch (Exception e) {
             Log.w(TAG, "Failed to configure Google Sign-In", e);
             btnGoogleSignIn.setEnabled(false);
-            btnGoogleSignIn.setText("Google Sign-In nao disponivel");
+            btnGoogleSignIn.setText("Google Sign-In não disponível");
         }
         btnLogin.setOnClickListener(v -> attemptLogin());
         tvRegister.setOnClickListener(v -> {
@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(this, RegisterActivity.class));
             } catch (Exception e) {
                 Log.e(TAG, "Error navigating to RegisterActivity", e);
-                Toast.makeText(this, "Erro ao abrir tela de cadastro", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir a tela de cadastro.", Toast.LENGTH_SHORT).show();
             }
         });
         tvForgotPassword.setOnClickListener(v -> {
@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ForgotPasswordActivity.class));
             } catch (Exception e) {
                 Log.e(TAG, "Error navigating to ForgotPasswordActivity", e);
-                Toast.makeText(this, "Erro ao abrir recuperacao de senha", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao abrir a recuperação de senha.", Toast.LENGTH_SHORT).show();
             }
         });
         tvGuest.setOnClickListener(v -> {
@@ -147,14 +147,14 @@ public class LoginActivity extends AppCompatActivity {
                 navigateToHome();
             } catch (Exception e) {
                 Log.e(TAG, "Error entering as guest", e);
-                Toast.makeText(this, "Erro ao entrar como convidado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Erro ao entrar como convidado.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void signInWithGoogle() {
         if (!isGoogleSignInConfigured || googleSignInClient == null) {
-            Toast.makeText(this, "Google Sign-In nao esta configurado.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Google Sign-In não está configurado.", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
@@ -180,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
             if (e.getStatusCode() == 12501) {
                 Toast.makeText(this, "Login com Google cancelado.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Erro ao entrar com Google (codigo: " + e.getStatusCode() + "). Tente novamente.",
+                Toast.makeText(this, "Erro ao entrar com o Google (código: " + e.getStatusCode() + "). Tente novamente.",
                         Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
@@ -191,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(String idToken) {
         if (firebaseAuth == null) {
-            Toast.makeText(this, "Firebase nao esta disponivel. Use login com email.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Firebase não está disponível. Use o login com e-mail.", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
@@ -204,21 +204,21 @@ public class LoginActivity extends AppCompatActivity {
                                 if (firebaseUser != null) {
                                     handleGoogleUser(firebaseUser);
                                 } else {
-                                    Toast.makeText(this, "Erro: usuario nao encontrado apos autenticacao.",
+                                    Toast.makeText(this, "Erro: usuário não encontrado após autenticação.",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 Log.w(TAG, "Firebase Auth falhou", task.getException());
-                                Toast.makeText(this, "Erro na autenticacao com Google.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, "Erro na autenticação com o Google.", Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Error processing Firebase auth result", e);
-                            Toast.makeText(this, "Erro ao processar autenticacao.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Erro ao processar a autenticação.", Toast.LENGTH_SHORT).show();
                         }
                     });
         } catch (Exception e) {
             Log.e(TAG, "Error in firebaseAuthWithGoogle", e);
-            Toast.makeText(this, "Erro na autenticacao. Tente novamente.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro na autenticação. Tente novamente.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -227,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
             String email = firebaseUser.getEmail();
             String name = firebaseUser.getDisplayName();
             if (name == null || name.isEmpty())
-                name = "Usuario Google";
+                name = "Usuário Google";
             if (email == null || email.isEmpty()) {
                 Toast.makeText(this, "Erro: conta Google sem e-mail. Use login com senha.", Toast.LENGTH_SHORT).show();
                 return;
@@ -274,17 +274,17 @@ public class LoginActivity extends AppCompatActivity {
         String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
             User user = dbHelper.getUserByEmail(email);
             if (user == null) {
-                Toast.makeText(this, "Usuario nao encontrado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Usuário não encontrado.", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
-                Toast.makeText(this, "Senha incorreta", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Senha incorreta.", Toast.LENGTH_SHORT).show();
                 return;
             }
             session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
@@ -304,7 +304,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
         } catch (Exception e) {
             Log.e(TAG, "Error navigating to HomeActivity", e);
-            Toast.makeText(this, "Erro ao abrir tela principal", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao abrir a tela principal.", Toast.LENGTH_SHORT).show();
         }
     }
 }

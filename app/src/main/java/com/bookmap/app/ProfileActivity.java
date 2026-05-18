@@ -57,7 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnLogout = findViewById(R.id.btnLogout);
-        String[] languages = { "Portugues", "English", "Espanol" };
+        String[] languages = { "Português", "English", "Español" };
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, languages);
         spinnerLanguage.setAdapter(adapter);
@@ -78,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             } catch (Exception e) {
                 android.util.Log.e("ProfileActivity", "Error during logout", e);
-                android.widget.Toast.makeText(this, "Erro ao sair", android.widget.Toast.LENGTH_SHORT).show();
+                android.widget.Toast.makeText(this, "Erro ao sair.", android.widget.Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -121,7 +121,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (cameraIntent != null) {
             startActivityForResult(cameraIntent, PhotoHelper.REQUEST_CAMERA);
         } else {
-            Toast.makeText(this, "Erro ao abrir camera", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao abrir a câmera.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -138,7 +138,7 @@ public class ProfileActivity extends AppCompatActivity {
             dbHelper.updateUser(user);
             imgAvatar.setImageResource(0);
             imgAvatar.setBackgroundColor(getResources().getColor(R.color.gray_text));
-            Toast.makeText(this, "Foto removida", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Foto removida!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -150,7 +150,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
-                Toast.makeText(this, "Permissao da camera negada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permissão da câmera negada.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -214,7 +214,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
         String lang = user.getLanguage();
         if (lang != null) {
-            String[] languages = { "Portugues", "English", "Espanol" };
+            String[] languages = { "Português", "English", "Español" };
             for (int i = 0; i < languages.length; i++) {
                 if (languages[i].equals(lang)) {
                     spinnerLanguage.setSelection(i);
@@ -230,7 +230,7 @@ public class ProfileActivity extends AppCompatActivity {
         String genres = editGenres.getText().toString().trim();
         String language = spinnerLanguage.getSelectedItem().toString();
         if (name.isEmpty()) {
-            Toast.makeText(this, "Nome nao pode estar vazio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "O nome não pode estar vazio.", Toast.LENGTH_SHORT).show();
             return;
         }
         User user = dbHelper.getUserById(session.getUserId());
@@ -245,7 +245,7 @@ public class ProfileActivity extends AppCompatActivity {
             tvUserName.setText(name);
             Toast.makeText(this, "Perfil atualizado!", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Erro ao salvar perfil", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao salvar o perfil.", Toast.LENGTH_SHORT).show();
         }
     }
 }

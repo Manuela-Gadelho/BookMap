@@ -44,19 +44,19 @@ public class ReportActivity extends AppCompatActivity {
 
     private void submitReport() {
         if (!session.isLoggedIn()) {
-            Toast.makeText(this, "Faca login para denunciar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Faça login para denunciar.", Toast.LENGTH_SHORT).show();
             return;
         }
         String reason = editReason.getText().toString().trim();
         int selectedId = radioReportType.getCheckedRadioButtonId();
         if (selectedId == -1) {
-            Toast.makeText(this, "Selecione o tipo de denuncia", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Selecione o tipo de denúncia.", Toast.LENGTH_SHORT).show();
             return;
         }
         RadioButton selected = findViewById(selectedId);
         String type = selected.getText().toString();
         if (reason.isEmpty()) {
-            Toast.makeText(this, "Descreva o motivo da denuncia", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Descreva o motivo da denúncia.", Toast.LENGTH_SHORT).show();
             return;
         }
         long result = dbHelper.insertReport(
@@ -66,10 +66,10 @@ public class ReportActivity extends AppCompatActivity {
                 contentType,
                 type + ": " + reason);
         if (result > 0) {
-            Toast.makeText(this, "Denuncia enviada com sucesso!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Denúncia enviada com sucesso!", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            Toast.makeText(this, "Erro ao enviar denuncia", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erro ao enviar a denúncia.", Toast.LENGTH_SHORT).show();
         }
     }
 }

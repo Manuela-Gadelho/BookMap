@@ -53,19 +53,19 @@ public class RegisterActivity extends AppCompatActivity {
         String password = editPassword.getText().toString().trim();
         String confirmPassword = editConfirmPassword.getText().toString().trim();
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Preencha todos os campos obrigatorios", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Preencha todos os campos obrigatórios.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "As senhas nao coincidem", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "As senhas não coincidem.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (password.length() < 6) {
-            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (dbHelper.getUserByEmail(email) != null) {
-            Toast.makeText(this, "Este e-mail ja esta cadastrado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Este e-mail já está cadastrado.", Toast.LENGTH_SHORT).show();
             return;
         }
         List<String> genres = new ArrayList<>();
@@ -76,7 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (checkRomance.isChecked())
             genres.add("Romance");
         if (checkFiccao.isChecked())
-            genres.add("Ficcao Cientifica");
+            genres.add("Ficção Científica");
         if (checkTecnologia.isChecked())
             genres.add("Tecnologia");
         if (checkLitBrasileira.isChecked())
