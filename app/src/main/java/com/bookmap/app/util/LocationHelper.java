@@ -130,24 +130,30 @@ public class LocationHelper {
 
     private void useLocationManagerFallback(LocationUpdateListener listener) {
         try {
-            android.location.LocationManager locationManager = (android.location.LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            android.location.LocationManager locationManager = (android.location.LocationManager) context
+                    .getSystemService(Context.LOCATION_SERVICE);
             if (locationManager != null) {
                 boolean isGpsEnabled = locationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
-                boolean isNetworkEnabled = locationManager.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
-                
+                boolean isNetworkEnabled = locationManager
+                        .isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER);
+
                 android.location.Location location = null;
                 if (isNetworkEnabled) {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                            || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                        location = locationManager.getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER);
+                    if (ActivityCompat.checkSelfPermission(context,
+                            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                            || ActivityCompat.checkSelfPermission(context,
+                                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        location = locationManager
+                                .getLastKnownLocation(android.location.LocationManager.NETWORK_PROVIDER);
                     }
                 }
                 if (location == null && isGpsEnabled) {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(context,
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         location = locationManager.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER);
                     }
                 }
-                
+
                 if (location != null) {
                     saveLastLocation(location.getLatitude(), location.getLongitude());
                     if (listener != null) {
@@ -159,7 +165,7 @@ public class LocationHelper {
         } catch (Exception e) {
             Log.w(TAG, "LocationManager fallback failed", e);
         }
-        
+
         if (listener != null) {
             listener.onLocationError("Usando localizacao aproximada");
         }
