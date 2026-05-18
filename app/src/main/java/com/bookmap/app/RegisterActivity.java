@@ -78,9 +78,9 @@ public class RegisterActivity extends AppCompatActivity {
         }
         String favoriteGenres = String.join(", ", selectedGenres);
         String passwordHash = PasswordUtil.hashPassword(password);
-        
+
         Toast.makeText(this, "Criando conta...", Toast.LENGTH_SHORT).show();
-        
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -88,7 +88,8 @@ public class RegisterActivity extends AppCompatActivity {
                         if (userId > 0) {
                             SessionManager session = new SessionManager(RegisterActivity.this);
                             session.createLoginSession(userId, name, email, "READER");
-                            Toast.makeText(RegisterActivity.this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Conta criada com sucesso!", Toast.LENGTH_SHORT)
+                                    .show();
                             try {
                                 Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -98,11 +99,14 @@ public class RegisterActivity extends AppCompatActivity {
                                 android.util.Log.e("RegisterActivity", "Error navigating to HomeActivity", e);
                             }
                         } else {
-                            Toast.makeText(RegisterActivity.this, "Erro ao salvar perfil no banco local.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Erro ao salvar perfil no banco local.",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        String errMsg = task.getException() != null ? task.getException().getMessage() : "Erro desconhecido";
-                        Toast.makeText(RegisterActivity.this, "Erro ao criar conta no Firebase: " + errMsg, Toast.LENGTH_SHORT).show();
+                        String errMsg = task.getException() != null ? task.getException().getMessage()
+                                : "Erro desconhecido";
+                        Toast.makeText(RegisterActivity.this, "Erro ao criar conta no Firebase: " + errMsg,
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }

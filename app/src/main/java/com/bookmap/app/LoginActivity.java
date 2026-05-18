@@ -294,16 +294,17 @@ public class LoginActivity extends AppCompatActivity {
             }
             return;
         }
-        
+
         Toast.makeText(this, "Autenticando...", Toast.LENGTH_SHORT).show();
-        
+
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         try {
                             User user = dbHelper.getUserByEmail(email);
                             if (user != null) {
-                                session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
+                                session.createLoginSession(user.getId(), user.getName(), user.getEmail(),
+                                        user.getRole());
                                 Toast.makeText(this, "Bem-vindo, " + user.getName() + "!", Toast.LENGTH_SHORT).show();
                                 navigateToHome();
                             } else {
@@ -323,12 +324,15 @@ public class LoginActivity extends AppCompatActivity {
                             if (user != null && PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
                                 firebaseAuth.createUserWithEmailAndPassword(email, password)
                                         .addOnCompleteListener(migrationTask -> {
-                                            session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
-                                            Toast.makeText(this, "Conta migrada e conectada!", Toast.LENGTH_SHORT).show();
+                                            session.createLoginSession(user.getId(), user.getName(), user.getEmail(),
+                                                    user.getRole());
+                                            Toast.makeText(this, "Conta migrada e conectada!", Toast.LENGTH_SHORT)
+                                                    .show();
                                             navigateToHome();
                                         });
                             } else {
-                                String errMsg = task.getException() != null ? task.getException().getMessage() : "Usuário ou senha incorretos.";
+                                String errMsg = task.getException() != null ? task.getException().getMessage()
+                                        : "Usuário ou senha incorretos.";
                                 Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception e) {

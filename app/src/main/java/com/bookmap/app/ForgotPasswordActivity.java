@@ -18,14 +18,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
-        
+
         mAuth = FirebaseAuth.getInstance();
-        
+
         editEmail = findViewById(R.id.editEmail);
         btnResetPassword = findViewById(R.id.btnResetPassword);
         tvStatus = findViewById(R.id.tvStatus);
         TextView btnBack = findViewById(R.id.btnBack);
-        
+
         btnResetPassword.setOnClickListener(v -> sendResetEmail());
         btnBack.setOnClickListener(v -> finish());
     }
@@ -36,7 +36,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             Toast.makeText(this, "Digite seu e-mail", Toast.LENGTH_SHORT).show();
             return;
         }
-        
+
         tvStatus.setText("Enviando e-mail de recuperação...");
         btnResetPassword.setEnabled(false);
 
@@ -45,16 +45,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     btnResetPassword.setEnabled(true);
                     if (task.isSuccessful()) {
                         tvStatus.setText("Link de redefinição enviado! Verifique seu e-mail.");
-                        Toast.makeText(ForgotPasswordActivity.this, 
+                        Toast.makeText(ForgotPasswordActivity.this,
                                 "E-mail de recuperação enviado com sucesso!", Toast.LENGTH_LONG).show();
                     } else {
-                        String errorMessage = task.getException() != null ? 
-                                task.getException().getMessage() : "Erro desconhecido";
+                        String errorMessage = task.getException() != null ? task.getException().getMessage()
+                                : "Erro desconhecido";
                         tvStatus.setText("Erro ao enviar: " + errorMessage);
-                        Toast.makeText(ForgotPasswordActivity.this, 
+                        Toast.makeText(ForgotPasswordActivity.this,
                                 "Falha ao enviar e-mail: " + errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
     }
 }
-
