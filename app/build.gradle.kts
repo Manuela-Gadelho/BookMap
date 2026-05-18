@@ -65,6 +65,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // CircleImageView for profile photos
     implementation("de.hdodenhof:circleimageview:3.1.0")
