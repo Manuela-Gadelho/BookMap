@@ -31,6 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         dbHelper = DatabaseHelper.getInstance(this);
         mAuth = FirebaseAuth.getInstance();
+        mAuth.setLanguageCode("pt-BR");
         editName = findViewById(R.id.editName);
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
@@ -84,20 +85,35 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        com.google.firebase.auth.FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        if (firebaseUser != null) {
+                            firebaseUser.sendEmailVerification()
+                                    .addOnCompleteListener(verificationTask -> {
+                                        if (verificationTask.isSuccessful()) {
+                                            Toast.makeText(RegisterActivity.this,
+                                                    "E-mail de verificação enviado! Verifique sua caixa de entrada.",
+                                                    Toast.LENGTH_LONG).show();
+                                        } else {
+                                            android.util.Log.e("RegisterActivity",
+                                                    "Erro ao enviar e-mail de verificação",
+                                                    verificationTask.getException());
+                                        }
+                                    });
+                        }
                         long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER");
                         if (userId > 0) {
-                            SessionManager session = new SessionManager(RegisterActivity.this);
-                            session.createLoginSession(userId, name, email, "READER");
-                            Toast.makeText(RegisterActivity.this, "Conta criada com sucesso!", Toast.LENGTH_SHORT)
+                            new android.app.AlertDialog.Builder(RegisterActivity.this)
+                                    .setTitle("Conta Criada!")
+                                    .setMessage(
+                                            "Sua conta foi criada com sucesso. Enviamos um e-mail de verificação para "
+                                                    + email
+                                                    + ". Por favor, confirme seu cadastro clicando no link enviado ao seu e-mail antes de fazer login.")
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", (dialog, which) -> {
+                                        mAuth.signOut();
+                                        finish();
+                                    })
                                     .show();
-                            try {
-                                Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
-                            } catch (Exception e) {
-                                android.util.Log.e("RegisterActivity", "Error navigating to HomeActivity", e);
-                            }
                         } else {
                             Toast.makeText(RegisterActivity.this, "Erro ao salvar perfil no banco local.",
                                     Toast.LENGTH_SHORT).show();

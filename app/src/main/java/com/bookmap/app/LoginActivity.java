@@ -300,6 +300,13 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                        if (firebaseUser != null && !firebaseUser.isEmailVerified()) {
+                            Toast.makeText(this, "Por favor, confirme seu cadastro no link enviado para seu e-mail.",
+                                    Toast.LENGTH_LONG).show();
+                            firebaseAuth.signOut();
+                            return;
+                        }
                         try {
                             User user = dbHelper.getUserByEmail(email);
                             if (user != null) {
