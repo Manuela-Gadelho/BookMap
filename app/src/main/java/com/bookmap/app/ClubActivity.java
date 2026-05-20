@@ -1,5 +1,6 @@
 package com.bookmap.app;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +27,14 @@ public class ClubActivity extends AppCompatActivity {
     private SessionManager session;
     private long clubId;
 
+    private TextView tvClubName, tvClubDescription, tvClubType;
+    private RecyclerView recyclerMembers, recyclerEvents;
+    private UserAdapter memberAdapter;
+    private EventAdapter eventAdapter;
+    private TextView tvNoEvents;
+    private TextView btnJoinClub;
+    private TextView btnCreateEvent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,29 +46,20 @@ public class ClubActivity extends AppCompatActivity {
             finish();
             return;
         }
-        Club club = dbHelper.getClubById(clubId);
-        if (club == null) {
-            finish();
-            return;
-        }
+
         TextView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
-        TextView tvClubName = findViewById(R.id.tvClubName);
-        TextView tvClubDescription = findViewById(R.id.tvClubDescription);
-        TextView tvClubType = findViewById(R.id.tvClubType);
-        tvClubName.setText(club.getName());
-        tvClubDescription.setText(club.getDescription());
-        tvClubType.setText(club.isPublic() ? "Público" : "Privado");
-        RecyclerView recyclerMembers = findViewById(R.id.recyclerMembers);
+        tvClubName = findViewById(R.id.tvClubName);
+        tvClubDescription = findViewById(R.id.tvClubDescription);
+        tvClubType = findViewById(R.id.tvClubType);
+        recyclerMembers = findViewById(R.id.recyclerMembers);
+        recyclerEvents = findViewById(R.id.recyclerEvents);
+        tvNoEvents = findViewById(R.id.tvNoEvents);
+        btnJoinClub = findViewById(R.id.btnJoinClub);
+        btnCreateEvent = findViewById(R.id.btnCreateEvent);
+
         recyclerMembers.setLayoutManager(new LinearLayoutManager(this));
-        List<ClubMember> clubMembers = dbHelper.getClubMembers(clubId);
-        List<User> memberUsers = new ArrayList<>();
-        for (ClubMember cm : clubMembers) {
-            User u = dbHelper.getUserById(cm.getUserId());
-            if (u != null)
-                memberUsers.add(u);
-        }
-        UserAdapter memberAdapter = new UserAdapter(memberUsers, user -> {
+        memberAdapter = new UserAdapter(new ArrayList<>(), user -> {
             try {
                 Intent intent = new Intent(this, PublicProfileActivity.class);
                 intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
@@ -70,6 +70,48 @@ public class ClubActivity extends AppCompatActivity {
         }, false);
         recyclerMembers.setAdapter(memberAdapter);
 
+        recyclerEvents.setLayoutManager(new LinearLayoutManager(this));
+        eventAdapter = new EventAdapter(new ArrayList<>(), event -> {
+            try {
+                Intent intent = new Intent(this, EventActivity.class);
+                intent.putExtra(EventActivity.EXTRA_EVENT_ID, event.getId());
+                startActivity(intent);
+            } catch (Exception e) {
+                android.util.Log.e("ClubActivity", "Error opening EventActivity", e);
+            }
+        });
+        recyclerEvents.setAdapter(eventAdapter);
+
+        loadClubDetails();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadClubDetails();
+    }
+
+    private void loadClubDetails() {
+        Club club = dbHelper.getClubById(clubId);
+        if (club == null) {
+            finish();
+            return;
+        }
+        tvClubName.setText(club.getName());
+        tvClubDescription.setText(club.getDescription());
+        tvClubType.setText(club.isPublic() ? "Público" : "Privado");
+
+        // Load members
+        List<ClubMember> clubMembers = dbHelper.getClubMembers(clubId);
+        List<User> memberUsers = new ArrayList<>();
+        for (ClubMember cm : clubMembers) {
+            User u = dbHelper.getUserById(cm.getUserId());
+            if (u != null)
+                memberUsers.add(u);
+        }
+        memberAdapter.updateData(memberUsers);
+
+        // Sync cloud members
         try {
             com.bookmap.app.database.FirebaseSyncHelper syncHelper = com.bookmap.app.database.FirebaseSyncHelper
                     .getInstance(this);
@@ -92,26 +134,33 @@ public class ClubActivity extends AppCompatActivity {
         } catch (Exception e) {
             android.util.Log.w("ClubActivity", "Could not sync club members", e);
         }
-        RecyclerView recyclerEvents = findViewById(R.id.recyclerEvents);
-        recyclerEvents.setLayoutManager(new LinearLayoutManager(this));
+
+        // Load events
         List<Event> events = dbHelper.getClubEvents(clubId);
-        EventAdapter eventAdapter = new EventAdapter(events);
-        recyclerEvents.setAdapter(eventAdapter);
-        TextView tvNoEvents = findViewById(R.id.tvNoEvents);
+        eventAdapter.updateData(events);
         if (events.isEmpty()) {
             tvNoEvents.setVisibility(View.VISIBLE);
         } else {
             tvNoEvents.setVisibility(View.GONE);
         }
-        TextView btnJoinClub = findViewById(R.id.btnJoinClub);
-        TextView btnCreateEvent = findViewById(R.id.btnCreateEvent);
+
+        // Action buttons
         if (session.isLoggedIn()) {
+            boolean isCreator = club.getCreatorId() == session.getUserId();
             boolean isMember = dbHelper.getClubMember(clubId, session.getUserId()) != null;
-            if (isMember) {
-                btnJoinClub.setText("Membro");
+
+            if (isCreator) {
+                btnJoinClub.setText("Organizador");
                 btnJoinClub.setEnabled(false);
                 btnCreateEvent.setVisibility(View.VISIBLE);
+            } else if (isMember) {
+                btnJoinClub.setText("Membro");
+                btnJoinClub.setEnabled(false);
+                btnCreateEvent.setVisibility(View.GONE);
             } else {
+                btnJoinClub.setVisibility(View.VISIBLE);
+                btnJoinClub.setEnabled(true);
+                btnJoinClub.setText("SOLICITAR ENTRADA NO CLUBE");
                 btnJoinClub.setOnClickListener(v -> {
                     long result = dbHelper.addClubMember(clubId, session.getUserId(), "MEMBER", "PENDING");
                     if (result > 0) {
@@ -128,6 +177,7 @@ public class ClubActivity extends AppCompatActivity {
                 });
                 btnCreateEvent.setVisibility(View.GONE);
             }
+
             btnCreateEvent.setOnClickListener(v -> {
                 try {
                     Intent intent = new Intent(this, EventActivity.class);
@@ -137,9 +187,41 @@ public class ClubActivity extends AppCompatActivity {
                     android.util.Log.e("ClubActivity", "Error opening EventActivity", e);
                 }
             });
+
+            // Edit / Delete actions
+            View layoutClubCreatorActions = findViewById(R.id.layoutClubCreatorActions);
+            Button btnEditClub = findViewById(R.id.btnEditClub);
+            Button btnDeleteClub = findViewById(R.id.btnDeleteClub);
+
+            if (isCreator) {
+                layoutClubCreatorActions.setVisibility(View.VISIBLE);
+                btnEditClub.setOnClickListener(v -> {
+                    Intent intent = new Intent(this, CreateClubActivity.class);
+                    intent.putExtra("club_id", clubId);
+                    startActivity(intent);
+                });
+                btnDeleteClub.setOnClickListener(v -> {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Excluir Clube")
+                            .setMessage("Tem certeza de que deseja excluir este clube?")
+                            .setPositiveButton("Sim", (dialog, which) -> {
+                                if (dbHelper.deleteClub(clubId)) {
+                                    Toast.makeText(this, "Clube excluído com sucesso!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(this, "Erro ao excluir o clube.", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton("Não", null)
+                            .show();
+                });
+            } else {
+                layoutClubCreatorActions.setVisibility(View.GONE);
+            }
         } else {
             btnJoinClub.setVisibility(View.GONE);
             btnCreateEvent.setVisibility(View.GONE);
+            findViewById(R.id.layoutClubCreatorActions).setVisibility(View.GONE);
         }
     }
 }

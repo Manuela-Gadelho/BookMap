@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
@@ -70,6 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "cover_path TEXT DEFAULT '', " +
                 "genre TEXT DEFAULT '', " +
                 "isbn TEXT DEFAULT '', " +
+                "creator_id INTEGER DEFAULT 0, " +
                 "created_at TEXT DEFAULT (datetime('now')))");
         db.execSQL("CREATE TABLE " + TABLE_USER_BOOKS + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -325,7 +326,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public long insertBook(String title, String author, String synopsis,
-            String coverPath, String genre, String isbn) {
+            String coverPath, String genre, String isbn, long creatorId) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", title);
@@ -334,6 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("cover_path", coverPath);
         values.put("genre", genre);
         values.put("isbn", isbn);
+        values.put("creator_id", creatorId);
         return db.insert(TABLE_BOOKS, null, values);
     }
 
@@ -384,6 +386,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         book.setGenre(cursor.getString(cursor.getColumnIndexOrThrow("genre")));
         book.setIsbn(cursor.getString(cursor.getColumnIndexOrThrow("isbn")));
         book.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
+        int creatorIdIdx = cursor.getColumnIndex("creator_id");
+        if (creatorIdIdx >= 0) {
+            book.setCreatorId(cursor.getLong(creatorIdIdx));
+        }
         return book;
     }
 
@@ -889,5 +895,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return userBook;
     }
-}
 
+    public boolean updateBook(long bookId, String title, String author, String synopsis,
+            String coverPath, String genre, String isbn) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("title", title);
+        values.put("author", author);
+        values.put("synopsis", synopsis);
+        if (coverPath != null) {
+            values.put("cover_path", coverPath);
+        }
+        values.put("genre", genre);
+        values.put("isbn", isbn);
+        return db.update(TABLE_BOOKS, values, "id = ?", new String[] { String.valueOf(bookId) }) > 0;
+    }
+
+    public boolean deleteBook(long bookId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_REVIEWS, "book_id = ?", new String[] { String.valueOf(bookId) });
+        db.delete(TABLE_USER_BOOKS, "book_id = ?", new String[] { String.valueOf(bookId) });
+        db.delete(TABLE_EVENTS, "book_id = ?", new String[] { String.valueOf(bookId) });
+        return db.delete(TABLE_BOOKS, "id = ?", new String[] { String.valueOf(bookId) }) > 0;
+    }
+
+    public boolean updateClub(long clubId, String name, String description, boolean isPublic, String bannerPath) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("name", name);
+        values.put("description", description);
+        values.put("is_public", isPublic ? 1 : 0);
+        if (bannerPath != null) {
+            values.put("banner_path", bannerPath);
+        }
+        return db.update(TABLE_CLUBS, values, "id = ?", new String[] { String.valueOf(clubId) }) > 0;
+    }
+
+    public boolean deleteClub(long clubId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_EVENTS, "club_id = ?", new String[] { String.valueOf(clubId) });
+        db.delete(TABLE_CLUB_MEMBERS, "club_id = ?", new String[] { String.valueOf(clubId) });
+        return db.delete(TABLE_CLUBS, "id = ?", new String[] { String.valueOf(clubId) }) > 0;
+    }
+
+    public boolean updateEvent(long eventId, String title, String description, String dateTime, String location,
+            Long bookId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("title", title);
+        values.put("description", description);
+        values.put("date_time", dateTime);
+        values.put("location", location);
+        if (bookId != null) {
+            values.put("book_id", bookId);
+        } else {
+            values.putNull("book_id");
+        }
+        return db.update(TABLE_EVENTS, values, "id = ?", new String[] { String.valueOf(eventId) }) > 0;
+    }
+
+    public boolean deleteEvent(long eventId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(TABLE_EVENTS, "id = ?", new String[] { String.valueOf(eventId) }) > 0;
+    }
+
+    public Event getEventById(long id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_EVENTS, null, "id = ?",
+                new String[] { String.valueOf(id) }, null, null, null);
+        Event event = null;
+        if (cursor.moveToFirst()) {
+            event = cursorToEvent(cursor);
+        }
+        cursor.close();
+        return event;
+    }
+}

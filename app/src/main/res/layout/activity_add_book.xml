@@ -19,7 +19,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
             <TextView
-                android:id="@+id/btnBack" android:visibility="gone"
+                android:id="@+id/btnBack" android:visibility="visible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="&lt;"
@@ -27,6 +27,7 @@
                 android:textSize="24sp"
                 android:paddingRight="16dp"/>
             <TextView
+                android:id="@+id/tvHeaderTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Adicionar Livro"
@@ -136,6 +137,7 @@
                 android:minHeight="52dp"
                 android:layout_marginBottom="16dp"/>
             <TextView
+                android:id="@+id/tvStatusLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Status de Leitura"

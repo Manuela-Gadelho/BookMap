@@ -82,6 +82,7 @@ public class FirebaseSyncHelper {
         bookData.put("genre", book.getGenre() != null ? book.getGenre() : "");
         bookData.put("isbn", book.getIsbn() != null ? book.getIsbn() : "");
         bookData.put("cover_path", book.getCoverPath() != null ? book.getCoverPath() : "");
+        bookData.put("creator_id", book.getCreatorId());
         firestore.collection(COLLECTION_BOOKS)
                 .document(String.valueOf(book.getId()))
                 .set(bookData, SetOptions.merge())
@@ -171,6 +172,7 @@ public class FirebaseSyncHelper {
                         String genre = doc.getString("genre");
                         String isbn = doc.getString("isbn");
                         String coverPath = doc.getString("cover_path");
+                        Long creatorId = doc.getLong("creator_id");
                         if (title != null && author != null) {
                             List<Book> existing = dbHelper.searchBooks(title);
                             boolean found = false;
@@ -185,7 +187,8 @@ public class FirebaseSyncHelper {
                                         synopsis != null ? synopsis : "",
                                         coverPath != null ? coverPath : "",
                                         genre != null ? genre : "",
-                                        isbn != null ? isbn : "");
+                                        isbn != null ? isbn : "",
+                                        creatorId != null ? creatorId : 0L);
                             }
                         }
                     }
@@ -365,4 +368,3 @@ public class FirebaseSyncHelper {
         void onComplete(boolean success);
     }
 }
-

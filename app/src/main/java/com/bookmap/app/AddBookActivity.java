@@ -34,6 +34,7 @@ public class AddBookActivity extends AppCompatActivity {
     private SessionManager session;
     private PhotoHelper photoHelper;
     private String coverPath = "";
+    private long bookId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,37 @@ public class AddBookActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveBook());
         btnAddCover.setOnClickListener(v -> showCoverOptions());
         imgCover.setOnClickListener(v -> showCoverOptions());
+
+        bookId = getIntent().getLongExtra("book_id", -1);
+        if (bookId != -1) {
+            com.bookmap.app.model.Book book = dbHelper.getBookById(bookId);
+            if (book != null) {
+                editTitle.setText(book.getTitle());
+                editAuthor.setText(book.getAuthor());
+                editSynopsis.setText(book.getSynopsis());
+                editIsbn.setText(book.getIsbn());
+                coverPath = book.getCoverPath() != null ? book.getCoverPath() : "";
+                if (book.getGenre() != null) {
+                    for (int i = 0; i < genres.length; i++) {
+                        if (genres[i].equalsIgnoreCase(book.getGenre())) {
+                            spinnerGenre.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+                radioStatus.setVisibility(View.GONE);
+                TextView tvStatusLabel = findViewById(R.id.tvStatusLabel);
+                if (tvStatusLabel != null) {
+                    tvStatusLabel.setVisibility(View.GONE);
+                }
+                TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);
+                if (tvHeaderTitle != null) {
+                    tvHeaderTitle.setText("Editar Livro");
+                }
+                btnSave.setText("Salvar Alterações");
+            }
+        }
+
         if (!coverPath.isEmpty()) {
             PhotoHelper.loadImageIntoView(imgCover, coverPath);
         }
@@ -156,27 +188,47 @@ public class AddBookActivity extends AppCompatActivity {
             Toast.makeText(this, "Título e autor são obrigatórios.", Toast.LENGTH_SHORT).show();
             return;
         }
-        int selectedId = radioStatus.getCheckedRadioButtonId();
-        String status = "QUERO_LER";
-        if (selectedId != -1) {
-            RadioButton selected = findViewById(selectedId);
-            String selectedText = selected.getText().toString();
-            if (selectedText.contains("Lendo"))
-                status = "LENDO";
-            else if (selectedText.contains("Lido"))
-                status = "LIDO";
-            else
-                status = "QUERO_LER";
-        }
-        long bookId = dbHelper.insertBook(title, author, synopsis, coverPath, genre, isbn);
-        if (bookId > 0) {
-            if (session.isLoggedIn()) {
-                dbHelper.insertUserBook(session.getUserId(), bookId, status, 0);
+
+        if (bookId != -1) {
+            boolean success = dbHelper.updateBook(bookId, title, author, synopsis, coverPath, genre, isbn);
+            if (success) {
+                com.bookmap.app.model.Book updatedBook = dbHelper.getBookById(bookId);
+                if (updatedBook != null) {
+                    com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncBookToCloud(updatedBook);
+                }
+                Toast.makeText(this, "Livro atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Erro ao atualizar o livro.", Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(this, "Livro adicionado com sucesso!", Toast.LENGTH_SHORT).show();
-            finish();
         } else {
-            Toast.makeText(this, "Erro ao adicionar o livro.", Toast.LENGTH_SHORT).show();
+            int selectedId = radioStatus.getCheckedRadioButtonId();
+            String status = "QUERO_LER";
+            if (selectedId != -1) {
+                RadioButton selected = findViewById(selectedId);
+                String selectedText = selected.getText().toString();
+                if (selectedText.contains("Lendo"))
+                    status = "LENDO";
+                else if (selectedText.contains("Lido"))
+                    status = "LIDO";
+                else
+                    status = "QUERO_LER";
+            }
+            long newBookId = dbHelper.insertBook(title, author, synopsis, coverPath, genre, isbn,
+                    session.isLoggedIn() ? session.getUserId() : 0);
+            if (newBookId > 0) {
+                com.bookmap.app.model.Book newBook = dbHelper.getBookById(newBookId);
+                if (newBook != null) {
+                    com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncBookToCloud(newBook);
+                }
+                if (session.isLoggedIn()) {
+                    dbHelper.insertUserBook(session.getUserId(), newBookId, status, 0);
+                }
+                Toast.makeText(this, "Livro adicionado com sucesso!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Erro ao adicionar o livro.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

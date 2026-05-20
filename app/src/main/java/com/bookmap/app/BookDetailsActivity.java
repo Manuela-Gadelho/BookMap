@@ -1,5 +1,6 @@
 package com.bookmap.app;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -44,26 +45,12 @@ public class BookDetailsActivity extends AppCompatActivity {
             finish();
             return;
         }
-        Book book = dbHelper.getBookById(bookId);
-        if (book == null) {
-            finish();
-            return;
-        }
         TextView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
-        TextView tvTitle = findViewById(R.id.tvTitle);
-        TextView tvAuthor = findViewById(R.id.tvAuthor);
-        TextView tvGenre = findViewById(R.id.tvGenre);
-        TextView tvSynopsis = findViewById(R.id.tvSynopsis);
-        tvTitle.setText(book.getTitle());
-        tvAuthor.setText(book.getAuthor());
-        tvGenre.setText(book.getGenre());
-        tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
-                ? book.getSynopsis()
-                : "Sem sinopse disponível");
         ratingBarAverage = findViewById(R.id.ratingBarAverage);
         tvAverageRating = findViewById(R.id.tvAverageRating);
         tvReviewCount = findViewById(R.id.tvReviewCount);
+        loadBookDetails();
         loadAverageRating();
         recyclerReviews = findViewById(R.id.recyclerReviews);
         recyclerReviews.setLayoutManager(new LinearLayoutManager(this));
@@ -132,8 +119,57 @@ public class BookDetailsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadBookDetails();
         loadReviews();
         loadAverageRating();
+    }
+
+    private void loadBookDetails() {
+        Book book = dbHelper.getBookById(bookId);
+        if (book == null) {
+            finish();
+            return;
+        }
+        TextView tvTitle = findViewById(R.id.tvTitle);
+        TextView tvAuthor = findViewById(R.id.tvAuthor);
+        TextView tvGenre = findViewById(R.id.tvGenre);
+        TextView tvSynopsis = findViewById(R.id.tvSynopsis);
+        tvTitle.setText(book.getTitle());
+        tvAuthor.setText(book.getAuthor());
+        tvGenre.setText(book.getGenre());
+        tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
+                ? book.getSynopsis()
+                : "Sem sinopse disponível");
+
+        View layoutBookCreatorActions = findViewById(R.id.layoutBookCreatorActions);
+        Button btnEditBook = findViewById(R.id.btnEditBook);
+        Button btnDeleteBook = findViewById(R.id.btnDeleteBook);
+
+        if (session.isLoggedIn() && book.getCreatorId() == session.getUserId()) {
+            layoutBookCreatorActions.setVisibility(View.VISIBLE);
+            btnEditBook.setOnClickListener(v -> {
+                Intent intent = new Intent(this, AddBookActivity.class);
+                intent.putExtra("book_id", bookId);
+                startActivity(intent);
+            });
+            btnDeleteBook.setOnClickListener(v -> {
+                new AlertDialog.Builder(this)
+                        .setTitle("Excluir Livro")
+                        .setMessage("Tem certeza de que deseja excluir este livro?")
+                        .setPositiveButton("Sim", (dialog, which) -> {
+                            if (dbHelper.deleteBook(bookId)) {
+                                Toast.makeText(this, "Livro excluído com sucesso!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            } else {
+                                Toast.makeText(this, "Erro ao excluir o livro.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Não", null)
+                        .show();
+            });
+        } else {
+            layoutBookCreatorActions.setVisibility(View.GONE);
+        }
     }
 
     private void loadAverageRating() {
