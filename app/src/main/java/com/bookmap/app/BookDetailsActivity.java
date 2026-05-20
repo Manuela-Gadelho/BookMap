@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.bookmap.app.model.UserBook;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+
 public class BookDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_BOOK_ID = "book_id";
     private DatabaseHelper dbHelper;
@@ -30,6 +32,7 @@ public class BookDetailsActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private RatingBar ratingBarAverage;
     private TextView tvAverageRating, tvReviewCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,7 +103,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                     if (result > 0) {
                         FirebaseSyncHelper syncHelper = FirebaseSyncHelper.getInstance(this);
                         syncHelper.syncUserBookToCloud(session.getUserId(), bookId, "QUERO_LER", 0);
-                        Toast.makeText(this, "Livro adicionado a sua estante!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Livro adicionado à sua estante!", Toast.LENGTH_SHORT).show();
                         btnAddToShelf.setText("Na sua estante");
                         btnAddToShelf.setEnabled(false);
                         btnUpdateProgress.setVisibility(View.VISIBLE);
@@ -114,7 +117,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-                        Toast.makeText(this, "Livro ja esta na sua estante", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Livro já está na sua estante", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -125,12 +128,14 @@ public class BookDetailsActivity extends AppCompatActivity {
         }
         loadReviews();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         loadReviews();
         loadAverageRating();
     }
+
     private void loadAverageRating() {
         double avg = dbHelper.getBookAverageRating(bookId);
         int count = dbHelper.getBookReviewCount(bookId);
@@ -141,9 +146,10 @@ public class BookDetailsActivity extends AppCompatActivity {
             tvAverageRating.setText(String.format("%.1f", avg));
         }
         if (tvReviewCount != null) {
-            tvReviewCount.setText(count + " avaliação(oes)");
+            tvReviewCount.setText(count + " avaliação(ões)");
         }
     }
+
     private void loadReviews() {
         List<Review> reviews = dbHelper.getBookReviews(bookId);
         reviewAdapter.updateData(reviews);
@@ -154,6 +160,7 @@ public class BookDetailsActivity extends AppCompatActivity {
             tvNoReviews.setVisibility(View.GONE);
         }
     }
+
     private void submitReview() {
         String text = editReviewText.getText().toString().trim();
         int rating = (int) ratingBar.getRating();
@@ -177,4 +184,3 @@ public class BookDetailsActivity extends AppCompatActivity {
         }
     }
 }
-

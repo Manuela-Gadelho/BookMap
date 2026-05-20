@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.bookmap.app.util.FirebaseErrorTranslator;
 import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity {
@@ -326,8 +327,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.e(TAG, "Error logging in local db after Firebase success", e);
                         }
                     } else {
-                        String errMsg = task.getException() != null ? task.getException().getMessage()
-                                : "Usuário ou senha incorretos.";
+                        String errMsg = FirebaseErrorTranslator.translate(task.getException());
                         Toast.makeText(this, errMsg, Toast.LENGTH_LONG).show();
                     }
                 });

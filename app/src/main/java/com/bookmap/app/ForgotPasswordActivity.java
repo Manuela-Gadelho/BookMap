@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.bookmap.app.util.FirebaseErrorTranslator;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText editEmail;
@@ -49,11 +50,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         Toast.makeText(ForgotPasswordActivity.this,
                                 "E-mail de recuperação enviado com sucesso!", Toast.LENGTH_LONG).show();
                     } else {
-                        String errorMessage = task.getException() != null ? task.getException().getMessage()
-                                : "Erro desconhecido";
+                        String errorMessage = FirebaseErrorTranslator.translate(task.getException());
                         tvStatus.setText("Erro ao enviar: " + errorMessage);
                         Toast.makeText(ForgotPasswordActivity.this,
-                                "Falha ao enviar e-mail: " + errorMessage, Toast.LENGTH_LONG).show();
+                                errorMessage, Toast.LENGTH_LONG).show();
                     }
                 });
     }

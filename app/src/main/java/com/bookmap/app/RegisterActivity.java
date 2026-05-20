@@ -13,6 +13,7 @@ import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.PasswordUtil;
 import com.bookmap.app.util.SessionManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.bookmap.app.util.FirebaseErrorTranslator;
 import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,9 +120,8 @@ public class RegisterActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        String errMsg = task.getException() != null ? task.getException().getMessage()
-                                : "Erro desconhecido";
-                        Toast.makeText(RegisterActivity.this, "Erro ao criar conta no Firebase: " + errMsg,
+                        String errMsg = FirebaseErrorTranslator.translate(task.getException());
+                        Toast.makeText(RegisterActivity.this, errMsg,
                                 Toast.LENGTH_SHORT).show();
                     }
                 });

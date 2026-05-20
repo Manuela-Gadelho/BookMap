@@ -115,7 +115,7 @@ public class ClubActivity extends AppCompatActivity {
                 btnJoinClub.setOnClickListener(v -> {
                     long result = dbHelper.addClubMember(clubId, session.getUserId(), "MEMBER", "PENDING");
                     if (result > 0) {
-                        Toast.makeText(this, "Solicitacao enviada!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Solicitação enviada!", Toast.LENGTH_SHORT).show();
                         btnJoinClub.setText("Pendente");
                         btnJoinClub.setEnabled(false);
                         try {
@@ -143,4 +143,3 @@ public class ClubActivity extends AppCompatActivity {
         }
     }
 }
-

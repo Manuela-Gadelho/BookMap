@@ -1,4 +1,5 @@
 package com.bookmap.app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,11 +13,13 @@ import com.bookmap.app.model.ClubMember;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+
 public class NotificationsActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private RecyclerView recyclerNotifications;
     private TextView tvEmpty;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,11 +37,13 @@ public class NotificationsActivity extends AppCompatActivity {
         btnBack.setOnClickListener(v -> finish());
         loadNotifications();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         loadNotifications();
     }
+
     private void loadNotifications() {
         List<ClubMember> pendingRequests = dbHelper.getPendingMemberRequests(session.getUserId());
         if (pendingRequests.isEmpty()) {
@@ -48,24 +53,25 @@ public class NotificationsActivity extends AppCompatActivity {
             tvEmpty.setVisibility(View.GONE);
             recyclerNotifications.setVisibility(View.VISIBLE);
         }
-        com.bookmap.app.adapter.NotificationAdapter adapter =
-                new com.bookmap.app.adapter.NotificationAdapter(pendingRequests,
-                        new com.bookmap.app.adapter.NotificationAdapter.NotificationActionListener() {
-                            @Override
-                            public void onApprove(ClubMember member) {
-                                dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "APPROVED");
-                                Toast.makeText(NotificationsActivity.this,
-                                        "Membro aprovado!", Toast.LENGTH_SHORT).show();
-                                loadNotifications();
-                            }
-                            @Override
-                            public void onReject(ClubMember member) {
-                                dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "REJECTED");
-                                Toast.makeText(NotificationsActivity.this,
-                                        "Solicitacao rejeitada", Toast.LENGTH_SHORT).show();
-                                loadNotifications();
-                            }
-                        });
+        com.bookmap.app.adapter.NotificationAdapter adapter = new com.bookmap.app.adapter.NotificationAdapter(
+                pendingRequests,
+                new com.bookmap.app.adapter.NotificationAdapter.NotificationActionListener() {
+                    @Override
+                    public void onApprove(ClubMember member) {
+                        dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "APPROVED");
+                        Toast.makeText(NotificationsActivity.this,
+                                "Membro aprovado!", Toast.LENGTH_SHORT).show();
+                        loadNotifications();
+                    }
+
+                    @Override
+                    public void onReject(ClubMember member) {
+                        dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "REJECTED");
+                        Toast.makeText(NotificationsActivity.this,
+                                "Solicitação rejeitada", Toast.LENGTH_SHORT).show();
+                        loadNotifications();
+                    }
+                });
         recyclerNotifications.setAdapter(adapter);
     }
 }
