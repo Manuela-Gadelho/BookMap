@@ -33,7 +33,6 @@ public class ProfileActivity extends AppCompatActivity {
     private Spinner spinnerGenres;
     private ChipGroup chipGroupGenres;
     private List<String> selectedGenres = new ArrayList<>();
-    private Spinner spinnerLanguage;
     private TextView tvUserName, tvUserEmail, tvUserRole;
     private ImageView imgAvatar;
     private DatabaseHelper dbHelper;
@@ -57,7 +56,6 @@ public class ProfileActivity extends AppCompatActivity {
         editBio = findViewById(R.id.editBio);
         spinnerGenres = findViewById(R.id.spinnerGenres);
         chipGroupGenres = findViewById(R.id.chipGroupGenres);
-        spinnerLanguage = findViewById(R.id.spinnerLanguage);
         tvUserName = findViewById(R.id.tvUserName);
         tvUserEmail = findViewById(R.id.tvUserEmail);
         tvUserRole = findViewById(R.id.tvUserRole);
@@ -65,10 +63,6 @@ public class ProfileActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnLogout = findViewById(R.id.btnLogout);
-        String[] languages = { "Português", "English", "Español" };
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, languages);
-        spinnerLanguage.setAdapter(adapter);
         loadUserData();
         GenreUIHelper.setupGenreSpinner(this, spinnerGenres, chipGroupGenres, selectedGenres);
         imgAvatar.setOnClickListener(v -> showPhotoOptions());
@@ -226,16 +220,6 @@ public class ProfileActivity extends AppCompatActivity {
         if (user.getPhotoPath() != null && !user.getPhotoPath().isEmpty()) {
             PhotoHelper.loadImageIntoView(imgAvatar, user.getPhotoPath());
         }
-        String lang = user.getLanguage();
-        if (lang != null) {
-            String[] languages = { "Português", "English", "Español" };
-            for (int i = 0; i < languages.length; i++) {
-                if (languages[i].equals(lang)) {
-                    spinnerLanguage.setSelection(i);
-                    break;
-                }
-            }
-        }
     }
 
     private void saveProfile() {
@@ -246,7 +230,6 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
         String genres = String.join(", ", selectedGenres);
-        String language = spinnerLanguage.getSelectedItem().toString();
         if (name.isEmpty()) {
             Toast.makeText(this, "O nome não pode estar vazio.", Toast.LENGTH_SHORT).show();
             return;
@@ -257,7 +240,7 @@ public class ProfileActivity extends AppCompatActivity {
         user.setName(name);
         user.setBio(bio);
         user.setFavoriteGenres(genres);
-        user.setLanguage(language);
+        user.setLanguage("Português");
         if (dbHelper.updateUser(user)) {
             session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
             tvUserName.setText(name);

@@ -44,7 +44,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private RecyclerView recyclerUsers;
     private UserAdapter userAdapter;
     private TextView tvDistance, tvNoUsers, tvLocationStatus;
-    private Spinner spinnerGenre, spinnerLanguage;
+    private Spinner spinnerGenre;
     private SeekBar seekDistance;
     private SwitchCompat switchLocationVisible;
     private double currentLat = 0.0;
@@ -63,7 +63,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         tvNoUsers = findViewById(R.id.tvNoUsers);
         tvLocationStatus = findViewById(R.id.tvLocationStatus);
         spinnerGenre = findViewById(R.id.spinnerGenre);
-        spinnerLanguage = findViewById(R.id.spinnerLanguage);
         seekDistance = findViewById(R.id.seekDistance);
         switchLocationVisible = findViewById(R.id.switchLocationVisible);
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
@@ -72,10 +71,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, genres);
         spinnerGenre.setAdapter(genreAdapter);
-        String[] languages = { "Todos", "Português", "English", "Español" };
-        ArrayAdapter<String> langAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, languages);
-        spinnerLanguage.setAdapter(langAdapter);
         seekDistance.setMax(100);
         seekDistance.setProgress(currentDistance);
         tvDistance.setText(currentDistance + " km");
@@ -106,7 +101,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         };
         spinnerGenre.setOnItemSelectedListener(filterListener);
-        spinnerLanguage.setOnItemSelectedListener(filterListener);
         switchLocationVisible.setChecked(locationHelper.isLocationVisible());
         switchLocationVisible.setOnCheckedChangeListener((buttonView, isChecked) -> {
             locationHelper.setLocationVisible(isChecked);
@@ -215,12 +209,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void loadNearbyUsers() {
         String genre = spinnerGenre.getSelectedItem().toString();
-        String language = spinnerLanguage.getSelectedItem().toString();
         if ("Todos".equals(genre))
             genre = null;
-        if ("Todos".equals(language))
-            language = null;
-        List<User> users = dbHelper.getNearbyUsers(currentLat, currentLng, currentDistance, genre, language);
+        List<User> users = dbHelper.getNearbyUsers(currentLat, currentLng, currentDistance, genre, null);
         if (session.isLoggedIn()) {
             long currentUserId = session.getUserId();
             List<User> filtered = new ArrayList<>();

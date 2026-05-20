@@ -23,6 +23,7 @@ public class GenreUtil {
             "Jovem Adulto (YA)",
             "Literatura Brasileira",
             "Literatura Clássica",
+            "Literatura Estrangeira",
             "Mangás e Quadrinhos",
             "Mistério",
             "Negócios e Finanças",

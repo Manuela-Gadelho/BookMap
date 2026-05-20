@@ -20,6 +20,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forgot_password);
 
         mAuth = FirebaseAuth.getInstance();
+        mAuth.setLanguageCode("pt-BR");
 
         editEmail = findViewById(R.id.editEmail);
         btnResetPassword = findViewById(R.id.btnResetPassword);
