@@ -151,7 +151,7 @@ public class BookDetailsActivity extends AppCompatActivity {
         String fallbackAssetPath = PhotoHelper.getGenreAssetPath(book.getGenre());
         
         if (isbn != null && !isbn.isEmpty()) {
-            String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-L.jpg";
+            String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-L.jpg?default=false";
             Glide.with(this)
                 .load(url)
                 .transform(new CenterCrop(), new RoundedCorners(16))

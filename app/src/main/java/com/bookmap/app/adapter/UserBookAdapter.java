@@ -51,7 +51,7 @@ public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHo
         String fallbackAssetPath = PhotoHelper.getGenreAssetPath(ub.getBookGenre());
         
         if (isbn != null && !isbn.isEmpty()) {
-            String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg";
+            String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg?default=false";
             Glide.with(holder.itemView.getContext())
                 .load(url)
                 .transform(new CenterCrop(), new RoundedCorners(8))
