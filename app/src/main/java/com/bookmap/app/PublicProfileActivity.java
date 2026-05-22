@@ -66,6 +66,7 @@ public class PublicProfileActivity extends AppCompatActivity {
         tvFollowersCount = findViewById(R.id.tvFollowersCount);
         tvFollowingCount = findViewById(R.id.tvFollowingCount);
         btnFollow = findViewById(R.id.btnFollow);
+        View btnMessage = findViewById(R.id.btnMessage);
         
         updateFollowCounters();
         
@@ -74,8 +75,15 @@ public class PublicProfileActivity extends AppCompatActivity {
             updateFollowButton();
             
             btnFollow.setOnClickListener(v -> toggleFollow());
+            
+            btnMessage.setOnClickListener(v -> {
+                Intent intent = new Intent(this, ChatActivity.class);
+                intent.putExtra(ChatActivity.EXTRA_OTHER_USER_ID, profileUserId);
+                startActivity(intent);
+            });
         } else {
             btnFollow.setVisibility(View.GONE);
+            btnMessage.setVisibility(View.GONE);
         }
         
         LinearLayout layoutCurrentReading = findViewById(R.id.layoutCurrentReading);

@@ -103,6 +103,21 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Erro ao abrir a busca.", Toast.LENGTH_SHORT).show();
             }
         });
+        
+        TextView btnInbox = findViewById(R.id.btnInbox);
+        if (btnInbox != null) {
+            btnInbox.setOnClickListener(v -> {
+                try {
+                    if (session.isLoggedIn()) {
+                        startActivity(new Intent(this, InboxActivity.class));
+                    } else {
+                        Toast.makeText(this, "Faça login para acessar mensagens.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("HomeActivity", "Error opening InboxActivity", e);
+                }
+            });
+        }
         btnLendo.setOnClickListener(v -> setFilter("LENDO"));
         btnQueroLer.setOnClickListener(v -> setFilter("QUERO_LER"));
         btnLidos.setOnClickListener(v -> setFilter("LIDO"));

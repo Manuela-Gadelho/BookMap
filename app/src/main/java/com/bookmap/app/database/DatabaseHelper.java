@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_EVENTS = "events";
     public static final String TABLE_REPORTS = "reports";
     public static final String TABLE_FOLLOWERS = "followers";
+    public static final String TABLE_MESSAGES = "messages";
     private static DatabaseHelper instance;
 
     public static synchronized DatabaseHelper getInstance(Context context) {
@@ -143,11 +144,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY (follower_id) REFERENCES " + TABLE_USERS + "(id), " +
                 "FOREIGN KEY (followed_id) REFERENCES " + TABLE_USERS + "(id), " +
                 "UNIQUE(follower_id, followed_id))");
+        db.execSQL("CREATE TABLE " + TABLE_MESSAGES + " (" +
+                "id TEXT PRIMARY KEY, " +
+                "sender_id INTEGER NOT NULL, " +
+                "receiver_id INTEGER NOT NULL, " +
+                "content TEXT NOT NULL, " +
+                "timestamp TEXT NOT NULL, " +
+                "is_read INTEGER DEFAULT 0, " +
+                "FOREIGN KEY (sender_id) REFERENCES " + TABLE_USERS + "(id), " +
+                "FOREIGN KEY (receiver_id) REFERENCES " + TABLE_USERS + "(id))");
         seedData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FOLLOWERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
@@ -1255,6 +1266,79 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return event;
+    }
+
+    // --- Message Methods ---
+
+    public boolean insertMessage(com.bookmap.app.model.Message msg) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", msg.getId());
+        values.put("sender_id", msg.getSenderId());
+        values.put("receiver_id", msg.getReceiverId());
+        values.put("content", msg.getContent());
+        values.put("timestamp", msg.getTimestamp());
+        values.put("is_read", msg.isRead() ? 1 : 0);
+        
+        long result = db.insertWithOnConflict(TABLE_MESSAGES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        return result != -1;
+    }
+
+    public List<com.bookmap.app.model.Message> getMessagesBetween(long user1, long user2) {
+        List<com.bookmap.app.model.Message> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_MESSAGES + 
+                       " WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?) " +
+                       " ORDER BY timestamp ASC";
+        Cursor cursor = db.rawQuery(query, new String[]{
+            String.valueOf(user1), String.valueOf(user2),
+            String.valueOf(user2), String.valueOf(user1)
+        });
+
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(new com.bookmap.app.model.Message(
+                        cursor.getString(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getLong(cursor.getColumnIndexOrThrow("sender_id")),
+                        cursor.getLong(cursor.getColumnIndexOrThrow("receiver_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("content")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("timestamp")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("is_read")) > 0
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
+    }
+
+    public List<com.bookmap.app.model.Message> getInbox(long userId) {
+        List<com.bookmap.app.model.Message> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT m1.* FROM " + TABLE_MESSAGES + " m1 " +
+                       "LEFT JOIN " + TABLE_MESSAGES + " m2 " +
+                       "ON ( " +
+                       "  ((m1.sender_id = m2.sender_id AND m1.receiver_id = m2.receiver_id) OR " +
+                       "   (m1.sender_id = m2.receiver_id AND m1.receiver_id = m2.sender_id)) " +
+                       "  AND m1.timestamp < m2.timestamp " +
+                       ") " +
+                       "WHERE (m1.sender_id = ? OR m1.receiver_id = ?) AND m2.id IS NULL " +
+                       "ORDER BY m1.timestamp DESC";
+        
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                list.add(new com.bookmap.app.model.Message(
+                        cursor.getString(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getLong(cursor.getColumnIndexOrThrow("sender_id")),
+                        cursor.getLong(cursor.getColumnIndexOrThrow("receiver_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("content")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("timestamp")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("is_read")) > 0
+                ));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return list;
     }
 }
 

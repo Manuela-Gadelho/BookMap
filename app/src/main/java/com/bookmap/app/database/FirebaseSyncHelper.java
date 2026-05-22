@@ -384,6 +384,69 @@ public class FirebaseSyncHelper {
                 });
     }
 
+    // --- MESSAGING SYNC ---
+
+    public void pushMessageToCloud(com.bookmap.app.model.Message msg, SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", msg.getId());
+        data.put("sender_id", msg.getSenderId());
+        data.put("receiver_id", msg.getReceiverId());
+        data.put("content", msg.getContent());
+        data.put("timestamp", msg.getTimestamp());
+        data.put("is_read", msg.isRead());
+
+        firestore.collection("messages").document(msg.getId())
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    if (callback != null) callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to push message", e);
+                    if (callback != null) callback.onComplete(false);
+                });
+    }
+
+    public void pullMessagesFromCloud(long myUserId, SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+
+        firestore.collection("messages")
+                .whereEqualTo("receiver_id", myUserId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        try {
+                            String id = doc.getString("id");
+                            Long senderId = doc.getLong("sender_id");
+                            Long receiverId = doc.getLong("receiver_id");
+                            String content = doc.getString("content");
+                            String timestamp = doc.getString("timestamp");
+                            Boolean isRead = doc.getBoolean("is_read");
+
+                            if (id != null && senderId != null && receiverId != null && content != null && timestamp != null) {
+                                com.bookmap.app.model.Message msg = new com.bookmap.app.model.Message(
+                                        id, senderId, receiverId, content, timestamp, isRead != null && isRead
+                                );
+                                dbHelper.insertMessage(msg);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing message sync", e);
+                        }
+                    }
+                    if (callback != null) callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to pull messages", e);
+                    if (callback != null) callback.onComplete(false);
+                });
+    }
+
     public interface SyncCallback {
         void onComplete(boolean success);
     }
