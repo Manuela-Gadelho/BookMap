@@ -18,6 +18,8 @@ import com.bookmap.app.model.ClubMember;
 import com.bookmap.app.model.Event;
 import com.bookmap.app.model.User;
 import com.bookmap.app.util.SessionManager;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +102,30 @@ public class ClubActivity extends AppCompatActivity {
         tvClubName.setText(club.getName());
         tvClubDescription.setText(club.getDescription());
         tvClubType.setText(club.isPublic() ? "Público" : "Privado");
+
+        // Load Creator
+        View layoutClubCreator = findViewById(R.id.layoutClubCreator);
+        android.widget.ImageView imgCreatorPhoto = findViewById(R.id.imgCreatorPhoto);
+        TextView tvCreatorName = findViewById(R.id.tvCreatorName);
+        
+        User creator = dbHelper.getUserById(club.getCreatorId());
+        if (creator != null) {
+            tvCreatorName.setText(creator.getName());
+            if (creator.getPhotoPath() != null && !creator.getPhotoPath().isEmpty()) {
+                Glide.with(this).load(creator.getPhotoPath()).transform(new CircleCrop()).into(imgCreatorPhoto);
+            }
+            layoutClubCreator.setOnClickListener(v -> {
+                try {
+                    Intent intent = new Intent(this, PublicProfileActivity.class);
+                    intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, creator.getId());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    android.util.Log.e("ClubActivity", "Error opening creator profile", e);
+                }
+            });
+        } else {
+            layoutClubCreator.setVisibility(View.GONE);
+        }
 
         // Load members
         List<ClubMember> clubMembers = dbHelper.getClubMembers(clubId);
