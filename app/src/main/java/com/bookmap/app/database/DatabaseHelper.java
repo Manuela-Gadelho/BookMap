@@ -1044,7 +1044,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public UserBook getCurrentReading(long userId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT ub.*, b.title, b.author, b.genre, b.cover_path, b.synopsis " +
+                "SELECT ub.*, b.title, b.author, b.genre, b.cover_path, b.synopsis, b.isbn " +
                         "FROM " + TABLE_USER_BOOKS + " ub " +
                         "INNER JOIN " + TABLE_BOOKS + " b ON ub.book_id = b.id " +
                         "WHERE ub.user_id = ? AND ub.status = 'LENDO' " +
