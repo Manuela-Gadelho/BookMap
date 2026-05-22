@@ -11,6 +11,7 @@ public class UserBook {
     private String bookGenre;
     private String bookCoverPath;
     private String bookSynopsis;
+    private String bookIsbn;
     public UserBook() {}
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -34,4 +35,6 @@ public class UserBook {
     public void setBookCoverPath(String bookCoverPath) { this.bookCoverPath = bookCoverPath; }
     public String getBookSynopsis() { return bookSynopsis; }
     public void setBookSynopsis(String bookSynopsis) { this.bookSynopsis = bookSynopsis; }
+    public String getBookIsbn() { return bookIsbn; }
+    public void setBookIsbn(String bookIsbn) { this.bookIsbn = bookIsbn; }
 }

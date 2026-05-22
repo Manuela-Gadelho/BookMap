@@ -8,6 +8,7 @@ import com.bookmap.app.model.ClubMember;
 import com.bookmap.app.model.Review;
 import com.bookmap.app.model.User;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class FirebaseSyncHelper {
     private static final String COLLECTION_CLUBS = "clubs";
     private static final String COLLECTION_EVENTS = "events";
     private static final String COLLECTION_USER_BOOKS = "user_books";
+    private static final String COLLECTION_FOLLOWERS = "followers";
     private final FirebaseFirestore firestore;
     private final DatabaseHelper dbHelper;
     private boolean isFirebaseAvailable;
@@ -122,6 +124,16 @@ public class FirebaseSyncHelper {
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to sync club to cloud", e));
     }
 
+    public void deleteClubFromCloud(long clubId) {
+        if (!isFirebaseAvailable())
+            return;
+        firestore.collection(COLLECTION_CLUBS)
+                .document(String.valueOf(clubId))
+                .delete()
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Club deleted from cloud: " + clubId))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to delete club from cloud", e));
+    }
+
     public void syncUserBookToCloud(long userId, long bookId, String status, int progress) {
         if (!isFirebaseAvailable())
             return;
@@ -136,6 +148,24 @@ public class FirebaseSyncHelper {
                 .set(data, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "UserBook synced to cloud"))
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to sync user book to cloud", e));
+    }
+    
+    public void syncFollowToCloud(long followerId, long followedId, boolean isFollowing) {
+        if (!isFirebaseAvailable()) return;
+        String docId = followerId + "_" + followedId;
+        if (isFollowing) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("follower_id", followerId);
+            data.put("followed_id", followedId);
+            data.put("timestamp", FieldValue.serverTimestamp());
+            firestore.collection(COLLECTION_FOLLOWERS).document(docId).set(data, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Follow synced to cloud"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Failed to sync follow to cloud", e));
+        } else {
+            firestore.collection(COLLECTION_FOLLOWERS).document(docId).delete()
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Unfollow synced to cloud"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Failed to sync unfollow to cloud", e));
+        }
     }
 
     public void syncAllDataToCloud() {
@@ -361,6 +391,69 @@ public class FirebaseSyncHelper {
                     Log.w(TAG, "Failed to pull club members", e);
                     if (callback != null)
                         callback.onComplete(false);
+                });
+    }
+
+    // --- MESSAGING SYNC ---
+
+    public void pushMessageToCloud(com.bookmap.app.model.Message msg, SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", msg.getId());
+        data.put("sender_id", msg.getSenderId());
+        data.put("receiver_id", msg.getReceiverId());
+        data.put("content", msg.getContent());
+        data.put("timestamp", msg.getTimestamp());
+        data.put("is_read", msg.isRead());
+
+        firestore.collection("messages").document(msg.getId())
+                .set(data)
+                .addOnSuccessListener(aVoid -> {
+                    if (callback != null) callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to push message", e);
+                    if (callback != null) callback.onComplete(false);
+                });
+    }
+
+    public void pullMessagesFromCloud(long myUserId, SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+
+        firestore.collection("messages")
+                .whereEqualTo("receiver_id", myUserId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        try {
+                            String id = doc.getString("id");
+                            Long senderId = doc.getLong("sender_id");
+                            Long receiverId = doc.getLong("receiver_id");
+                            String content = doc.getString("content");
+                            String timestamp = doc.getString("timestamp");
+                            Boolean isRead = doc.getBoolean("is_read");
+
+                            if (id != null && senderId != null && receiverId != null && content != null && timestamp != null) {
+                                com.bookmap.app.model.Message msg = new com.bookmap.app.model.Message(
+                                        id, senderId, receiverId, content, timestamp, isRead != null && isRead
+                                );
+                                dbHelper.insertMessage(msg);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing message sync", e);
+                        }
+                    }
+                    if (callback != null) callback.onComplete(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Failed to pull messages", e);
+                    if (callback != null) callback.onComplete(false);
                 });
     }
 

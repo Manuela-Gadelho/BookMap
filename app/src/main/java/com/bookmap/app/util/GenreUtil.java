@@ -17,7 +17,6 @@ public class GenreUtil {
             "Ficção Científica",
             "Filosofia",
             "História",
-            "Horror / Terror",
             "Humor",
             "Infantil",
             "Jovem Adulto (YA)",
@@ -34,6 +33,7 @@ public class GenreUtil {
             "Romance",
             "Suspense",
             "Tecnologia",
+            "Terror",
             "Outros"
     };
 

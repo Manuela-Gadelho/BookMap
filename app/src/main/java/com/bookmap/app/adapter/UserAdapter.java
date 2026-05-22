@@ -3,8 +3,12 @@ package com.bookmap.app.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bookmap.app.R;
@@ -43,6 +47,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         User user = users.get(position);
         holder.tvName.setText(user.getName());
         holder.tvGenres.setText(user.getFavoriteGenres() != null ? user.getFavoriteGenres() : "");
+        
+        if (user.getPhotoPath() != null && !user.getPhotoPath().isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                 .load(user.getPhotoPath())
+                 .transform(new CircleCrop())
+                 .into(holder.imgUserPhoto);
+        } else {
+            holder.imgUserPhoto.setImageResource(R.mipmap.ic_launcher_round);
+        }
+        
         if (showCheckbox) {
             holder.checkSelect.setVisibility(View.VISIBLE);
             holder.checkSelect.setChecked(selectedUserIds.contains(user.getId()));
@@ -90,12 +104,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvGenres;
         CheckBox checkSelect;
+        ImageView imgUserPhoto;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvUserName);
             tvGenres = itemView.findViewById(R.id.tvUserGenres);
             checkSelect = itemView.findViewById(R.id.checkSelect);
+            imgUserPhoto = itemView.findViewById(R.id.imgUserPhoto);
         }
     }
 }

@@ -44,7 +44,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private RecyclerView recyclerUsers;
     private UserAdapter userAdapter;
     private TextView tvDistance, tvNoUsers, tvLocationStatus;
-    private Spinner spinnerGenre;
+    private TextView tvGenreSelection;
+    private String selectedGenre = "Todos";
     private SeekBar seekDistance;
     private SwitchCompat switchLocationVisible;
     private double currentLat = 0.0;
@@ -62,15 +63,39 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         tvDistance = findViewById(R.id.tvDistance);
         tvNoUsers = findViewById(R.id.tvNoUsers);
         tvLocationStatus = findViewById(R.id.tvLocationStatus);
-        spinnerGenre = findViewById(R.id.spinnerGenre);
         seekDistance = findViewById(R.id.seekDistance);
         switchLocationVisible = findViewById(R.id.switchLocationVisible);
+        tvGenreSelection = findViewById(R.id.tvGenreSelection);
+        
+        List<String> genreList = new java.util.ArrayList<>();
+        genreList.add("Todos");
+        genreList.addAll(com.bookmap.app.util.GenreUtil.getGenres());
+        String[] genres = genreList.toArray(new String[0]);
+        
+        tvGenreSelection.setOnClickListener(v -> {
+            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+            builder.setTitle("Filtrar por Gênero");
+            
+            int checkedItem = 0;
+            for (int i = 0; i < genres.length; i++) {
+                if (genres[i].equalsIgnoreCase(selectedGenre)) {
+                    checkedItem = i;
+                    break;
+                }
+            }
+            
+            builder.setSingleChoiceItems(genres, checkedItem, (dialog, which) -> {
+                selectedGenre = genres[which];
+                tvGenreSelection.setText(selectedGenre);
+                loadNearbyUsers();
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Cancelar", null);
+            builder.show();
+        });
+        
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
-        String[] genres = { "Todos", "Fantasia", "Terror", "Romance", "Ficção Científica",
-                "Tecnologia", "Literatura Brasileira" };
-        ArrayAdapter<String> genreAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, genres);
-        spinnerGenre.setAdapter(genreAdapter);
+        
         seekDistance.setMax(100);
         seekDistance.setProgress(currentDistance);
         tvDistance.setText(currentDistance + " km");
@@ -100,7 +125,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onNothingSelected(AdapterView<?> parent) {
             }
         };
-        spinnerGenre.setOnItemSelectedListener(filterListener);
+
         switchLocationVisible.setChecked(locationHelper.isLocationVisible());
         switchLocationVisible.setOnCheckedChangeListener((buttonView, isChecked) -> {
             locationHelper.setLocationVisible(isChecked);
@@ -208,8 +233,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private void loadNearbyUsers() {
-        String genre = spinnerGenre.getSelectedItem().toString();
-        if ("Todos".equals(genre))
+        String genre = selectedGenre;
+        if ("Todos".equalsIgnoreCase(genre))
             genre = null;
         List<User> users = dbHelper.getNearbyUsers(currentLat, currentLng, currentDistance, genre, null);
         if (session.isLoggedIn()) {
@@ -280,9 +305,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
+        TextView navFeed = findViewById(R.id.navFeed);
         TextView navClubs = findViewById(R.id.navClubs);
         TextView navProfile = findViewById(R.id.navProfile);
         navMap.setTextColor(getResources().getColor(R.color.blue_primary));
+        navMap.setTypeface(null, android.graphics.Typeface.BOLD);
         navShelf.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, HomeActivity.class);
@@ -291,6 +318,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("MapActivity", "Error navigating to HomeActivity", e);
+            }
+        });
+        navFeed.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(this, FeedActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            } catch (Exception e) {
+                Log.e("MapActivity", "Error navigating to FeedActivity", e);
             }
         });
         navClubs.setOnClickListener(v -> {

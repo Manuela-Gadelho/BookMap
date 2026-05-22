@@ -48,6 +48,7 @@ public class SearchActivity extends AppCompatActivity {
             performSearch();
         });
         updateTabUI();
+        performSearch(); // Load initial alphabetical list of books
     }
     private void updateTabUI() {
         btnTabBooks.setTextColor(getResources().getColor(
@@ -57,18 +58,28 @@ public class SearchActivity extends AppCompatActivity {
     }
     private void performSearch() {
         String query = editSearch.getText().toString().trim();
-        if (query.isEmpty()) {
-            Toast.makeText(this, "Digite algo para buscar", Toast.LENGTH_SHORT).show();
-            return;
-        }
         if (showingBooks) {
-            searchBooks(query);
+            if (query.isEmpty()) {
+                searchBooks(""); // Empty query means all books
+            } else {
+                searchBooks(query);
+            }
         } else {
-            searchUsers(query);
+            if (query.isEmpty()) {
+                Toast.makeText(this, "Digite algo para buscar usuários", Toast.LENGTH_SHORT).show();
+            } else {
+                searchUsers(query);
+            }
         }
     }
     private void searchBooks(String query) {
-        List<Book> books = dbHelper.searchBooks(query);
+        List<Book> books;
+        if (query.isEmpty()) {
+            books = dbHelper.getAllBooks(); // Returns all books sorted alphabetically
+        } else {
+            books = dbHelper.searchBooks(query);
+        }
+        
         if (books.isEmpty()) {
             tvNoResults.setVisibility(View.VISIBLE);
             recyclerResults.setVisibility(View.GONE);

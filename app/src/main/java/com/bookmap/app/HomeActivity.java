@@ -103,6 +103,37 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Erro ao abrir a busca.", Toast.LENGTH_SHORT).show();
             }
         });
+        
+        View btnInbox = findViewById(R.id.btnInbox);
+        if (btnInbox != null) {
+            btnInbox.setOnClickListener(v -> {
+                try {
+                    if (session.isLoggedIn()) {
+                        startActivity(new Intent(this, InboxActivity.class));
+                    } else {
+                        Toast.makeText(this, "Faça login para acessar mensagens.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("HomeActivity", "Error opening InboxActivity", e);
+                }
+            });
+        }
+        
+        View btnNotifications = findViewById(R.id.btnNotifications);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v -> {
+                try {
+                    if (session.isLoggedIn()) {
+                        startActivity(new Intent(this, NotificationsActivity.class));
+                    } else {
+                        Toast.makeText(this, "Faça login para acessar notificações.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("HomeActivity", "Error opening NotificationsActivity", e);
+                }
+            });
+        }
+
         btnLendo.setOnClickListener(v -> setFilter("LENDO"));
         btnQueroLer.setOnClickListener(v -> setFilter("QUERO_LER"));
         btnLidos.setOnClickListener(v -> setFilter("LIDO"));
@@ -183,31 +214,28 @@ public class HomeActivity extends AppCompatActivity {
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
+        TextView navFeed = findViewById(R.id.navFeed);
         TextView navClubs = findViewById(R.id.navClubs);
         TextView navProfile = findViewById(R.id.navProfile);
+
         navShelf.setTextColor(getResources().getColor(R.color.blue_primary));
+        navShelf.setTypeface(null, android.graphics.Typeface.BOLD);
+        
         navMap.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(this, MapActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            } catch (Exception e) {
-                Log.e("HomeActivity", "Error navigating to MapActivity", e);
-                Toast.makeText(this, "Erro ao abrir o mapa.", Toast.LENGTH_SHORT).show();
-            }
+            startActivity(new Intent(this, MapActivity.class));
+            overridePendingTransition(0, 0);
         });
+        
+        navFeed.setOnClickListener(v -> {
+            startActivity(new Intent(this, FeedActivity.class));
+            overridePendingTransition(0, 0);
+        });
+
         navClubs.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(this, ClubListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            } catch (Exception e) {
-                Log.e("HomeActivity", "Error navigating to ClubListActivity", e);
-                Toast.makeText(this, "Erro ao abrir clubes.", Toast.LENGTH_SHORT).show();
-            }
+            startActivity(new Intent(this, ClubListActivity.class));
+            overridePendingTransition(0, 0);
         });
+
         navProfile.setOnClickListener(v -> {
             try {
                 if (session.isLoggedIn()) {

@@ -19,7 +19,6 @@
             android:id="@+id/btnBack" android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="&lt;"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:paddingRight="16dp"/>

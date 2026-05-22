@@ -38,11 +38,16 @@
         <activity android:name=".UpdateProgressActivity" android:exported="false" />
         <activity android:name=".MapActivity" android:exported="false" />
         <activity android:name=".ClubActivity" android:exported="false" />
-        <activity android:name=".CreateClubActivity" android:exported="false" />
+        <activity
+            android:name=".FeedActivity"
+            android:exported="false" />
         <activity android:name=".ClubListActivity" android:exported="false" />
+        <activity android:name=".CreateClubActivity" android:exported="false" />
         <activity android:name=".EventActivity" android:exported="false" />
         <activity android:name=".ReportActivity" android:exported="false" />
         <activity android:name=".NotificationsActivity" android:exported="false" />
+        <activity android:name=".InboxActivity" android:exported="false" />
+        <activity android:name=".ChatActivity" android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
