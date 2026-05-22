@@ -115,9 +115,11 @@ public class ClubListActivity extends AppCompatActivity {
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
+        TextView navFeed = findViewById(R.id.navFeed);
         TextView navClubs = findViewById(R.id.navClubs);
         TextView navProfile = findViewById(R.id.navProfile);
         navClubs.setTextColor(getResources().getColor(R.color.blue_primary));
+        navClubs.setTypeface(null, android.graphics.Typeface.BOLD);
         navShelf.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(this, HomeActivity.class);
@@ -126,6 +128,16 @@ public class ClubListActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
                 Log.e("ClubListActivity", "Error navigating to HomeActivity", e);
+            }
+        });
+        navFeed.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(this, FeedActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            } catch (Exception e) {
+                Log.e("ClubListActivity", "Error navigating to FeedActivity", e);
             }
         });
         navMap.setOnClickListener(v -> {

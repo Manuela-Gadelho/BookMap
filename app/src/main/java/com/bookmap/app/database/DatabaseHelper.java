@@ -756,6 +756,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return reviews;
     }
+    
+    public List<Review> getTimelineReviews(long currentUserId) {
+        List<Review> reviews = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT r.*, u.name as user_name, u.photo_path as user_photo, b.title as book_title " +
+                "FROM " + TABLE_REVIEWS + " r " +
+                "INNER JOIN " + TABLE_USERS + " u ON r.user_id = u.id " +
+                "INNER JOIN " + TABLE_BOOKS + " b ON r.book_id = b.id " +
+                "INNER JOIN " + TABLE_FOLLOWERS + " f ON r.user_id = f.followed_id " +
+                "WHERE f.follower_id = ? " +
+                "ORDER BY r.created_at DESC";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(currentUserId)});
+        if (cursor.moveToFirst()) {
+            do {
+                Review r = new Review();
+                r.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
+                r.setUserId(cursor.getLong(cursor.getColumnIndexOrThrow("user_id")));
+                r.setBookId(cursor.getLong(cursor.getColumnIndexOrThrow("book_id")));
+                r.setText(cursor.getString(cursor.getColumnIndexOrThrow("text")));
+                r.setRating(cursor.getInt(cursor.getColumnIndexOrThrow("rating")));
+                r.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
+                r.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("user_name")));
+                r.setUserPhotoPath(cursor.getString(cursor.getColumnIndexOrThrow("user_photo")));
+                r.setBookTitle(cursor.getString(cursor.getColumnIndexOrThrow("book_title")));
+                reviews.add(r);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return reviews;
+    }
 
     public double getBookAverageRating(long bookId) {
         SQLiteDatabase db = getReadableDatabase();

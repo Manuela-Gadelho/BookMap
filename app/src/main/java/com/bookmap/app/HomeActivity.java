@@ -183,31 +183,28 @@ public class HomeActivity extends AppCompatActivity {
     private void setupBottomNav() {
         TextView navShelf = findViewById(R.id.navShelf);
         TextView navMap = findViewById(R.id.navMap);
+        TextView navFeed = findViewById(R.id.navFeed);
         TextView navClubs = findViewById(R.id.navClubs);
         TextView navProfile = findViewById(R.id.navProfile);
+
         navShelf.setTextColor(getResources().getColor(R.color.blue_primary));
+        navShelf.setTypeface(null, android.graphics.Typeface.BOLD);
+        
         navMap.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(this, MapActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            } catch (Exception e) {
-                Log.e("HomeActivity", "Error navigating to MapActivity", e);
-                Toast.makeText(this, "Erro ao abrir o mapa.", Toast.LENGTH_SHORT).show();
-            }
+            startActivity(new Intent(this, MapActivity.class));
+            overridePendingTransition(0, 0);
         });
+        
+        navFeed.setOnClickListener(v -> {
+            startActivity(new Intent(this, FeedActivity.class));
+            overridePendingTransition(0, 0);
+        });
+
         navClubs.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(this, ClubListActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            } catch (Exception e) {
-                Log.e("HomeActivity", "Error navigating to ClubListActivity", e);
-                Toast.makeText(this, "Erro ao abrir clubes.", Toast.LENGTH_SHORT).show();
-            }
+            startActivity(new Intent(this, ClubListActivity.class));
+            overridePendingTransition(0, 0);
         });
+
         navProfile.setOnClickListener(v -> {
             try {
                 if (session.isLoggedIn()) {
