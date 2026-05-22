@@ -41,6 +41,7 @@
         <activity
             android:name=".FeedActivity"
             android:exported="false" />
+        <activity android:name=".ClubListActivity" android:exported="false" />
         <activity android:name=".CreateClubActivity" android:exported="false" />
         <activity android:name=".EventActivity" android:exported="false" />
         <activity android:name=".ReportActivity" android:exported="false" />

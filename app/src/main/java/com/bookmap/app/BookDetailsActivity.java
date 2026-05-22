@@ -148,9 +148,24 @@ public class BookDetailsActivity extends AppCompatActivity {
 
         ImageView imgCover = findViewById(R.id.imgBookCover);
         String isbn = book.getIsbn();
+        String coverPath = book.getCoverPath();
         String fallbackAssetPath = PhotoHelper.getGenreAssetPath(book.getGenre());
         
-        if (isbn != null && !isbn.isEmpty()) {
+        if (coverPath != null && !coverPath.isEmpty()) {
+            if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
+                Glide.with(this)
+                    .load(coverPath)
+                    .transform(new CenterCrop(), new RoundedCorners(16))
+                    .error(Glide.with(this).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(16)))
+                    .into(imgCover);
+            } else {
+                Glide.with(this)
+                    .load(new java.io.File(coverPath))
+                    .transform(new CenterCrop(), new RoundedCorners(16))
+                    .error(Glide.with(this).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(16)))
+                    .into(imgCover);
+            }
+        } else if (isbn != null && !isbn.isEmpty()) {
             String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-L.jpg?default=false";
             Glide.with(this)
                 .load(url)

@@ -48,9 +48,24 @@ public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHo
 
         // Load cover dynamically
         String isbn = ub.getBookIsbn();
+        String coverPath = ub.getBookCoverPath();
         String fallbackAssetPath = PhotoHelper.getGenreAssetPath(ub.getBookGenre());
-        
-        if (isbn != null && !isbn.isEmpty()) {
+
+        if (coverPath != null && !coverPath.isEmpty()) {
+            if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
+                Glide.with(holder.itemView.getContext())
+                    .load(coverPath)
+                    .transform(new CenterCrop(), new RoundedCorners(8))
+                    .error(Glide.with(holder.itemView.getContext()).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(8)))
+                    .into(holder.imgCover);
+            } else {
+                Glide.with(holder.itemView.getContext())
+                    .load(new java.io.File(coverPath))
+                    .transform(new CenterCrop(), new RoundedCorners(8))
+                    .error(Glide.with(holder.itemView.getContext()).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(8)))
+                    .into(holder.imgCover);
+            }
+        } else if (isbn != null && !isbn.isEmpty()) {
             String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg?default=false";
             Glide.with(holder.itemView.getContext())
                 .load(url)
