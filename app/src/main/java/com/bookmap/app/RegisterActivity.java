@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Spinner;
 import com.google.android.material.chip.ChipGroup;
-import com.bookmap.app.util.GenreUIHelper;
+import android.widget.TextView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +20,9 @@ import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editName, editEmail, editPassword, editConfirmPassword;
-    private androidx.recyclerview.widget.RecyclerView recyclerGenres;
+    private TextView tvGenreSelection;
     private List<String> selectedGenres = new ArrayList<>();
+    private boolean[] checkedItems;
     private DatabaseHelper dbHelper;
     private FirebaseAuth mAuth;
 
@@ -36,8 +37,35 @@ public class RegisterActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
-        recyclerGenres = findViewById(R.id.recyclerGenres);
-        selectedGenres = GenreUIHelper.setupGenreRecycler(this, recyclerGenres, selectedGenres, null);
+        tvGenreSelection = findViewById(R.id.tvGenreSelection);
+        
+        String[] genres = com.bookmap.app.util.GenreUtil.getGenresArray();
+        checkedItems = new boolean[genres.length];
+        
+        tvGenreSelection.setOnClickListener(v -> {
+            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+            builder.setTitle("Selecione os Gêneros");
+            
+            builder.setMultiChoiceItems(genres, checkedItems, (dialog, which, isChecked) -> {
+                checkedItems[which] = isChecked;
+            });
+            
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                selectedGenres.clear();
+                for (int i = 0; i < checkedItems.length; i++) {
+                    if (checkedItems[i]) {
+                        selectedGenres.add(genres[i]);
+                    }
+                }
+                if (selectedGenres.isEmpty()) {
+                    tvGenreSelection.setText("Nenhum gênero selecionado");
+                } else {
+                    tvGenreSelection.setText(selectedGenres.size() + " gêneros selecionados");
+                }
+            });
+            builder.setNegativeButton("Cancelar", null);
+            builder.show();
+        });
         Button btnRegister = findViewById(R.id.btnRegister);
         TextView tvLogin = findViewById(R.id.tvLogin);
         btnRegister.setOnClickListener(v -> attemptRegister());

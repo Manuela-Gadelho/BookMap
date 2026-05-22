@@ -28,7 +28,8 @@ import android.view.View;
 public class AddBookActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3002;
     private EditText editTitle, editAuthor, editSynopsis, editIsbn;
-    private Spinner spinnerGenre;
+    private TextView tvGenreSelection;
+    private String selectedGenre = "";
     private RadioGroup radioStatus;
     private ImageView imgCover;
     private DatabaseHelper dbHelper;
@@ -55,16 +56,36 @@ public class AddBookActivity extends AppCompatActivity {
         editAuthor = findViewById(R.id.editAuthor);
         editSynopsis = findViewById(R.id.editSynopsis);
         editIsbn = findViewById(R.id.editIsbn);
-        spinnerGenre = findViewById(R.id.spinnerGenre);
         radioStatus = findViewById(R.id.radioStatus);
         imgCover = findViewById(R.id.imgCover);
         Button btnSave = findViewById(R.id.btnSaveBook);
         Button btnAddCover = findViewById(R.id.btnAddCover);
         TextView btnBack = findViewById(R.id.btnBack);
+        tvGenreSelection = findViewById(R.id.tvGenreSelection);
+        
         String[] genres = com.bookmap.app.util.GenreUtil.getGenresArray();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, genres);
-        spinnerGenre.setAdapter(adapter);
+        tvGenreSelection.setOnClickListener(v -> {
+            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+            builder.setTitle("Selecione um Gênero");
+            
+            int checkedItem = -1;
+            if (!selectedGenre.isEmpty()) {
+                for (int i = 0; i < genres.length; i++) {
+                    if (genres[i].equalsIgnoreCase(selectedGenre)) {
+                        checkedItem = i;
+                        break;
+                    }
+                }
+            }
+            
+            builder.setSingleChoiceItems(genres, checkedItem, (dialog, which) -> {
+                selectedGenre = genres[which];
+                tvGenreSelection.setText(selectedGenre);
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("Cancelar", null);
+            builder.show();
+        });
         btnBack.setOnClickListener(v -> finish());
         btnSave.setOnClickListener(v -> saveBook());
         btnAddCover.setOnClickListener(v -> showCoverOptions());
@@ -79,13 +100,9 @@ public class AddBookActivity extends AppCompatActivity {
                 editSynopsis.setText(book.getSynopsis());
                 editIsbn.setText(book.getIsbn());
                 coverPath = book.getCoverPath() != null ? book.getCoverPath() : "";
-                if (book.getGenre() != null) {
-                    for (int i = 0; i < genres.length; i++) {
-                        if (genres[i].equalsIgnoreCase(book.getGenre())) {
-                            spinnerGenre.setSelection(i);
-                            break;
-                        }
-                    }
+                if (book.getGenre() != null && !book.getGenre().isEmpty()) {
+                    selectedGenre = book.getGenre();
+                    tvGenreSelection.setText(selectedGenre);
                 }
                 radioStatus.setVisibility(View.GONE);
                 TextView tvStatusLabel = findViewById(R.id.tvStatusLabel);
@@ -184,7 +201,7 @@ public class AddBookActivity extends AppCompatActivity {
         String author = editAuthor.getText().toString().trim();
         String synopsis = editSynopsis.getText().toString().trim();
         String isbn = editIsbn.getText().toString().trim();
-        String genre = spinnerGenre.getSelectedItem().toString();
+        String genre = selectedGenre;
         if (title.isEmpty() || author.isEmpty()) {
             Toast.makeText(this, "Título e autor são obrigatórios.", Toast.LENGTH_SHORT).show();
             return;
