@@ -196,6 +196,9 @@ public class ProfileActivity extends AppCompatActivity {
         tvUserEmail.setText(user.getEmail());
         String roleLabel;
         switch (user.getRole()) {
+            case "ADMIN":
+                roleLabel = "Administrador";
+                break;
             case "ORGANIZER":
                 roleLabel = "Organizador";
                 break;
