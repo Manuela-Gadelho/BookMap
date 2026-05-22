@@ -3,12 +3,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.bookmap.app.adapter.ReviewAdapter;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
@@ -51,11 +53,15 @@ public class PublicProfileActivity extends AppCompatActivity {
         TextView tvName = findViewById(R.id.tvName);
         TextView tvBio = findViewById(R.id.tvBio);
         TextView tvGenres = findViewById(R.id.tvGenres);
+        ImageView imgProfile = findViewById(R.id.imgProfile);
         tvName.setText(user.getName());
         tvBio.setText(user.getBio() != null && !user.getBio().isEmpty() ? user.getBio() : "Sem bio");
         tvGenres.setText(user.getFavoriteGenres() != null && !user.getFavoriteGenres().isEmpty()
                 ? user.getFavoriteGenres()
                 : "Nenhum gênero");
+        if (user.getPhotoPath() != null && !user.getPhotoPath().isEmpty()) {
+            Glide.with(this).load(user.getPhotoPath()).circleCrop().into(imgProfile);
+        }
                 
         tvFollowersCount = findViewById(R.id.tvFollowersCount);
         tvFollowingCount = findViewById(R.id.tvFollowingCount);
