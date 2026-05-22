@@ -24,24 +24,34 @@
             android:textSize="20sp"
             android:textStyle="bold"/>
             
-        <TextView
-            android:id="@+id/btnInbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MENSAGENS"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="16dp"/>
-            
-        <TextView
+        <ImageView
             android:id="@+id/btnSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BUSCAR"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:textStyle="bold"/>
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_search"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <ImageView
+            android:id="@+id/btnNotifications"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_notifications"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"/>
+            
+        <ImageView
+            android:id="@+id/btnInbox"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_mail"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

@@ -104,7 +104,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         
-        TextView btnInbox = findViewById(R.id.btnInbox);
+        View btnInbox = findViewById(R.id.btnInbox);
         if (btnInbox != null) {
             btnInbox.setOnClickListener(v -> {
                 try {
@@ -118,6 +118,22 @@ public class HomeActivity extends AppCompatActivity {
                 }
             });
         }
+        
+        View btnNotifications = findViewById(R.id.btnNotifications);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v -> {
+                try {
+                    if (session.isLoggedIn()) {
+                        startActivity(new Intent(this, NotificationsActivity.class));
+                    } else {
+                        Toast.makeText(this, "Faça login para acessar notificações.", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("HomeActivity", "Error opening NotificationsActivity", e);
+                }
+            });
+        }
+
         btnLendo.setOnClickListener(v -> setFilter("LENDO"));
         btnQueroLer.setOnClickListener(v -> setFilter("QUERO_LER"));
         btnLidos.setOnClickListener(v -> setFilter("LIDO"));
