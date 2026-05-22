@@ -124,6 +124,16 @@ public class FirebaseSyncHelper {
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to sync club to cloud", e));
     }
 
+    public void deleteClubFromCloud(long clubId) {
+        if (!isFirebaseAvailable())
+            return;
+        firestore.collection(COLLECTION_CLUBS)
+                .document(String.valueOf(clubId))
+                .delete()
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Club deleted from cloud: " + clubId))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to delete club from cloud", e));
+    }
+
     public void syncUserBookToCloud(long userId, long bookId, String status, int progress) {
         if (!isFirebaseAvailable())
             return;

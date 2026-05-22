@@ -232,6 +232,7 @@ public class ClubActivity extends AppCompatActivity {
                             .setMessage("Tem certeza de que deseja excluir este clube?")
                             .setPositiveButton("Sim", (dialog, which) -> {
                                 if (dbHelper.deleteClub(clubId)) {
+                                    com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).deleteClubFromCloud(clubId);
                                     Toast.makeText(this, "Clube excluído com sucesso!", Toast.LENGTH_SHORT).show();
                                     finish();
                                 } else {
