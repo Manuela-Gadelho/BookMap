@@ -92,6 +92,16 @@ public class FirebaseSyncHelper {
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to sync book to cloud", e));
     }
 
+    public void deleteBookFromCloud(long bookId) {
+        if (!isFirebaseAvailable())
+            return;
+        firestore.collection(COLLECTION_BOOKS)
+                .document(String.valueOf(bookId))
+                .delete()
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Book deleted from cloud"))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to delete book from cloud", e));
+    }
+
     public void syncReviewToCloud(Review review) {
         if (!isFirebaseAvailable())
             return;
@@ -396,28 +406,33 @@ public class FirebaseSyncHelper {
 
     // --- MESSAGING SYNC ---
 
-    public void pushMessageToCloud(com.bookmap.app.model.Message msg, SyncCallback callback) {
+    public void pushMessageToCloud(com.bookmap.app.model.Message message, SyncCallback callback) {
         if (!isFirebaseAvailable()) {
             if (callback != null) callback.onComplete(false);
             return;
         }
         Map<String, Object> data = new HashMap<>();
-        data.put("id", msg.getId());
-        data.put("sender_id", msg.getSenderId());
-        data.put("receiver_id", msg.getReceiverId());
-        data.put("content", msg.getContent());
-        data.put("timestamp", msg.getTimestamp());
-        data.put("is_read", msg.isRead());
+        data.put("id", message.getId());
+        data.put("sender_id", message.getSenderId());
+        data.put("receiver_id", message.getReceiverId());
+        data.put("content", message.getContent());
+        data.put("timestamp", message.getTimestamp());
+        data.put("is_read", message.isRead());
+        data.put("deletedFor", new java.util.ArrayList<Long>()); // New array for soft deletes
 
-        firestore.collection("messages").document(msg.getId())
-                .set(data)
-                .addOnSuccessListener(aVoid -> {
-                    if (callback != null) callback.onComplete(true);
-                })
-                .addOnFailureListener(e -> {
-                    Log.w(TAG, "Failed to push message", e);
-                    if (callback != null) callback.onComplete(false);
-                });
+        firestore.collection("messages")
+                .document(message.getId())
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> { if (callback != null) callback.onComplete(true); })
+                .addOnFailureListener(e -> { if (callback != null) callback.onComplete(false); });
+    }
+
+    public void softDeleteMessageFromCloud(String messageId, long userId) {
+        if (!isFirebaseAvailable()) return;
+        firestore.collection("messages").document(messageId)
+                .update("deletedFor", FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "Message soft deleted for user " + userId))
+                .addOnFailureListener(e -> Log.e(TAG, "Failed soft delete message", e));
     }
 
     public void pullMessagesFromCloud(long myUserId, SyncCallback callback) {
@@ -432,6 +447,21 @@ public class FirebaseSyncHelper {
                 .addOnSuccessListener(querySnapshot -> {
                     for (DocumentSnapshot doc : querySnapshot) {
                         try {
+                            List<Number> deletedFor = (List<Number>) doc.get("deletedFor");
+                            boolean isDeleted = false;
+                            if (deletedFor != null) {
+                                for (Number n : deletedFor) {
+                                    if (n.longValue() == myUserId) {
+                                        isDeleted = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isDeleted) {
+                                dbHelper.deleteMessageLocal(doc.getId());
+                                continue;
+                            }
+
                             String id = doc.getString("id");
                             Long senderId = doc.getLong("sender_id");
                             Long receiverId = doc.getLong("receiver_id");

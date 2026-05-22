@@ -93,6 +93,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
+        
+        // Inject admin user if missing
+        User adminUser = dbHelper.getUserByEmail("mmgsansung@gmail.com");
+        if (adminUser == null) {
+            String pwdHash = PasswordUtil.hashPassword("123456");
+            dbHelper.insertUser("Admin Manuela", "mmgsansung@gmail.com", pwdHash, "", "", "ADMIN");
+        }
+        
         try {
             firebaseAuth = FirebaseAuth.getInstance();
         } catch (Exception e) {
@@ -279,6 +287,19 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
             return;
         }
+        
+        if ("mmgsansung@gmail.com".equalsIgnoreCase(email)) {
+            User user = dbHelper.getUserByEmail(email);
+            if (user != null && PasswordUtil.verifyPassword(password, user.getPasswordHash())) {
+                session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
+                Toast.makeText(this, "Bem-vindo, Mestre Administrador!", Toast.LENGTH_SHORT).show();
+                navigateToHome();
+            } else {
+                Toast.makeText(this, "Senha de administrador incorreta.", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        
         if (firebaseAuth == null) {
             try {
                 User user = dbHelper.getUserByEmail(email);

@@ -17,10 +17,16 @@ import java.util.List;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private List<Message> messages;
     private long currentUserId;
+    private OnMessageDeleteListener deleteListener;
 
-    public MessageAdapter(List<Message> messages, long currentUserId) {
+    public interface OnMessageDeleteListener {
+        void onDeleteClick(Message message, int position);
+    }
+
+    public MessageAdapter(List<Message> messages, long currentUserId, OnMessageDeleteListener listener) {
         this.messages = messages;
         this.currentUserId = currentUserId;
+        this.deleteListener = listener;
     }
 
     public void updateData(List<Message> newMessages) {
@@ -70,6 +76,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         holder.layoutMessageBubble.setBackground(bgShape);
         holder.layoutMessageBubble.setLayoutParams(layoutParams);
+
+        holder.imgDeleteMessage.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onDeleteClick(msg, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -80,12 +92,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     static class MessageViewHolder extends RecyclerView.ViewHolder {
         LinearLayout layoutMessageBubble;
         TextView tvMessageContent, tvMessageTime;
+        android.widget.ImageView imgDeleteMessage;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             layoutMessageBubble = itemView.findViewById(R.id.layoutMessageBubble);
             tvMessageContent = itemView.findViewById(R.id.tvMessageContent);
             tvMessageTime = itemView.findViewById(R.id.tvMessageTime);
+            imgDeleteMessage = itemView.findViewById(R.id.imgDeleteMessage);
         }
     }
 }
