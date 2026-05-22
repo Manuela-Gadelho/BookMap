@@ -70,7 +70,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_like_outline"
-                android:app:tint="@color/gray_text"/>
+                app:tint="@color/gray_text"/>
             <TextView
                 android:id="@+id/tvLikeCount"
                 android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_chat"
-                android:app:tint="@color/gray_text"/>
+                app:tint="@color/gray_text"/>
             <TextView
                 android:id="@+id/tvCommentCount"
                 android:layout_width="wrap_content"
