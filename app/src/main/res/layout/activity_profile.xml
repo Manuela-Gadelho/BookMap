@@ -55,6 +55,7 @@
                 android:layout_height="100dp"
                 android:background="@color/gray_text"
                 android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_user"
                 android:contentDescription="Foto de perfil - toque para alterar" />
             <TextView
                 android:id="@+id/tvUserName"

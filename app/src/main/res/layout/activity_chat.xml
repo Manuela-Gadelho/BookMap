@@ -30,7 +30,8 @@
             android:id="@+id/imgChatUserPhoto"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@mipmap/ic_launcher_round"/>
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_default_user"/>
 
         <TextView
             android:id="@+id/tvChatUserName"
