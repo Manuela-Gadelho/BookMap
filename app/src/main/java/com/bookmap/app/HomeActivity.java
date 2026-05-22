@@ -61,6 +61,12 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
+        
+        // Sync review interactions in background
+        if (session.isLoggedIn()) {
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).pullReviewInteractions(null);
+        }
+
         btnLendo = findViewById(R.id.btnLendo);
         btnQueroLer = findViewById(R.id.btnQueroLer);
         btnLidos = findViewById(R.id.btnLidos);

@@ -18,11 +18,13 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
     public static final String TABLE_REVIEWS = "reviews";
+    public static final String TABLE_REVIEW_LIKES = "review_likes";
+    public static final String TABLE_REVIEW_COMMENTS = "review_comments";
     public static final String TABLE_CLUBS = "clubs";
     public static final String TABLE_CLUB_MEMBERS = "club_members";
     public static final String TABLE_EVENTS = "events";
@@ -93,6 +95,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "created_at TEXT DEFAULT (datetime('now')), " +
                 "FOREIGN KEY (user_id) REFERENCES " + TABLE_USERS + "(id), " +
                 "FOREIGN KEY (book_id) REFERENCES " + TABLE_BOOKS + "(id))");
+        db.execSQL("CREATE TABLE " + TABLE_REVIEW_LIKES + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "review_id INTEGER NOT NULL, " +
+                "user_id INTEGER NOT NULL, " +
+                "is_like INTEGER DEFAULT 1, " +
+                "FOREIGN KEY (review_id) REFERENCES " + TABLE_REVIEWS + "(id) ON DELETE CASCADE, " +
+                "FOREIGN KEY (user_id) REFERENCES " + TABLE_USERS + "(id) ON DELETE CASCADE, " +
+                "UNIQUE(review_id, user_id))");
+        db.execSQL("CREATE TABLE " + TABLE_REVIEW_COMMENTS + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "review_id INTEGER NOT NULL, " +
+                "user_id INTEGER NOT NULL, " +
+                "text TEXT NOT NULL, " +
+                "timestamp TEXT DEFAULT (datetime('now')), " +
+                "FOREIGN KEY (review_id) REFERENCES " + TABLE_REVIEWS + "(id) ON DELETE CASCADE, " +
+                "FOREIGN KEY (user_id) REFERENCES " + TABLE_USERS + "(id) ON DELETE CASCADE)");
         db.execSQL("CREATE TABLE " + TABLE_CLUBS + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "name TEXT NOT NULL, " +
@@ -164,6 +182,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLUB_MEMBERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLUBS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_COMMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_LIKES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEWS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER_BOOKS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BOOKS);
@@ -1344,6 +1364,148 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return list;
+    }
+
+    // --- REVIEW INTERACTIONS ---
+    public boolean toggleReviewLike(long reviewId, long userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.query(TABLE_REVIEW_LIKES, new String[]{"id", "is_like"},
+                "review_id = ? AND user_id = ?", new String[]{String.valueOf(reviewId), String.valueOf(userId)},
+                null, null, null);
+
+        boolean isLikedNow = false;
+        if (cursor != null && cursor.moveToFirst()) {
+            int isLikeIndex = cursor.getColumnIndex("is_like");
+            if (isLikeIndex != -1) {
+                int isLike = cursor.getInt(isLikeIndex);
+                if (isLike == 1) {
+                    // Unlike
+                    db.delete(TABLE_REVIEW_LIKES, "review_id = ? AND user_id = ?", new String[]{String.valueOf(reviewId), String.valueOf(userId)});
+                } else {
+                    ContentValues values = new ContentValues();
+                    values.put("is_like", 1);
+                    db.update(TABLE_REVIEW_LIKES, values, "review_id = ? AND user_id = ?", new String[]{String.valueOf(reviewId), String.valueOf(userId)});
+                    isLikedNow = true;
+                }
+            }
+            cursor.close();
+        } else {
+            // Like
+            ContentValues values = new ContentValues();
+            values.put("review_id", reviewId);
+            values.put("user_id", userId);
+            values.put("is_like", 1);
+            db.insert(TABLE_REVIEW_LIKES, null, values);
+            isLikedNow = true;
+        }
+        return isLikedNow;
+    }
+
+    public int getReviewLikesCount(long reviewId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_REVIEW_LIKES + " WHERE review_id = ? AND is_like = 1", new String[]{String.valueOf(reviewId)});
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) count = cursor.getInt(0);
+            cursor.close();
+        }
+        return count;
+    }
+
+    public boolean hasUserLikedReview(long reviewId, long userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_REVIEW_LIKES + " WHERE review_id = ? AND user_id = ? AND is_like = 1", new String[]{String.valueOf(reviewId), String.valueOf(userId)});
+        boolean liked = false;
+        if (cursor != null) {
+            liked = cursor.moveToFirst();
+            cursor.close();
+        }
+        return liked;
+    }
+
+    public long addReviewComment(long reviewId, long userId, String text) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("review_id", reviewId);
+        values.put("user_id", userId);
+        values.put("text", text);
+        return db.insert(TABLE_REVIEW_COMMENTS, null, values);
+    }
+
+    public boolean deleteReviewComment(long commentId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_REVIEW_COMMENTS, "id = ?", new String[]{String.valueOf(commentId)}) > 0;
+    }
+
+    public int getReviewCommentsCount(long reviewId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_REVIEW_COMMENTS + " WHERE review_id = ?", new String[]{String.valueOf(reviewId)});
+        int count = 0;
+        if (cursor != null) {
+            if (cursor.moveToFirst()) count = cursor.getInt(0);
+            cursor.close();
+        }
+        return count;
+    }
+
+    public List<com.bookmap.app.model.ReviewComment> getReviewComments(long reviewId) {
+        List<com.bookmap.app.model.ReviewComment> comments = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT c.*, u.name as user_name FROM " + TABLE_REVIEW_COMMENTS + " c " +
+                "INNER JOIN " + TABLE_USERS + " u ON c.user_id = u.id " +
+                "WHERE c.review_id = ? ORDER BY c.timestamp ASC";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(reviewId)});
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                int idIndex = cursor.getColumnIndex("id");
+                int userIdIndex = cursor.getColumnIndex("user_id");
+                int userNameIndex = cursor.getColumnIndex("user_name");
+                int textIndex = cursor.getColumnIndex("text");
+                int timestampIndex = cursor.getColumnIndex("timestamp");
+                if (idIndex != -1 && userIdIndex != -1 && userNameIndex != -1 && textIndex != -1 && timestampIndex != -1) {
+                    comments.add(new com.bookmap.app.model.ReviewComment(
+                            cursor.getLong(idIndex),
+                            reviewId,
+                            cursor.getLong(userIdIndex),
+                            cursor.getString(userNameIndex),
+                            cursor.getString(textIndex),
+                            cursor.getString(timestampIndex)
+                    ));
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return comments;
+    }
+
+    public void insertReviewLike(long reviewId, long userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("review_id", reviewId);
+        values.put("user_id", userId);
+        values.put("is_like", 1);
+        db.insertWithOnConflict(TABLE_REVIEW_LIKES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public void removeReviewLike(long reviewId, long userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_REVIEW_LIKES, "review_id = ? AND user_id = ?", new String[]{String.valueOf(reviewId), String.valueOf(userId)});
+    }
+    
+    public void insertReviewCommentSync(long id, long reviewId, long userId, String text, String timestamp) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("review_id", reviewId);
+        values.put("user_id", userId);
+        values.put("text", text);
+        values.put("timestamp", timestamp);
+        db.insertWithOnConflict(TABLE_REVIEW_COMMENTS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public void removeReviewCommentSync(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_REVIEW_COMMENTS, "id = ?", new String[]{String.valueOf(id)});
     }
 }
 

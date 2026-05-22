@@ -487,6 +487,81 @@ public class FirebaseSyncHelper {
                 });
     }
 
+    // --- REVIEW INTERACTIONS SYNC ---
+    public void pushReviewLike(long reviewId, long userId, boolean isLike) {
+        if (!isFirebaseAvailable()) return;
+        String docId = reviewId + "_" + userId;
+        if (isLike) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("reviewId", reviewId);
+            data.put("userId", userId);
+            data.put("timestamp", FieldValue.serverTimestamp());
+            firestore.collection("review_likes").document(docId).set(data, SetOptions.merge());
+        } else {
+            firestore.collection("review_likes").document(docId).delete();
+        }
+    }
+
+    public void pushReviewComment(com.bookmap.app.model.ReviewComment comment, SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", comment.getId());
+        data.put("reviewId", comment.getReviewId());
+        data.put("userId", comment.getUserId());
+        data.put("text", comment.getText());
+        data.put("timestamp", comment.getTimestamp());
+        
+        firestore.collection("review_comments").document(String.valueOf(comment.getId()))
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> { if (callback != null) callback.onComplete(true); })
+                .addOnFailureListener(e -> { if (callback != null) callback.onComplete(false); });
+    }
+
+    public void softDeleteReviewCommentFromCloud(long commentId) {
+        if (!isFirebaseAvailable()) return;
+        firestore.collection("review_comments").document(String.valueOf(commentId)).delete();
+    }
+
+    public void pullReviewInteractions(SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+        
+        firestore.collection("review_likes").get().addOnSuccessListener(querySnapshot -> {
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            db.execSQL("DELETE FROM " + DatabaseHelper.TABLE_REVIEW_LIKES);
+            for (DocumentSnapshot doc : querySnapshot) {
+                Long reviewId = doc.getLong("reviewId");
+                Long userId = doc.getLong("userId");
+                if (reviewId != null && userId != null) {
+                    dbHelper.insertReviewLike(reviewId, userId);
+                }
+            }
+        });
+
+        firestore.collection("review_comments").get().addOnSuccessListener(querySnapshot -> {
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            db.execSQL("DELETE FROM " + DatabaseHelper.TABLE_REVIEW_COMMENTS);
+            for (DocumentSnapshot doc : querySnapshot) {
+                Long id = doc.getLong("id");
+                Long reviewId = doc.getLong("reviewId");
+                Long userId = doc.getLong("userId");
+                String text = doc.getString("text");
+                String timestamp = doc.getString("timestamp");
+                if (id != null && reviewId != null && userId != null && text != null && timestamp != null) {
+                    dbHelper.insertReviewCommentSync(id, reviewId, userId, text, timestamp);
+                }
+            }
+            if (callback != null) callback.onComplete(true);
+        }).addOnFailureListener(e -> {
+            if (callback != null) callback.onComplete(false);
+        });
+    }
+
     public interface SyncCallback {
         void onComplete(boolean success);
     }
