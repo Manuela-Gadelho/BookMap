@@ -1,60 +1,111 @@
 package com.bookmap.app.util;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.bookmap.app.R;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenreUIHelper {
-    public static void setupGenreSpinner(Context context, Spinner spinner, ChipGroup chipGroup,
-            List<String> selectedGenres) {
-        List<String> options = new ArrayList<>();
-        options.add("Selecione os gêneros...");
-        options.addAll(GenreUtil.getGenres());
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item,
-                options);
-        spinner.setAdapter(adapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position > 0) {
-                    String selected = options.get(position);
-                    if (!selectedGenres.contains(selected)) {
-                        selectedGenres.add(selected);
-                        addChipToGroup(context, chipGroup, selected, selectedGenres);
-                    }
-                    spinner.setSelection(0);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        // Load initial
-        chipGroup.removeAllViews();
-        for (String g : selectedGenres) {
-            addChipToGroup(context, chipGroup, g, selectedGenres);
-        }
+    public interface OnGenreSelectionChanged {
+        void onChange(List<String> selectedGenres);
     }
 
-    private static void addChipToGroup(Context context, ChipGroup chipGroup, String genre,
-            List<String> selectedGenres) {
-        Chip chip = new Chip(context);
-        chip.setText(genre);
-        chip.setCloseIconVisible(true);
-        chip.setOnCloseIconClickListener(v -> {
-            chipGroup.removeView(chip);
-            selectedGenres.remove(genre);
+    /**
+     * Configura um RecyclerView de gêneros com chips estilizados selecionáveis.
+     * @param context       contexto
+     * @param rv            RecyclerView onde a lista será exibida
+     * @param preSelected   gêneros já selecionados (para modo edição)
+     * @param listener      callback chamado sempre que a seleção muda
+     * @return              lista mutável de gêneros selecionados (referência viva)
+     */
+    public static List<String> setupGenreRecycler(Context context, RecyclerView rv,
+                                                   List<String> preSelected,
+                                                   OnGenreSelectionChanged listener) {
+        List<String> genres = GenreUtil.getGenres();
+        List<String> selected = new ArrayList<>();
+        if (preSelected != null) selected.addAll(preSelected);
+
+        GenreChipAdapter adapter = new GenreChipAdapter(genres, selected, () -> {
+            if (listener != null) listener.onChange(new ArrayList<>(selected));
         });
-        chipGroup.addView(chip);
+        rv.setLayoutManager(new GridLayoutManager(context, 2));
+        rv.setAdapter(adapter);
+        rv.setNestedScrollingEnabled(false);
+        return selected;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Adapter interno de chips de gênero                                  */
+    /* ------------------------------------------------------------------ */
+    private static class GenreChipAdapter
+            extends RecyclerView.Adapter<GenreChipAdapter.VH> {
+
+        interface OnChanged { void changed(); }
+
+        private final List<String> genres;
+        private final List<String> selected;
+        private final OnChanged onChange;
+
+        GenreChipAdapter(List<String> genres, List<String> selected, OnChanged cb) {
+            this.genres   = genres;
+            this.selected = selected;
+            this.onChange = cb;
+        }
+
+        @Override
+        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_genre, parent, false);
+            return new VH(v);
+        }
+
+        @Override
+        public void onBindViewHolder(VH h, int pos) {
+            String genre = genres.get(pos);
+            h.tv.setText(genre);
+            boolean isSelected = selected.contains(genre);
+            applyState(h.tv, isSelected);
+
+            h.itemView.setOnClickListener(v -> {
+                boolean nowSelected = !selected.contains(genre);
+                if (nowSelected) selected.add(genre);
+                else             selected.remove(genre);
+                applyState(h.tv, nowSelected);
+                if (onChange != null) onChange.changed();
+            });
+        }
+
+        private void applyState(TextView tv, boolean sel) {
+            GradientDrawable bg = new GradientDrawable();
+            bg.setCornerRadius(50f);
+            if (sel) {
+                bg.setColor(0xFF1565C0);   // azul escuro (blue_dark)
+                tv.setTextColor(Color.WHITE);
+            } else {
+                bg.setColor(Color.WHITE);
+                bg.setStroke(2, 0xFF1565C0);
+                tv.setTextColor(0xFF1565C0);
+            }
+            tv.setBackground(bg);
+        }
+
+        @Override public int getItemCount() { return genres.size(); }
+
+        static class VH extends RecyclerView.ViewHolder {
+            TextView tv;
+            VH(View v) {
+                super(v);
+                tv = v.findViewById(R.id.tvGenreName);
+            }
+        }
     }
 }

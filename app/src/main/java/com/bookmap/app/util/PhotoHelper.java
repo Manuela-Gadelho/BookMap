@@ -110,6 +110,20 @@ public class PhotoHelper {
     }
     public static void loadImageIntoView(ImageView imageView, String photoPath) {
         if (photoPath == null || photoPath.isEmpty()) return;
+        if (photoPath.startsWith("asset:")) {
+            try {
+                String assetName = photoPath.substring(6);
+                InputStream is = imageView.getContext().getAssets().open(assetName);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap);
+                }
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         File file = new File(photoPath);
         if (!file.exists()) return;
         BitmapFactory.Options options = new BitmapFactory.Options();

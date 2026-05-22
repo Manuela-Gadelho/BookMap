@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
@@ -151,24 +151,185 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void seedData(SQLiteDatabase db) {
-        insertBookDirect(db, "Engenharia de Software", "Ian Sommerville",
-                "A decima edicao de Engenharia de Software, um classico da área, foi totalmente atualizada e reestruturada para refletir as mudancas tecnologicas mais recentes.",
-                "", "Tecnologia", "978-8543024974");
-        insertBookDirect(db, "O Senhor dos Aneis: A Sociedade do Anel", "J.R.R. Tolkien",
-                "A primeira parte da trilogia O Senhor dos Aneis, que conta a historia do hobbit Frodo e a Sociedade formada para destruir o Um Anel.",
-                "", "Fantasia", "978-8595084742");
-        insertBookDirect(db, "Dom Casmurro", "Machado de Assis",
-                "Um dos maiores classicos da literatura brasileira, narra a historia de Bentinho e Capitu.",
-                "", "Literatura Brasileira", "978-8544001561");
-        insertBookDirect(db, "A Hora da Estrela", "Clarice Lispector",
-                "A historia de Macabea, uma jovem nordestina que vive no Rio de Janeiro.",
-                "", "Literatura Brasileira", "978-8532511454");
-        insertBookDirect(db, "O Iluminado", "Stephen King",
-                "Jack Torrance aceita o cargo de zelador de inverno no Hotel Overlook, isolado nas montanhas do Colorado.",
-                "", "Terror", "978-8556510761");
-        insertBookDirect(db, "1984", "George Orwell",
-                "Uma distopia sobre um regime totalitario que controla todos os aspectos da vida.",
-                "", "Ficção Científica", "978-8535914849");
+        insertBookDirect(db, "O Conde de Monte Cristo", "Alexandre Dumas", "A história de um homem injustamente preso que busca vingança.", "asset:covers/çãoeaventura.jpg", "Ação e Aventura", "978-8537801605");
+        insertBookDirect(db, "A Ilha do Tesouro", "Robert Louis Stevenson", "Uma aventura clássica sobre piratas e tesouros enterrados.", "asset:covers/çãoeaventura.jpg", "Ação e Aventura", "978-8542217629");
+        insertBookDirect(db, "As Aventuras de Robin Hood", "Howard Pyle", "O lendário herói que roubava dos ricos para dar aos pobres.", "asset:covers/çãoeaventura.jpg", "Ação e Aventura", "978-8537801834");
+        insertBookDirect(db, "Vinte Mil Léguas Submarinas", "Júlio Verne", "A incrível jornada do Capitão Nemo em seu submarino Náutilus.", "asset:covers/çãoeaventura.jpg", "Ação e Aventura", "978-8537801643");
+        insertBookDirect(db, "O Último dos Moicanos", "James Fenimore Cooper", "A luta de uma tribo nativa americana durante a guerra franco-indígena.", "asset:covers/çãoeaventura.jpg", "Ação e Aventura", "978-8520921005");
+
+        insertBookDirect(db, "O Poder do Hábito", "Charles Duhigg", "Por que fazemos o que fazemos na vida e nos negócios.", "asset:covers/autoajuda.jpg", "Autoajuda", "978-8539004119");
+        insertBookDirect(db, "Mindset", "Carol S. Dweck", "A nova psicologia do sucesso.", "asset:covers/autoajuda.jpg", "Autoajuda", "978-8547001063");
+        insertBookDirect(db, "Como Fazer Amigos e Influenciar Pessoas", "Dale Carnegie", "O guia clássico para melhorar relacionamentos pessoais e profissionais.", "asset:covers/autoajuda.jpg", "Autoajuda", "978-8504020360");
+        insertBookDirect(db, "A Sutil Arte de Ligar o F*da-se", "Mark Manson", "Uma estratégia inusitada para uma vida melhor.", "asset:covers/autoajuda.jpg", "Autoajuda", "978-8551002490");
+        insertBookDirect(db, "Hábitos Atômicos", "James Clear", "Um método fácil e comprovado de criar bons hábitos e se livrar dos maus.", "asset:covers/autoajuda.jpg", "Autoajuda", "978-8550805246");
+
+        insertBookDirect(db, "Steve Jobs", "Walter Isaacson", "A biografia exclusiva de um dos maiores inovadores do mundo.", "asset:covers/biografia.jpg", "Biografia", "978-8535919714");
+        insertBookDirect(db, "Minha História", "Michelle Obama", "Um relato íntimo e poderoso da ex-primeira-dama dos Estados Unidos.", "asset:covers/biografia.jpg", "Biografia", "978-8547000646");
+        insertBookDirect(db, "O Diário de Anne Frank", "Anne Frank", "O emocionante relato de uma jovem judia escondida durante a Segunda Guerra Mundial.", "asset:covers/biografia.jpg", "Biografia", "978-8501069509");
+        insertBookDirect(db, "Long Walk to Freedom", "Nelson Mandela", "A autobiografia de um dos maiores líderes morais e políticos de nosso tempo.", "asset:covers/biografia.jpg", "Biografia", "978-8535921861");
+        insertBookDirect(db, "Leonardo da Vinci", "Walter Isaacson", "A biografia do maior gênio da história da humanidade.", "asset:covers/biografia.jpg", "Biografia", "978-8551002575");
+
+        insertBookDirect(db, "Laços de Família", "Clarice Lispector", "Contos que exploram a complexidade das relações humanas.", "asset:covers/contos.jpg", "Contos", "978-8532508126");
+        insertBookDirect(db, "Ficções", "Jorge Luis Borges", "Uma coletânea das melhores histórias curtas e ensaios do autor argentino.", "asset:covers/contos.jpg", "Contos", "978-8535911305");
+        insertBookDirect(db, "Contos de Machado de Assis", "Machado de Assis", "Os contos mais consagrados do maior escritor brasileiro.", "asset:covers/contos.jpg", "Contos", "978-8525411709");
+        insertBookDirect(db, "Dublinenses", "James Joyce", "Quinze contos que retratam a vida em Dublin no início do século XX.", "asset:covers/contos.jpg", "Contos", "978-8535921502");
+        insertBookDirect(db, "Histórias Extraordinárias", "Edgar Allan Poe", "As melhores histórias de terror e suspense do mestre do gênero.", "asset:covers/contos.jpg", "Contos", "978-8535911435");
+
+        insertBookDirect(db, "A Sangue Frio", "Truman Capote", "A história real de um assassinato brutal que marcou a literatura de não-ficção.", "asset:covers/crimesverdadeiros.jpg", "Crimes Verdadeiros", "978-8535904338");
+        insertBookDirect(db, "Zodiac", "Robert Graysmith", "A investigação sobre o famoso serial killer do zodíaco.", "asset:covers/crimesverdadeiros.jpg", "Crimes Verdadeiros", "978-8542217636");
+        insertBookDirect(db, "Helter Skelter", "Vincent Bugliosi", "A história verdadeira dos assassinatos de Charles Manson.", "asset:covers/crimesverdadeiros.jpg", "Crimes Verdadeiros", "978-8501069516");
+        insertBookDirect(db, "O Maníaco do Parque", "Ullisses Campbell", "A história do serial killer brasileiro Francisco de Assis Pereira.", "asset:covers/crimesverdadeiros.jpg", "Crimes Verdadeiros", "978-8520421005");
+        insertBookDirect(db, "I'll Be Gone in the Dark", "Michelle McNamara", "A caçada ao assassino do Estado Dourado nos EUA.", "asset:covers/crimesverdadeiros.jpg", "Crimes Verdadeiros", "978-8595084759");
+
+        insertBookDirect(db, "A Última Crônica", "Rubem Braga", "Crônicas memoráveis de um dos maiores cronistas do Brasil.", "asset:covers/crnicas.jpg", "Crônicas", "978-8501069523");
+        insertBookDirect(db, "As Cem Melhores Crônicas Brasileiras", "Joaquim Ferreira dos Santos", "Uma seleção das melhores crônicas da literatura nacional.", "asset:covers/crnicas.jpg", "Crônicas", "978-8539004126");
+        insertBookDirect(db, "Comédias para Ler na Escola", "Luis Fernando Verissimo", "Crônicas humorísticas perfeitas para jovens leitores.", "asset:covers/crnicas.jpg", "Crônicas", "978-8539004133");
+        insertBookDirect(db, "O Melhor das Comédias da Vida Privada", "Luis Fernando Verissimo", "As melhores crônicas sobre o dia a dia e o comportamento brasileiro.", "asset:covers/crnicas.jpg", "Crônicas", "978-8539004140");
+        insertBookDirect(db, "Cem Crônicas", "Nelson Rodrigues", "A visão única e irônica do cotidiano carioca.", "asset:covers/crnicas.jpg", "Crônicas", "978-8535919721");
+
+        insertBookDirect(db, "1984", "George Orwell", "Uma distopia sobre um regime totalitário que controla todos os aspectos da vida.", "asset:covers/distopia.jpg", "Distopia", "978-8535914849");
+        insertBookDirect(db, "Admirável Mundo Novo", "Aldous Huxley", "Um mundo futuro onde o sofrimento foi erradicado, mas a que custo?", "asset:covers/distopia.jpg", "Distopia", "978-8525056009");
+        insertBookDirect(db, "O Conto da Aia", "Margaret Atwood", "A história de Offred na opressiva República de Gilead.", "asset:covers/distopia.jpg", "Distopia", "978-8532520661");
+        insertBookDirect(db, "Fahrenheit 451", "Ray Bradbury", "Uma sociedade onde os livros são proibidos e queimados.", "asset:covers/distopia.jpg", "Distopia", "978-8525056016");
+        insertBookDirect(db, "Laranja Mecânica", "Anthony Burgess", "A história de Alex e a ultraviolência em uma sociedade distópica.", "asset:covers/distopia.jpg", "Distopia", "978-8525056023");
+
+        insertBookDirect(db, "Sobre a Brevidade da Vida", "Sêneca", "Um ensaio clássico sobre o valor do tempo e como vivemos.", "asset:covers/ensaios.jpg", "Ensaios", "978-8520421012");
+        insertBookDirect(db, "A Morte de Ivan Ilitch", "Liev Tolstói", "Uma reflexão profunda sobre o sentido da vida e da morte.", "asset:covers/ensaios.jpg", "Ensaios", "978-8535919738");
+        insertBookDirect(db, "Ensaios", "Michel de Montaigne", "Os ensaios fundamentais que deram origem ao gênero.", "asset:covers/ensaios.jpg", "Ensaios", "978-8535919745");
+        insertBookDirect(db, "Cultura e Sociedade", "Zygmunt Bauman", "Uma análise crítica da sociedade contemporânea.", "asset:covers/ensaios.jpg", "Ensaios", "978-8535919752");
+        insertBookDirect(db, "O Mito de Sísifo", "Albert Camus", "Um ensaio sobre o absurdo da existência e a rebelião.", "asset:covers/ensaios.jpg", "Ensaios", "978-8535919769");
+
+        insertBookDirect(db, "O Senhor dos Anéis: A Sociedade do Anel", "J.R.R. Tolkien", "A jornada de Frodo Bolseiro para destruir o Um Anel.", "asset:covers/fantasia.jpg", "Fantasia", "978-8595084742");
+        insertBookDirect(db, "Harry Potter e a Pedra Filosofal", "J.K. Rowling", "O início da jornada mágica do menino que sobreviveu.", "asset:covers/fantasia.jpg", "Fantasia", "978-8532511010");
+        insertBookDirect(db, "O Nome do Vento", "Patrick Rothfuss", "A história do mago e músico Kvothe.", "asset:covers/fantasia.jpg", "Fantasia", "978-8599296573");
+        insertBookDirect(db, "As Crônicas de Nárnia", "C.S. Lewis", "Aventura mágica de quatro irmãos em um mundo paralelo.", "asset:covers/fantasia.jpg", "Fantasia", "978-8578270698");
+        insertBookDirect(db, "O Hobbit", "J.R.R. Tolkien", "A jornada de Bilbo Bolseiro para recuperar o tesouro dos anões.", "asset:covers/fantasia.jpg", "Fantasia", "978-8595084766");
+
+        insertBookDirect(db, "Duna", "Frank Herbert", "Uma saga épica de política, religião e sobrevivência no planeta Arrakis.", "asset:covers/ficodecientfica.jpg", "Ficção Científica", "978-8576573135");
+        insertBookDirect(db, "Fundação", "Isaac Asimov", "O início do colapso do Império Galáctico e o plano de Hari Seldon.", "asset:covers/ficodecientfica.jpg", "Ficção Científica", "978-8576573142");
+        insertBookDirect(db, "Eu, Robô", "Isaac Asimov", "Contos fundamentais sobre a relação entre humanos e inteligência artificial.", "asset:covers/ficodecientfica.jpg", "Ficção Científica", "978-8576573159");
+        insertBookDirect(db, "Neuromancer", "William Gibson", "A obra seminal do cyberpunk e da exploração do ciberespaço.", "asset:covers/ficodecientfica.jpg", "Ficção Científica", "978-8576573166");
+        insertBookDirect(db, "Androides Sonham com Ovelhas Elétricas?", "Philip K. Dick", "O caçador de recompensas Rick Deckard e os androides fugitivos.", "asset:covers/ficodecientfica.jpg", "Ficção Científica", "978-8576573173");
+
+        insertBookDirect(db, "O Mundo de Sofia", "Jostein Gaarder", "Uma introdução acessível e fascinante à história da filosofia.", "asset:covers/filosofia.jpg", "Filosofia", "978-8535919776");
+        insertBookDirect(db, "Assim Falou Zaratustra", "Friedrich Nietzsche", "Um romance filosófico sobre a superação do homem.", "asset:covers/filosofia.jpg", "Filosofia", "978-8535919783");
+        insertBookDirect(db, "Meditações", "Marco Aurélio", "Reflexões de um imperador estoico sobre a vida e o dever.", "asset:covers/filosofia.jpg", "Filosofia", "978-8535919790");
+        insertBookDirect(db, "Ética a Nicômaco", "Aristóteles", "Tratado sobre a moralidade e a busca pela felicidade.", "asset:covers/filosofia.jpg", "Filosofia", "978-8535919806");
+        insertBookDirect(db, "A República", "Platão", "Diálogo sobre a justiça e a estrutura da sociedade ideal.", "asset:covers/filosofia.jpg", "Filosofia", "978-8535919813");
+
+        insertBookDirect(db, "Sapiens", "Yuval Noah Harari", "Uma breve história da humanidade.", "asset:covers/histria.jpg", "História", "978-8535919820");
+        insertBookDirect(db, "1808", "Laurentino Gomes", "Como uma rainha louca e um príncipe medroso fugiram para o Brasil.", "asset:covers/histria.jpg", "História", "978-8535919837");
+        insertBookDirect(db, "O Povo Brasileiro", "Darcy Ribeiro", "A formação cultural e histórica do Brasil.", "asset:covers/histria.jpg", "História", "978-8535919844");
+        insertBookDirect(db, "Guns, Germs, and Steel", "Jared Diamond", "As influências geográficas e ambientais na história da humanidade.", "asset:covers/histria.jpg", "História", "978-8535919851");
+        insertBookDirect(db, "A Segunda Guerra Mundial", "Antony Beevor", "O relato definitivo sobre o maior conflito da história humana.", "asset:covers/histria.jpg", "História", "978-8535919868");
+
+        insertBookDirect(db, "It: A Coisa", "Stephen King", "O palhaço Pennywise e o terror na pequena cidade de Derry.", "asset:covers/horror_terror.jpg", "Horror / Terror", "978-8535919875");
+        insertBookDirect(db, "Drácula", "Bram Stoker", "O clássico romance sobre o vampiro mais famoso de todos os tempos.", "asset:covers/horror_terror.jpg", "Horror / Terror", "978-8535919882");
+        insertBookDirect(db, "O Exorcista", "William Peter Blatty", "A possessão demoníaca da jovem Regan MacNeil.", "asset:covers/horror_terror.jpg", "Horror / Terror", "978-8535919899");
+        insertBookDirect(db, "O Chamado de Cthulhu", "H.P. Lovecraft", "A descoberta do horror cósmico e de entidades além da compreensão.", "asset:covers/horror_terror.jpg", "Horror / Terror", "978-8535919905");
+        insertBookDirect(db, "O Iluminado", "Stephen King", "O horror psicológico e sobrenatural no isolado Hotel Overlook.", "asset:covers/horror_terror.jpg", "Horror / Terror", "978-8535919912");
+
+        insertBookDirect(db, "O Guia do Mochileiro das Galáxias", "Douglas Adams", "Uma aventura intergaláctica absurdamente cômica.", "asset:covers/humor.jpg", "Humor", "978-8535919929");
+        insertBookDirect(db, "Memórias Póstumas de Brás Cubas", "Machado de Assis", "As memórias irônicas de um defunto autor.", "asset:covers/humor.jpg", "Humor", "978-8535919936");
+        insertBookDirect(db, "Bons Omens", "Neil Gaiman e Terry Pratchett", "As profecias bizarras sobre o fim do mundo e os esforços para impedi-lo.", "asset:covers/humor.jpg", "Humor", "978-8535919943");
+        insertBookDirect(db, "Três Homens em um Barco", "Jerome K. Jerome", "A cômica jornada de três amigos pelo rio Tâmisa.", "asset:covers/humor.jpg", "Humor", "978-8535919950");
+        insertBookDirect(db, "A Vida Não é Útil", "Ailton Krenak", "Ensaios curtos com uma visão crítica e humorada da modernidade.", "asset:covers/humor.jpg", "Humor", "978-8535919967");
+
+        insertBookDirect(db, "O Pequeno Príncipe", "Antoine de Saint-Exupéry", "Uma história poética sobre a infância e o valor da amizade.", "asset:covers/infantil.jpg", "Infantil", "978-8535919974");
+        insertBookDirect(db, "O Menino Maluquinho", "Ziraldo", "A história de um garoto com o olho maior que a barriga e muita imaginação.", "asset:covers/infantil.jpg", "Infantil", "978-8535919981");
+        insertBookDirect(db, "A Bolsa Amarela", "Lygia Bojunga", "A jornada de Raquel e seus desejos guardados em uma bolsa amarela.", "asset:covers/infantil.jpg", "Infantil", "978-8535919998");
+        insertBookDirect(db, "Reinações de Narizinho", "Monteiro Lobato", "As incríveis aventuras do Sítio do Picapau Amarelo.", "asset:covers/infantil.jpg", "Infantil", "978-8535920000");
+        insertBookDirect(db, "Alice no País das Maravilhas", "Lewis Carroll", "Uma garota descobre um mundo mágico e absurdo ao cair em uma toca de coelho.", "asset:covers/infantil.jpg", "Infantil", "978-8535920017");
+
+        insertBookDirect(db, "Jogos Vorazes", "Suzanne Collins", "Jovens lutam até a morte em um evento televisionado em uma sociedade distópica.", "asset:covers/jovemadultoya.jpg", "Jovem Adulto (YA)", "978-8535920024");
+        insertBookDirect(db, "A Culpa é das Estrelas", "John Green", "Um romance emocionante sobre dois adolescentes lutando contra o câncer.", "asset:covers/jovemadultoya.jpg", "Jovem Adulto (YA)", "978-8535920031");
+        insertBookDirect(db, "Percy Jackson e o Ladrão de Raios", "Rick Riordan", "Aventuras de um jovem semideus no mundo moderno.", "asset:covers/jovemadultoya.jpg", "Jovem Adulto (YA)", "978-8535920048");
+        insertBookDirect(db, "Divergente", "Veronica Roth", "Uma sociedade dividida por facções e a jornada de uma jovem para se encontrar.", "asset:covers/jovemadultoya.jpg", "Jovem Adulto (YA)", "978-8535920055");
+        insertBookDirect(db, "Crepúsculo", "Stephenie Meyer", "O romance sobrenatural entre uma humana e um vampiro.", "asset:covers/jovemadultoya.jpg", "Jovem Adulto (YA)", "978-8535920062");
+
+        insertBookDirect(db, "Grande Sertão: Veredas", "João Guimarães Rosa", "A jornada e reflexões do jagunço Riobaldo no sertão brasileiro.", "asset:covers/literaturabrasileira.jpg", "Literatura Brasileira", "978-8535920079");
+        insertBookDirect(db, "Capitães da Areia", "Jorge Amado", "A vida de um grupo de meninos abandonados nas ruas de Salvador.", "asset:covers/literaturabrasileira.jpg", "Literatura Brasileira", "978-8535920086");
+        insertBookDirect(db, "O Cortiço", "Aluísio Azevedo", "A dinâmica social e moral de um cortiço carioca do século XIX.", "asset:covers/literaturabrasileira.jpg", "Literatura Brasileira", "978-8535920093");
+        insertBookDirect(db, "Vidas Secas", "Graciliano Ramos", "A luta pela sobrevivência de uma família de retirantes nordestinos.", "asset:covers/literaturabrasileira.jpg", "Literatura Brasileira", "978-8535920109");
+        insertBookDirect(db, "Macunaíma", "Mário de Andrade", "A história do herói sem nenhum caráter em busca de sua identidade brasileira.", "asset:covers/literaturabrasileira.jpg", "Literatura Brasileira", "978-8535920116");
+
+        insertBookDirect(db, "Orgulho e Preconceito", "Jane Austen", "Um retrato irônico da sociedade inglesa do início do século XIX.", "asset:covers/literaturaclssica.jpg", "Literatura Clássica", "978-8535920123");
+        insertBookDirect(db, "Crime e Castigo", "Fiódor Dostoiévski", "A culpa e a redenção de Raskólnikov após cometer um assassinato.", "asset:covers/literaturaclssica.jpg", "Literatura Clássica", "978-8535920130");
+        insertBookDirect(db, "Os Miseráveis", "Victor Hugo", "A saga de redenção de Jean Valjean na França do século XIX.", "asset:covers/literaturaclssica.jpg", "Literatura Clássica", "978-8535920147");
+        insertBookDirect(db, "Dom Quixote", "Miguel de Cervantes", "As aventuras do engenhoso fidalgo e seu escudeiro Sancho Pança.", "asset:covers/literaturaclssica.jpg", "Literatura Clássica", "978-8535920154");
+        insertBookDirect(db, "Moby Dick", "Herman Melville", "A obsessiva caçada do Capitão Ahab à grande baleia branca.", "asset:covers/literaturaclssica.jpg", "Literatura Clássica", "978-8535920161");
+
+        insertBookDirect(db, "Cem Anos de Solidão", "Gabriel García Márquez", "A saga da família Buendía na cidade fictícia de Macondo.", "asset:covers/literaturaestrangeira.jpg", "Literatura Estrangeira", "978-8535920178");
+        insertBookDirect(db, "O Caçador de Pipas", "Khaled Hosseini", "Uma história de amizade e redenção ambientada no Afeganistão.", "asset:covers/literaturaestrangeira.jpg", "Literatura Estrangeira", "978-8535920185");
+        insertBookDirect(db, "Norwegian Wood", "Haruki Murakami", "Uma nostálgica e comovente história de amor e perda na juventude.", "asset:covers/literaturaestrangeira.jpg", "Literatura Estrangeira", "978-8535920192");
+        insertBookDirect(db, "A Sombra do Vento", "Carlos Ruiz Zafón", "Um mistério envolvendo um livro amaldiçoado e o Cemitério dos Livros Esquecidos.", "asset:covers/literaturaestrangeira.jpg", "Literatura Estrangeira", "978-8535920208");
+        insertBookDirect(db, "Ensaio Sobre a Cegueira", "José Saramago", "Uma epidemia incontrolável de cegueira branca testa os limites humanos.", "asset:covers/literaturaestrangeira.jpg", "Literatura Estrangeira", "978-8535920215");
+
+        insertBookDirect(db, "Naruto Vol. 1", "Masashi Kishimoto", "A jornada de um jovem ninja em busca de aceitação e de seu sonho de ser Hokage.", "asset:covers/mangsequadrinhos.jpg", "Mangás e Quadrinhos", "978-8535920222");
+        insertBookDirect(db, "One Piece Vol. 1", "Eiichiro Oda", "A aventura de Monkey D. Luffy para encontrar o grande tesouro One Piece.", "asset:covers/mangsequadrinhos.jpg", "Mangás e Quadrinhos", "978-8535920239");
+        insertBookDirect(db, "Death Note Vol. 1", "Tsugumi Ohba", "O embate mortal entre Kira e o detetive L envolvendo um caderno sobrenatural.", "asset:covers/mangsequadrinhos.jpg", "Mangás e Quadrinhos", "978-8535920246");
+        insertBookDirect(db, "Turma da Mônica: Laços", "Vitor Cafaggi e Lu Cafaggi", "Uma emocionante jornada da turminha do Bairro do Limoeiro para encontrar o Floquinho.", "asset:covers/mangsequadrinhos.jpg", "Mangás e Quadrinhos", "978-8535920253");
+        insertBookDirect(db, "Maus", "Art Spiegelman", "A dolorosa e impressionante narrativa do Holocausto retratando judeus como ratos e nazistas como gatos.", "asset:covers/mangsequadrinhos.jpg", "Mangás e Quadrinhos", "978-8535920260");
+
+        insertBookDirect(db, "Assassinato no Expresso do Oriente", "Agatha Christie", "Hercule Poirot investiga um crime intricado em um luxuoso trem.", "asset:covers/mistrio.jpg", "Mistério", "978-8535920277");
+        insertBookDirect(db, "O Código Da Vinci", "Dan Brown", "Robert Langdon descobre segredos ocultos que abalam a base do cristianismo.", "asset:covers/mistrio.jpg", "Mistério", "978-8535920284");
+        insertBookDirect(db, "A Garota no Trem", "Paula Hawkins", "O tenso thriller psicológico envolvendo o desaparecimento de uma mulher.", "asset:covers/mistrio.jpg", "Mistério", "978-8535920291");
+        insertBookDirect(db, "Garota Exemplar", "Gillian Flynn", "O misterioso e sombrio desaparecimento de Amy Dunne e as suspeitas sobre seu marido.", "asset:covers/mistrio.jpg", "Mistério", "978-8535920307");
+        insertBookDirect(db, "Os Homens que Não Amavam as Mulheres", "Stieg Larsson", "O início da trilogia Millennium, revelando segredos sombrios de uma rica família.", "asset:covers/mistrio.jpg", "Mistério", "978-8535920314");
+
+        insertBookDirect(db, "Pai Rico, Pai Pobre", "Robert Kiyosaki", "O que os ricos ensinam aos seus filhos sobre dinheiro.", "asset:covers/negciosefinanas.jpg", "Negócios e Finanças", "978-8535920321");
+        insertBookDirect(db, "A Startup Enxuta", "Eric Ries", "Como o empreendedorismo inovador transforma a maneira de desenvolver novos produtos.", "asset:covers/negciosefinanas.jpg", "Negócios e Finanças", "978-8535920338");
+        insertBookDirect(db, "O Homem Mais Rico da Babilônia", "George S. Clason", "Antigas parábolas sobre sucesso financeiro e sabedoria econômica.", "asset:covers/negciosefinanas.jpg", "Negócios e Finanças", "978-8535920345");
+        insertBookDirect(db, "Rápido e Devagar", "Daniel Kahneman", "Duas formas de pensar que impactam nossas decisões financeiras e de vida.", "asset:covers/negciosefinanas.jpg", "Negócios e Finanças", "978-8535920352");
+        insertBookDirect(db, "Os Segredos da Mente Milionária", "T. Harv Eker", "Aprenda a enriquecer mudando seus conceitos sobre o dinheiro e adotando o comportamento de pessoas ricas.", "asset:covers/negciosefinanas.jpg", "Negócios e Finanças", "978-8535920369");
+
+        insertBookDirect(db, "Antologia Poética", "Vinícius de Moraes", "Uma seleção das melhores poesias do grande mestre brasileiro.", "asset:covers/poesia.jpg", "Poesia", "978-8535920376");
+        insertBookDirect(db, "Sentimento do Mundo", "Carlos Drummond de Andrade", "Poesias que retratam a dor e a melancolia do ser humano frente aos horrores da guerra.", "asset:covers/poesia.jpg", "Poesia", "978-8535920383");
+        insertBookDirect(db, "Flor de Poemas", "Florbela Espanca", "Uma intensa coletânea que expressa a alma inquieta da poeta portuguesa.", "asset:covers/poesia.jpg", "Poesia", "978-8535920390");
+        insertBookDirect(db, "A Rosa do Povo", "Carlos Drummond de Andrade", "Uma das obras primas da poesia brasileira moderna.", "asset:covers/poesia.jpg", "Poesia", "978-8535920406");
+        insertBookDirect(db, "Odes Elementares", "Pablo Neruda", "Uma celebração poética de coisas simples do cotidiano e da vida.", "asset:covers/poesia.jpg", "Poesia", "978-8535920413");
+
+        insertBookDirect(db, "O Silêncio dos Inocentes", "Thomas Harris", "A investigação sobre um serial killer com a ajuda de Hannibal Lecter.", "asset:covers/policial.jpg", "Policial", "978-8535920420");
+        insertBookDirect(db, "Sherlock Holmes", "Arthur Conan Doyle", "As clássicas aventuras do detetive mais brilhante da literatura.", "asset:covers/policial.jpg", "Policial", "978-8535920437");
+        insertBookDirect(db, "O Caso dos Dez Negrinhos", "Agatha Christie", "O maior e mais famoso mistério já escrito pela rainha do crime.", "asset:covers/policial.jpg", "Policial", "978-8535920444");
+        insertBookDirect(db, "Boneco de Neve", "Jo Nesbø", "O inspetor Harry Hole investiga assassinatos conectados pela presença de bonecos de neve.", "asset:covers/policial.jpg", "Policial", "978-8535920451");
+        insertBookDirect(db, "Morte no Nilo", "Agatha Christie", "Hercule Poirot investiga o assassinato de uma herdeira milionária a bordo de um navio.", "asset:covers/policial.jpg", "Policial", "978-8535920468");
+
+        insertBookDirect(db, "O Homem em Busca de Sentido", "Viktor E. Frankl", "O relato comovente e inspirador do psiquiatra austríaco sobre a sobrevivência em campos de concentração.", "asset:covers/psicologia.jpg", "Psicologia", "978-8535920475");
+        insertBookDirect(db, "Inteligência Emocional", "Daniel Goleman", "A teoria inovadora que redefine o que significa ser inteligente e bem sucedido.", "asset:covers/psicologia.jpg", "Psicologia", "978-8535920482");
+        insertBookDirect(db, "O Poder do Agora", "Eckhart Tolle", "Um guia espiritual que inspira milhões a descobrir a liberdade através de viver no momento presente.", "asset:covers/psicologia.jpg", "Psicologia", "978-8535920499");
+        insertBookDirect(db, "O Corpo Fala", "Pierre Weil", "A linguagem secreta de nosso corpo e seu significado na comunicação interpessoal.", "asset:covers/psicologia.jpg", "Psicologia", "978-8535920505");
+        insertBookDirect(db, "O Que a Vida Me Ensinou", "Luiz Alberto Py", "Uma reflexão madura e acessível sobre como enfrentar os desafios da mente moderna.", "asset:covers/psicologia.jpg", "Psicologia", "978-8535920512");
+
+        insertBookDirect(db, "O Alquimista", "Paulo Coelho", "A mágica jornada de Santiago em busca de um tesouro nas pirâmides do Egito.", "asset:covers/religioeespiritualidade.jpg", "Religião e Espiritualidade", "978-8535920529");
+        insertBookDirect(db, "Sidarta", "Hermann Hesse", "O clássico romance sobre a busca espiritual e iluminação durante o tempo de Buda.", "asset:covers/religioeespiritualidade.jpg", "Religião e Espiritualidade", "978-8535920536");
+        insertBookDirect(db, "O Monge e o Executivo", "James C. Hunter", "A história que ensina liderança por meio dos princípios da essência e serviço.", "asset:covers/religioeespiritualidade.jpg", "Religião e Espiritualidade", "978-8535920543");
+        insertBookDirect(db, "Conversando com Deus", "Neale Donald Walsch", "Um diálogo inusitado que propõe profundas questões sobre o universo e o ser humano.", "asset:covers/religioeespiritualidade.jpg", "Religião e Espiritualidade", "978-8535920550");
+        insertBookDirect(db, "A Cabana", "William P. Young", "Uma emocionante ficção que debate a dor, fé e o perdão diante de tragédias.", "asset:covers/religioeespiritualidade.jpg", "Religião e Espiritualidade", "978-8535920567");
+
+        insertBookDirect(db, "Me Chame Pelo Seu Nome", "André Aciman", "Uma belíssima história de amor e autodescoberta no verão da Itália.", "asset:covers/romance.jpg", "Romance", "978-8535920574");
+        insertBookDirect(db, "Como Eu Era Antes de Você", "Jojo Moyes", "A envolvente e triste jornada de amor de Will Traynor e Louisa Clark.", "asset:covers/romance.jpg", "Romance", "978-8535920581");
+        insertBookDirect(db, "É Assim Que Acaba", "Colleen Hoover", "Uma reflexão profunda sobre o amor, a família e a dor no meio da paixão.", "asset:covers/romance.jpg", "Romance", "978-8535920598");
+        insertBookDirect(db, "O Diário de Uma Paixão", "Nicholas Sparks", "Um amor atemporal e emocionante que transcende até a doença.", "asset:covers/romance.jpg", "Romance", "978-8535920604");
+        insertBookDirect(db, "Orgulho e Preconceito e Zumbis", "Seth Grahame-Smith", "A adorada obra clássica agora mesclada à sobrevivência num apocalipse zumbi.", "asset:covers/romance.jpg", "Romance", "978-8535920611");
+
+        insertBookDirect(db, "A Paciente Silenciosa", "Alex Michaelides", "O envolvente suspense sobre uma mulher que assassina o marido e nunca mais fala.", "asset:covers/suspense.jpg", "Suspense", "978-8535920628");
+        insertBookDirect(db, "A Mulher na Janela", "A.J. Finn", "Um tenso thriller psicológico envolvendo uma reclusa e os segredos dos vizinhos.", "asset:covers/suspense.jpg", "Suspense", "978-8535920635");
+        insertBookDirect(db, "Objetos Cortantes", "Gillian Flynn", "Uma repórter retorna à sua cidade natal para cobrir brutais crimes e os próprios fantasmas.", "asset:covers/suspense.jpg", "Suspense", "978-8535920642");
+        insertBookDirect(db, "Os Últimos Dias de Krypton", "Kevin J. Anderson", "O fascinante relato focado na destruição do planeta natal do Superman e seus mistérios.", "asset:covers/suspense.jpg", "Suspense", "978-8535920659");
+        insertBookDirect(db, "O Colecionador", "John Fowles", "A obsessão macabra de um homem introvertido que decide sequestrar a garota que ama.", "asset:covers/suspense.jpg", "Suspense", "978-8535920666");
+
+        insertBookDirect(db, "Clean Code", "Robert C. Martin", "Um manual prático e atemporal de boas práticas para a engenharia de software ágil.", "asset:covers/tecnologia.jpg", "Tecnologia", "978-8535920673");
+        insertBookDirect(db, "O Programador Pragmático", "Andrew Hunt", "A jornada definitiva da iniciação até a maestria técnica no mundo da programação.", "asset:covers/tecnologia.jpg", "Tecnologia", "978-8535920680");
+        insertBookDirect(db, "Design Patterns", "Erich Gamma", "Elementos fundamentais e essenciais no desenvolvimento de software orientado a objetos.", "asset:covers/tecnologia.jpg", "Tecnologia", "978-8535920697");
+        insertBookDirect(db, "Código Limpo", "Robert C. Martin", "A versão nacional essencial de habilidades práticas para programadores.", "asset:covers/tecnologia.jpg", "Tecnologia", "978-8535920703");
+        insertBookDirect(db, "Engenharia de Software", "Ian Sommerville", "O livro base na formação acadêmica que guia toda a criação moderna de softwares e metodologias.", "asset:covers/tecnologia.jpg", "Tecnologia", "978-8535920710");
+
+        insertBookDirect(db, "O Gene Egoísta", "Richard Dawkins", "A fascinante perspectiva de vida do mundo biológico focada na evolução centrada no gene.", "asset:covers/outros.jpg", "Outros", "978-8535920727");
+        insertBookDirect(db, "Freakonomics", "Steven D. Levitt", "Explorando a economia por um lado obscuro, investigando o lado divertido de escolhas diárias.", "asset:covers/outros.jpg", "Outros", "978-8535920734");
+        insertBookDirect(db, "Armas, Germes e Aço", "Jared Diamond", "As razões ocultas e o curso de evolução e história da desigualdade global.", "asset:covers/outros.jpg", "Outros", "978-8535920741");
+        insertBookDirect(db, "Cisne Negro", "Nassim Nicholas Taleb", "O surpreendente impacto das consequências de eventos altamente improváveis e da incerteza.", "asset:covers/outros.jpg", "Outros", "978-8535920758");
+        insertBookDirect(db, "Breves Respostas Para Grandes Questões", "Stephen Hawking", "As conclusões e previsões essenciais do cientista brilhante a respeito do futuro universal e civilizacional.", "asset:covers/outros.jpg", "Outros", "978-8535920765");
     }
 
     private void insertBookDirect(SQLiteDatabase db, String title, String author,
