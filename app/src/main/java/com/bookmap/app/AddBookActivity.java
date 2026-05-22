@@ -23,6 +23,7 @@ import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.util.PhotoHelper;
 import com.bookmap.app.util.SessionManager;
 import android.widget.EditText;
+import android.view.View;
 
 public class AddBookActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3002;

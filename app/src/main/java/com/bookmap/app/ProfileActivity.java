@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import com.google.android.material.chip.ChipGroup;
+import androidx.recyclerview.widget.RecyclerView;
 import com.bookmap.app.util.GenreUIHelper;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -30,8 +30,7 @@ import android.widget.EditText;
 public class ProfileActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3001;
     private EditText editName, editBio;
-    private Spinner spinnerGenres;
-    private ChipGroup chipGroupGenres;
+    private RecyclerView recyclerGenres;
     private List<String> selectedGenres = new ArrayList<>();
     private TextView tvUserName, tvUserEmail, tvUserRole;
     private ImageView imgAvatar;
@@ -54,8 +53,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
         editName = findViewById(R.id.editName);
         editBio = findViewById(R.id.editBio);
-        spinnerGenres = findViewById(R.id.spinnerGenres);
-        chipGroupGenres = findViewById(R.id.chipGroupGenres);
+        recyclerGenres = findViewById(R.id.recyclerGenres);
         tvUserName = findViewById(R.id.tvUserName);
         tvUserEmail = findViewById(R.id.tvUserEmail);
         tvUserRole = findViewById(R.id.tvUserRole);
@@ -64,7 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnLogout = findViewById(R.id.btnLogout);
         loadUserData();
-        GenreUIHelper.setupGenreSpinner(this, spinnerGenres, chipGroupGenres, selectedGenres);
+        selectedGenres = GenreUIHelper.setupGenreRecycler(this, recyclerGenres, selectedGenres, null);
         imgAvatar.setOnClickListener(v -> showPhotoOptions());
         btnSave.setOnClickListener(v -> saveProfile());
         btnBack.setOnClickListener(v -> finish());

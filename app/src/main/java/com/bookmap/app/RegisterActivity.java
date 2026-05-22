@@ -20,8 +20,7 @@ import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editName, editEmail, editPassword, editConfirmPassword;
-    private Spinner spinnerGenres;
-    private ChipGroup chipGroupGenres;
+    private androidx.recyclerview.widget.RecyclerView recyclerGenres;
     private List<String> selectedGenres = new ArrayList<>();
     private DatabaseHelper dbHelper;
     private FirebaseAuth mAuth;
@@ -37,9 +36,8 @@ public class RegisterActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
-        spinnerGenres = findViewById(R.id.spinnerGenres);
-        chipGroupGenres = findViewById(R.id.chipGroupGenres);
-        GenreUIHelper.setupGenreSpinner(this, spinnerGenres, chipGroupGenres, selectedGenres);
+        recyclerGenres = findViewById(R.id.recyclerGenres);
+        selectedGenres = GenreUIHelper.setupGenreRecycler(this, recyclerGenres, selectedGenres, null);
         Button btnRegister = findViewById(R.id.btnRegister);
         TextView tvLogin = findViewById(R.id.tvLogin);
         btnRegister.setOnClickListener(v -> attemptRegister());
