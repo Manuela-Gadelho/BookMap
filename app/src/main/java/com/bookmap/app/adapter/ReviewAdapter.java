@@ -11,7 +11,7 @@ import android.content.Intent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.bookmap.app.ReviewCommentsActivity;
-import com.bookmap.app.SessionManager;
+import com.bookmap.app.util.SessionManager;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
 import java.util.List;

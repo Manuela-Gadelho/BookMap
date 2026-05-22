@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bookmap.app.R;
-import com.bookmap.app.SessionManager;
+import com.bookmap.app.util.SessionManager;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
 import com.bookmap.app.model.ReviewComment;

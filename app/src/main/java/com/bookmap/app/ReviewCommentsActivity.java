@@ -13,6 +13,7 @@ import com.bookmap.app.adapter.CommentAdapter;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
 import com.bookmap.app.model.ReviewComment;
+import com.bookmap.app.util.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
