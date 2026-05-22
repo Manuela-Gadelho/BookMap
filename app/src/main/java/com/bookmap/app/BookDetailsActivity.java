@@ -26,6 +26,13 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import java.util.ArrayList;
 import java.util.List;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 public class BookDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_BOOK_ID = "book_id";
@@ -38,6 +45,8 @@ public class BookDetailsActivity extends AppCompatActivity {
     private RatingBar ratingBar;
     private RatingBar ratingBarAverage;
     private TextView tvAverageRating, tvReviewCount;
+    private PhotoHelper photoHelper;
+    private static final int PERMISSION_REQUEST_CAMERA = 3003;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,13 @@ public class BookDetailsActivity extends AppCompatActivity {
         ratingBarAverage = findViewById(R.id.ratingBarAverage);
         tvAverageRating = findViewById(R.id.tvAverageRating);
         tvReviewCount = findViewById(R.id.tvReviewCount);
+        photoHelper = new PhotoHelper(this);
+        if (savedInstanceState != null) {
+            String savedPath = savedInstanceState.getString("photo_path");
+            if (savedPath != null) {
+                photoHelper.setCurrentPhotoPath(savedPath);
+            }
+        }
         loadBookDetails();
         loadAverageRating();
         recyclerReviews = findViewById(R.id.recyclerReviews);
@@ -129,6 +145,14 @@ public class BookDetailsActivity extends AppCompatActivity {
         loadAverageRating();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (photoHelper.getCurrentPhotoPath() != null) {
+            outState.putString("photo_path", photoHelper.getCurrentPhotoPath());
+        }
+    }
+
     private void loadBookDetails() {
         Book book = dbHelper.getBookById(bookId);
         if (book == null) {
@@ -179,11 +203,17 @@ public class BookDetailsActivity extends AppCompatActivity {
                 .into(imgCover);
         }
 
+        if (session.isLoggedIn() && (book.getCreatorId() == session.getUserId() || session.isAdmin())) {
+            imgCover.setOnClickListener(v -> showPhotoOptions(book));
+        } else {
+            imgCover.setOnClickListener(null);
+        }
+
         View layoutBookCreatorActions = findViewById(R.id.layoutBookCreatorActions);
         Button btnEditBook = findViewById(R.id.btnEditBook);
         Button btnDeleteBook = findViewById(R.id.btnDeleteBook);
 
-        if (session.isLoggedIn() && book.getCreatorId() == session.getUserId()) {
+        if (session.isLoggedIn() && (book.getCreatorId() == session.getUserId() || session.isAdmin())) {
             layoutBookCreatorActions.setVisibility(View.VISIBLE);
             btnEditBook.setOnClickListener(v -> {
                 Intent intent = new Intent(this, AddBookActivity.class);
@@ -196,6 +226,7 @@ public class BookDetailsActivity extends AppCompatActivity {
                         .setMessage("Tem certeza de que deseja excluir este livro?")
                         .setPositiveButton("Sim", (dialog, which) -> {
                             if (dbHelper.deleteBook(bookId)) {
+                                com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).deleteBookFromCloud(bookId);
                                 Toast.makeText(this, "Livro excluído com sucesso!", Toast.LENGTH_SHORT).show();
                                 finish();
                             } else {
@@ -255,6 +286,87 @@ public class BookDetailsActivity extends AppCompatActivity {
             loadAverageRating();
         } else {
             Toast.makeText(this, "Erro ao publicar resenha", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showPhotoOptions(Book book) {
+        String[] options = { "Tirar Foto", "Escolher da Galeria", "Remover Capa" };
+        new AlertDialog.Builder(this)
+                .setTitle("Capa do Livro")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            openCamera();
+                            break;
+                        case 1:
+                            openGallery();
+                            break;
+                        case 2:
+                            updateBookCover(book, "");
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    private void openCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CAMERA);
+            return;
+        }
+        try {
+            Intent cameraIntent = photoHelper.createCameraIntent();
+            if (cameraIntent != null) {
+                startActivityForResult(cameraIntent, PhotoHelper.REQUEST_CAMERA);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Erro ao abrir a câmera", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openGallery() {
+        Intent galleryIntent = photoHelper.createGalleryIntent();
+        startActivityForResult(galleryIntent, PhotoHelper.REQUEST_GALLERY);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CAMERA && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openCamera();
+        } else if (requestCode == PERMISSION_REQUEST_CAMERA) {
+            Toast.makeText(this, "Permissão de câmera negada", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String photoPath = null;
+        if (requestCode == PhotoHelper.REQUEST_CAMERA && resultCode == RESULT_OK) {
+            photoPath = photoHelper.getCurrentPhotoPath();
+        } else if (requestCode == PhotoHelper.REQUEST_GALLERY && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            photoPath = photoHelper.processGalleryResult(imageUri);
+        }
+        
+        if (photoPath != null) {
+            Book book = dbHelper.getBookById(bookId);
+            if (book != null) {
+                updateBookCover(book, photoPath);
+            }
+        }
+    }
+
+    private void updateBookCover(Book book, String newPath) {
+        boolean success = dbHelper.updateBook(book.getId(), book.getTitle(), book.getAuthor(), book.getSynopsis(), newPath, book.getGenre(), book.getIsbn());
+        if (success) {
+            book.setCoverPath(newPath);
+            FirebaseSyncHelper.getInstance(this).syncBookToCloud(book);
+            loadBookDetails();
+            Toast.makeText(this, "Capa atualizada com sucesso!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Erro ao atualizar a capa.", Toast.LENGTH_SHORT).show();
         }
     }
 }

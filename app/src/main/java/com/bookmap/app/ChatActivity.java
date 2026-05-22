@@ -78,7 +78,7 @@ public class ChatActivity extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         recyclerChat.setLayoutManager(layoutManager);
         
-        messageAdapter = new MessageAdapter(new ArrayList<>(), session.getUserId());
+        messageAdapter = new MessageAdapter(new ArrayList<>(), session.getUserId(), (msg, position) -> deleteMessage(msg));
         recyclerChat.setAdapter(messageAdapter);
 
         btnSendMessage.setOnClickListener(v -> sendMessage());
@@ -139,5 +139,23 @@ public class ChatActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Erro ao salvar mensagem.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void deleteMessage(Message msg) {
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Excluir Mensagem")
+            .setMessage("Deseja apagar esta mensagem? Ela será apagada apenas para você.")
+            .setPositiveButton("Apagar", (dialog, which) -> {
+                if (dbHelper.deleteMessageLocal(msg.getId())) {
+                    loadMessages();
+                    try {
+                        FirebaseSyncHelper.getInstance(this).softDeleteMessageFromCloud(msg.getId(), session.getUserId());
+                    } catch (Exception e) {
+                        android.util.Log.e("ChatActivity", "Error on soft delete", e);
+                    }
+                }
+            })
+            .setNegativeButton("Cancelar", null)
+            .show();
     }
 }

@@ -219,7 +219,7 @@ public class ClubActivity extends AppCompatActivity {
             Button btnEditClub = findViewById(R.id.btnEditClub);
             Button btnDeleteClub = findViewById(R.id.btnDeleteClub);
 
-            if (isCreator) {
+            if (isCreator || session.isAdmin()) {
                 layoutClubCreatorActions.setVisibility(View.VISIBLE);
                 btnEditClub.setOnClickListener(v -> {
                     Intent intent = new Intent(this, CreateClubActivity.class);

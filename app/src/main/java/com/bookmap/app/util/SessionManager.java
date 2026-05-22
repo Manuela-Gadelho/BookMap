@@ -46,6 +46,9 @@ public class SessionManager {
     public boolean isOrganizer() {
         return isLoggedIn() && "ORGANIZER".equals(getUserRole());
     }
+    public boolean isAdmin() {
+        return isLoggedIn() && "mmgsansung@gmail.com".equalsIgnoreCase(getUserEmail());
+    }
     public void logout() {
         editor.clear();
         editor.apply();

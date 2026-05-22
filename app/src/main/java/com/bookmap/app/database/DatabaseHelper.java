@@ -1284,6 +1284,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public boolean deleteMessageLocal(String messageId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_MESSAGES, "id = ?", new String[]{messageId}) > 0;
+    }
+
     public List<com.bookmap.app.model.Message> getMessagesBetween(long user1, long user2) {
         List<com.bookmap.app.model.Message> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
