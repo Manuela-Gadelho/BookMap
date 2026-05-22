@@ -54,7 +54,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                  .transform(new CircleCrop())
                  .into(holder.imgUserPhoto);
         } else {
-            holder.imgUserPhoto.setImageResource(R.mipmap.ic_launcher_round);
+            holder.imgUserPhoto.setImageResource(R.drawable.ic_default_user);
         }
         
         if (showCheckbox) {

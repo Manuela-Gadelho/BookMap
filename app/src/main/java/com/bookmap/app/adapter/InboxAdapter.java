@@ -59,7 +59,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.InboxViewHol
                      .transform(new CircleCrop())
                      .into(holder.imgContactPhoto);
             } else {
-                holder.imgContactPhoto.setImageResource(R.mipmap.ic_launcher_round);
+                holder.imgContactPhoto.setImageResource(R.drawable.ic_default_user);
             }
         } else {
             holder.tvContactName.setText("Usuário Desconhecido");
