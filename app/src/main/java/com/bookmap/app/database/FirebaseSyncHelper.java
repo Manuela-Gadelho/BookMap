@@ -413,11 +413,11 @@ public class FirebaseSyncHelper {
         }
         Map<String, Object> data = new HashMap<>();
         data.put("id", message.getId());
-        data.put("senderId", message.getSenderId());
-        data.put("receiverId", message.getReceiverId());
+        data.put("sender_id", message.getSenderId());
+        data.put("receiver_id", message.getReceiverId());
         data.put("content", message.getContent());
         data.put("timestamp", message.getTimestamp());
-        data.put("isRead", message.isRead());
+        data.put("is_read", message.isRead());
         data.put("deletedFor", new java.util.ArrayList<Long>()); // New array for soft deletes
 
         firestore.collection("messages")
@@ -447,6 +447,21 @@ public class FirebaseSyncHelper {
                 .addOnSuccessListener(querySnapshot -> {
                     for (DocumentSnapshot doc : querySnapshot) {
                         try {
+                            List<Number> deletedFor = (List<Number>) doc.get("deletedFor");
+                            boolean isDeleted = false;
+                            if (deletedFor != null) {
+                                for (Number n : deletedFor) {
+                                    if (n.longValue() == myUserId) {
+                                        isDeleted = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (isDeleted) {
+                                dbHelper.deleteMessageLocal(doc.getId());
+                                continue;
+                            }
+
                             String id = doc.getString("id");
                             Long senderId = doc.getLong("sender_id");
                             Long receiverId = doc.getLong("receiver_id");
