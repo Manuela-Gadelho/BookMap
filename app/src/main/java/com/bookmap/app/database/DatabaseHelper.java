@@ -587,7 +587,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             args.add(status);
         }
         Cursor cursor = db.rawQuery(
-                "SELECT ub.*, b.title, b.author, b.genre, b.cover_path, b.synopsis " +
+                "SELECT ub.*, b.title, b.author, b.genre, b.cover_path, b.synopsis, b.isbn " +
                         "FROM " + TABLE_USER_BOOKS + " ub " +
                         "INNER JOIN " + TABLE_BOOKS + " b ON ub.book_id = b.id " +
                         "WHERE " + selection + " ORDER BY ub.created_at DESC",
@@ -602,7 +602,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public UserBook getUserBook(long userId, long bookId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(
-                "SELECT ub.*, b.title, b.author, b.genre, b.cover_path, b.synopsis " +
+                "SELECT ub.*, b.title, b.author, b.genre, b.cover_path, b.synopsis, b.isbn " +
                         "FROM " + TABLE_USER_BOOKS + " ub " +
                         "INNER JOIN " + TABLE_BOOKS + " b ON ub.book_id = b.id " +
                         "WHERE ub.user_id = ? AND ub.book_id = ?",
@@ -627,6 +627,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ub.setBookGenre(cursor.getString(cursor.getColumnIndexOrThrow("genre")));
         ub.setBookCoverPath(cursor.getString(cursor.getColumnIndexOrThrow("cover_path")));
         ub.setBookSynopsis(cursor.getString(cursor.getColumnIndexOrThrow("synopsis")));
+        ub.setBookIsbn(cursor.getString(cursor.getColumnIndexOrThrow("isbn")));
         ub.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
         return ub;
     }

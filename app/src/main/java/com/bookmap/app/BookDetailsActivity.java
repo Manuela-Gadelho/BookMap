@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +19,11 @@ import com.bookmap.app.database.FirebaseSyncHelper;
 import com.bookmap.app.model.Book;
 import com.bookmap.app.model.Review;
 import com.bookmap.app.model.UserBook;
+import com.bookmap.app.util.PhotoHelper;
 import com.bookmap.app.util.SessionManager;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,6 +145,24 @@ public class BookDetailsActivity extends AppCompatActivity {
         tvSynopsis.setText(book.getSynopsis() != null && !book.getSynopsis().isEmpty()
                 ? book.getSynopsis()
                 : "Sem sinopse disponível");
+
+        ImageView imgCover = findViewById(R.id.imgBookCover);
+        String isbn = book.getIsbn();
+        String fallbackAssetPath = PhotoHelper.getGenreAssetPath(book.getGenre());
+        
+        if (isbn != null && !isbn.isEmpty()) {
+            String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-L.jpg";
+            Glide.with(this)
+                .load(url)
+                .transform(new CenterCrop(), new RoundedCorners(16))
+                .error(Glide.with(this).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(16)))
+                .into(imgCover);
+        } else {
+            Glide.with(this)
+                .load(fallbackAssetPath)
+                .transform(new CenterCrop(), new RoundedCorners(16))
+                .into(imgCover);
+        }
 
         View layoutBookCreatorActions = findViewById(R.id.layoutBookCreatorActions);
         Button btnEditBook = findViewById(R.id.btnEditBook);

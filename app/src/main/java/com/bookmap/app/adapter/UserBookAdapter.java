@@ -7,7 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bookmap.app.R;
 import com.bookmap.app.model.UserBook;
+import com.bookmap.app.util.PhotoHelper;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import java.util.List;
+import android.widget.ImageView;
 public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHolder> {
     private final List<UserBook> userBooks;
     private OnUserBookClickListener listener;
@@ -40,6 +45,25 @@ public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHo
         }
         holder.tvStatus.setText(statusLabel);
         holder.tvStatus.setVisibility(View.VISIBLE);
+
+        // Load cover dynamically
+        String isbn = ub.getBookIsbn();
+        String fallbackAssetPath = PhotoHelper.getGenreAssetPath(ub.getBookGenre());
+        
+        if (isbn != null && !isbn.isEmpty()) {
+            String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg";
+            Glide.with(holder.itemView.getContext())
+                .load(url)
+                .transform(new CenterCrop(), new RoundedCorners(8))
+                .error(Glide.with(holder.itemView.getContext()).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(8)))
+                .into(holder.imgCover);
+        } else {
+            Glide.with(holder.itemView.getContext())
+                .load(fallbackAssetPath)
+                .transform(new CenterCrop(), new RoundedCorners(8))
+                .into(holder.imgCover);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onUserBookClick(ub);
         });
@@ -55,12 +79,14 @@ public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHo
     }
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvAuthor, tvGenre, tvStatus;
+        ImageView imgCover;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvBookTitle);
             tvAuthor = itemView.findViewById(R.id.tvBookAuthor);
             tvGenre = itemView.findViewById(R.id.tvBookGenre);
             tvStatus = itemView.findViewById(R.id.tvBookStatus);
+            imgCover = itemView.findViewById(R.id.imgBookCover);
         }
     }
 }

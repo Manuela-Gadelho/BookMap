@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -29,6 +30,17 @@ public class PhotoHelper {
     }
     public String getCurrentPhotoPath() {
         return currentPhotoPath;
+    }
+
+    public static String getGenreAssetPath(String genre) {
+        if (genre == null || genre.isEmpty()) {
+            return "file:///android_asset/covers/romance.jpg"; // Default fallback
+        }
+        String cleanGenre = Normalizer.normalize(genre, Normalizer.Form.NFD)
+                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                .toLowerCase(Locale.ROOT)
+                .replace(" ", "");
+        return "file:///android_asset/covers/" + cleanGenre + ".jpg";
     }
     public void setCurrentPhotoPath(String path) {
         this.currentPhotoPath = path;
