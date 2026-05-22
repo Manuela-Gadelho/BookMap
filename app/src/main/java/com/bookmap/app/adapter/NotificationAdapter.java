@@ -32,6 +32,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         ClubMember member = notifications.get(position);
         holder.tvUserName.setText(member.getUserName() != null ? member.getUserName() : "Usuário");
         holder.tvClubName.setText("Clube: " + (member.getClubName() != null ? member.getClubName() : ""));
+
         holder.tvStatus.setText("Solicitacao pendente");
         holder.btnApprove.setOnClickListener(v -> {
             if (listener != null) listener.onApprove(member);

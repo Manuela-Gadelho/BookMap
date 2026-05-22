@@ -38,7 +38,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         ReviewComment comment = comments.get(position);
         holder.tvUserName.setText(comment.getUserName());
         holder.tvText.setText(comment.getText());
-        holder.tvDate.setText(comment.getTimestamp() != null ? comment.getTimestamp() : "");
+        holder.tvDate.setText(comment.getTimestamp() != null ? com.bookmap.app.util.DateUtil.formatToBrazilian(comment.getTimestamp()) : "");
 
         SessionManager session = new SessionManager(holder.itemView.getContext());
         

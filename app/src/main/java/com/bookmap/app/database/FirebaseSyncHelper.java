@@ -2,6 +2,7 @@ package com.bookmap.app.database;
 
 import android.content.Context;
 import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
 import com.bookmap.app.model.Book;
 import com.bookmap.app.model.Club;
 import com.bookmap.app.model.ClubMember;

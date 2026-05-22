@@ -48,6 +48,7 @@
         <activity android:name=".NotificationsActivity" android:exported="false" />
         <activity android:name=".InboxActivity" android:exported="false" />
         <activity android:name=".ChatActivity" android:exported="false" />
+        <activity android:name=".ReviewCommentsActivity" android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

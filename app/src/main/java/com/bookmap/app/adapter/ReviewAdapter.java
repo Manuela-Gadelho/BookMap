@@ -33,7 +33,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         holder.tvUser.setText(review.getUserName());
         holder.tvRating.setText(review.getStars());
         holder.tvText.setText(review.getText());
-        holder.tvDate.setText(review.getCreatedAt() != null ? review.getCreatedAt() : "");
+        holder.tvDate.setText(review.getCreatedAt() != null ? com.bookmap.app.util.DateUtil.formatToBrazilian(review.getCreatedAt()) : "");
 
         DatabaseHelper db = DatabaseHelper.getInstance(holder.itemView.getContext());
         SessionManager session = new SessionManager(holder.itemView.getContext());
