@@ -8,6 +8,7 @@ import com.bookmap.app.model.ClubMember;
 import com.bookmap.app.model.Review;
 import com.bookmap.app.model.User;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class FirebaseSyncHelper {
     private static final String COLLECTION_CLUBS = "clubs";
     private static final String COLLECTION_EVENTS = "events";
     private static final String COLLECTION_USER_BOOKS = "user_books";
+    private static final String COLLECTION_FOLLOWERS = "followers";
     private final FirebaseFirestore firestore;
     private final DatabaseHelper dbHelper;
     private boolean isFirebaseAvailable;
@@ -136,6 +138,24 @@ public class FirebaseSyncHelper {
                 .set(data, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "UserBook synced to cloud"))
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to sync user book to cloud", e));
+    }
+    
+    public void syncFollowToCloud(long followerId, long followedId, boolean isFollowing) {
+        if (!isFirebaseAvailable()) return;
+        String docId = followerId + "_" + followedId;
+        if (isFollowing) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("follower_id", followerId);
+            data.put("followed_id", followedId);
+            data.put("timestamp", FieldValue.serverTimestamp());
+            firestore.collection(COLLECTION_FOLLOWERS).document(docId).set(data, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Follow synced to cloud"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Failed to sync follow to cloud", e));
+        } else {
+            firestore.collection(COLLECTION_FOLLOWERS).document(docId).delete()
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Unfollow synced to cloud"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Failed to sync unfollow to cloud", e));
+        }
     }
 
     public void syncAllDataToCloud() {

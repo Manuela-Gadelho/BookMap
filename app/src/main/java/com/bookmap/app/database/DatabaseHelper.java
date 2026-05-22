@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
@@ -27,6 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_CLUB_MEMBERS = "club_members";
     public static final String TABLE_EVENTS = "events";
     public static final String TABLE_REPORTS = "reports";
+    public static final String TABLE_FOLLOWERS = "followers";
     private static DatabaseHelper instance;
 
     public static synchronized DatabaseHelper getInstance(Context context) {
@@ -134,11 +135,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "created_at TEXT DEFAULT (datetime('now')), " +
                 "FOREIGN KEY (reporter_id) REFERENCES " + TABLE_USERS + "(id), " +
                 "FOREIGN KEY (reported_user_id) REFERENCES " + TABLE_USERS + "(id))");
+        db.execSQL("CREATE TABLE " + TABLE_FOLLOWERS + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "follower_id INTEGER NOT NULL, " +
+                "followed_id INTEGER NOT NULL, " +
+                "created_at TEXT DEFAULT (datetime('now')), " +
+                "FOREIGN KEY (follower_id) REFERENCES " + TABLE_USERS + "(id), " +
+                "FOREIGN KEY (followed_id) REFERENCES " + TABLE_USERS + "(id), " +
+                "UNIQUE(follower_id, followed_id))");
         seedData(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FOLLOWERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EVENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLUB_MEMBERS);
@@ -658,6 +668,90 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(bookId) });
         while (cursor.moveToNext()) {
             reviews.add(cursorToReview(cursor));
+        }
+        cursor.close();
+        return reviews;
+    }
+    
+    // --- FOLLOW SYSTEM METHODS ---
+    
+    public boolean followUser(long followerId, long followedId) {
+        if (followerId == followedId) return false;
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("follower_id", followerId);
+        values.put("followed_id", followedId);
+        try {
+            long result = db.insertWithOnConflict(TABLE_FOLLOWERS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            return result != -1;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    public boolean unfollowUser(long followerId, long followedId) {
+        SQLiteDatabase db = getWritableDatabase();
+        int deleted = db.delete(TABLE_FOLLOWERS, "follower_id = ? AND followed_id = ?", 
+            new String[]{String.valueOf(followerId), String.valueOf(followedId)});
+        return deleted > 0;
+    }
+    
+    public boolean isFollowing(long followerId, long followedId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ? AND followed_id = ?",
+                new String[]{String.valueOf(followerId), String.valueOf(followedId)});
+        boolean following = cursor.moveToFirst();
+        cursor.close();
+        return following;
+    }
+    
+    public int getFollowersCount(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE followed_id = ?",
+                new String[]{String.valueOf(userId)});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+    
+    public int getFollowingCount(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ?",
+                new String[]{String.valueOf(userId)});
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+    
+    public List<Review> getUserReviews(long userId) {
+        List<Review> reviews = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT r.*, u.name as user_name, u.photo_path as user_photo, b.title as book_title " +
+                "FROM " + TABLE_REVIEWS + " r " +
+                "INNER JOIN " + TABLE_USERS + " u ON r.user_id = u.id " +
+                "INNER JOIN " + TABLE_BOOKS + " b ON r.book_id = b.id " +
+                "WHERE r.user_id = ? ORDER BY r.created_at DESC", 
+                new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                Review r = new Review();
+                r.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
+                r.setUserId(cursor.getLong(cursor.getColumnIndexOrThrow("user_id")));
+                r.setBookId(cursor.getLong(cursor.getColumnIndexOrThrow("book_id")));
+                r.setText(cursor.getString(cursor.getColumnIndexOrThrow("text")));
+                r.setRating(cursor.getInt(cursor.getColumnIndexOrThrow("rating")));
+                r.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
+                r.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("user_name")));
+                r.setUserPhotoPath(cursor.getString(cursor.getColumnIndexOrThrow("user_photo")));
+                r.setBookTitle(cursor.getString(cursor.getColumnIndexOrThrow("book_title")));
+                reviews.add(r);
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return reviews;
