@@ -527,6 +527,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    public boolean isBookTitleExists(String title) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_BOOKS, new String[] { "id" }, "title COLLATE NOCASE = ?",
+                new String[] { title }, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
     public long insertBook(String title, String author, String synopsis,
             String coverPath, String genre, String isbn, long creatorId) {
         SQLiteDatabase db = getWritableDatabase();

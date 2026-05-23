@@ -220,6 +220,10 @@ public class AddBookActivity extends AppCompatActivity {
                 Toast.makeText(this, "Erro ao atualizar o livro.", Toast.LENGTH_SHORT).show();
             }
         } else {
+            if (dbHelper.isBookTitleExists(title)) {
+                Toast.makeText(this, "Já existe um livro com este título.", Toast.LENGTH_SHORT).show();
+                return;
+            }
             int selectedId = radioStatus.getCheckedRadioButtonId();
             String status = "QUERO_LER";
             if (selectedId != -1) {
