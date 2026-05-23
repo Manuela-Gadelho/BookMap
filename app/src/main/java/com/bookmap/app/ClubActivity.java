@@ -162,12 +162,27 @@ public class ClubActivity extends AppCompatActivity {
         }
 
         // Load events
-        List<Event> events = dbHelper.getClubEvents(clubId);
-        eventAdapter.updateData(events);
-        if (events.isEmpty()) {
+        boolean canViewEvents = club.isPublic();
+        if (!canViewEvents && session.isLoggedIn()) {
+            canViewEvents = club.getCreatorId() == session.getUserId() || 
+                            dbHelper.getClubMember(clubId, session.getUserId()) != null || 
+                            session.isAdmin();
+        }
+
+        if (!canViewEvents) {
+            recyclerEvents.setVisibility(View.GONE);
             tvNoEvents.setVisibility(View.VISIBLE);
+            tvNoEvents.setText("Este clube é privado. Somente membros podem ver os eventos.");
         } else {
-            tvNoEvents.setVisibility(View.GONE);
+            recyclerEvents.setVisibility(View.VISIBLE);
+            List<Event> events = dbHelper.getClubEvents(clubId);
+            eventAdapter.updateData(events);
+            if (events.isEmpty()) {
+                tvNoEvents.setVisibility(View.VISIBLE);
+                tvNoEvents.setText("Nenhum evento.");
+            } else {
+                tvNoEvents.setVisibility(View.GONE);
+            }
         }
 
         // Action buttons
