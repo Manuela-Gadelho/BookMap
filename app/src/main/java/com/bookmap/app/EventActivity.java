@@ -59,14 +59,16 @@ public class EventActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance();
             new DatePickerDialog(this, (view, year, month, day) -> {
                 selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, day);
-                tvSelectedDate.setText(selectedDate + " " + selectedTime);
+                String dt = selectedDate + " " + selectedTime;
+                tvSelectedDate.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(dt.trim()));
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
         });
         btnSelectTime.setOnClickListener(v -> {
             Calendar cal = Calendar.getInstance();
             new TimePickerDialog(this, (view, hour, minute) -> {
                 selectedTime = String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
-                tvSelectedTime.setText(selectedDate + " " + selectedTime);
+                String dt = selectedDate + " " + selectedTime;
+                tvSelectedTime.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(dt.trim()));
             }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show();
         });
         btnCreateEvent.setOnClickListener(v -> createEvent());
@@ -82,9 +84,9 @@ public class EventActivity extends AppCompatActivity {
                     String[] parts = dt.split(" ");
                     selectedDate = parts[0];
                     selectedTime = parts[1];
-                    tvSelectedDate.setText(dt);
+                    tvSelectedDate.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(dt));
                 } else if (dt != null) {
-                    tvSelectedDate.setText(dt);
+                    tvSelectedDate.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(dt));
                 }
                 boolean isCreator = event.getCreatedBy() == session.getUserId();
                 TextView tvHeaderTitle = findViewById(R.id.tvHeaderTitle);

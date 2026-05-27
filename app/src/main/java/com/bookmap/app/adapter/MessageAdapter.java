@@ -48,10 +48,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         
         // Format timestamp (just extracting time part for simplicity)
         String time = msg.getTimestamp();
-        if (time.length() >= 16) {
-            time = time.substring(11, 16); // Extract HH:mm from "YYYY-MM-DD HH:mm:ss"
-        }
-        holder.tvMessageTime.setText(time);
+        holder.tvMessageTime.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(time));
 
         GradientDrawable bgShape = new GradientDrawable();
         bgShape.setCornerRadius(16f);

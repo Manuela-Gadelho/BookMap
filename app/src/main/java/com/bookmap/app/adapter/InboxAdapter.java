@@ -68,10 +68,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.InboxViewHol
         holder.tvLastMessage.setText(msg.getContent());
         
         String time = msg.getTimestamp();
-        if (time.length() >= 16) {
-            time = time.substring(11, 16);
-        }
-        holder.tvTimestamp.setText(time);
+        holder.tvTimestamp.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(time));
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {

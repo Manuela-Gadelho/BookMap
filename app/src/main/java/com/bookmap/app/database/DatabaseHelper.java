@@ -527,6 +527,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return user;
     }
 
+    public boolean isBookTitleExists(String title) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_BOOKS, new String[] { "id" }, "title COLLATE NOCASE = ?",
+                new String[] { title }, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+
     public long insertBook(String title, String author, String synopsis,
             String coverPath, String genre, String isbn, long creatorId) {
         SQLiteDatabase db = getWritableDatabase();
@@ -1003,7 +1012,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(
                 "SELECT cm.*, u.name as user_name, u.email as user_email FROM " +
                         TABLE_CLUB_MEMBERS + " cm INNER JOIN " + TABLE_USERS +
-                        " u ON cm.user_id = u.id WHERE cm.club_id = ? ORDER BY cm.role, u.name",
+                        " u ON cm.user_id = u.id WHERE cm.club_id = ? AND cm.status = 'APPROVED' ORDER BY cm.role, u.name",
                 new String[] { String.valueOf(clubId) });
         while (cursor.moveToNext()) {
             members.add(cursorToClubMember(cursor));
@@ -1138,6 +1147,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
+    public int getPendingMemberRequestsCount(long organizerId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_CLUB_MEMBERS + " cm INNER JOIN " + TABLE_CLUBS +
+                        " c ON cm.club_id = c.id WHERE c.creator_id = ? AND cm.status = 'PENDING'",
+                new String[] { String.valueOf(organizerId) });
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+
+    public int getUnreadMessagesCount(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_MESSAGES + " WHERE receiver_id = ? AND is_read = 0",
+                new String[] { String.valueOf(userId) });
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+
     public List<ClubMember> getPendingMemberRequests(long organizerId) {
         SQLiteDatabase db = getReadableDatabase();
         List<ClubMember> members = new ArrayList<>();
@@ -1248,6 +1284,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update(TABLE_CLUBS, values, "id = ?", new String[] { String.valueOf(clubId) }) > 0;
     }
 
+    public boolean removeClubMember(long clubId, long userId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(TABLE_CLUB_MEMBERS, "club_id = ? AND user_id = ?",
+                new String[] { String.valueOf(clubId), String.valueOf(userId) }) > 0;
+    }
+
     public boolean deleteClub(long clubId) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_EVENTS, "club_id = ?", new String[] { String.valueOf(clubId) });
@@ -1302,6 +1344,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         long result = db.insertWithOnConflict(TABLE_MESSAGES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         return result != -1;
+    }
+
+    public void markMessagesAsRead(long currentUserId, long senderId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("is_read", 1);
+        db.update(TABLE_MESSAGES, values, "receiver_id = ? AND sender_id = ? AND is_read = 0",
+                new String[] { String.valueOf(currentUserId), String.valueOf(senderId) });
     }
 
     public boolean deleteMessageLocal(String messageId) {

@@ -2,6 +2,7 @@ package com.bookmap.app.database;
 
 import android.content.Context;
 import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
 import com.bookmap.app.model.Book;
 import com.bookmap.app.model.Club;
 import com.bookmap.app.model.ClubMember;
@@ -142,6 +143,17 @@ public class FirebaseSyncHelper {
                 .delete()
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Club deleted from cloud: " + clubId))
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to delete club from cloud", e));
+    }
+
+    public void removeClubMemberFromCloud(long clubId, long userId) {
+        if (!isFirebaseAvailable())
+            return;
+        String docId = clubId + "_" + userId;
+        firestore.collection("club_members")
+                .document(docId)
+                .delete()
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "ClubMember deleted from cloud"))
+                .addOnFailureListener(e -> Log.w(TAG, "Failed to delete ClubMember", e));
     }
 
     public void syncUserBookToCloud(long userId, long bookId, String status, int progress) {

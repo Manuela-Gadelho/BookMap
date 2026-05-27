@@ -70,6 +70,30 @@ public class ClubActivity extends AppCompatActivity {
                 android.util.Log.e("ClubActivity", "Error opening PublicProfile", e);
             }
         }, false);
+        memberAdapter.setOnUserLongClickListener(user -> {
+            com.bookmap.app.model.Club currentClub = dbHelper.getClubById(clubId);
+            if (session.isLoggedIn() && currentClub != null && (currentClub.getCreatorId() == session.getUserId() || session.isAdmin())) {
+                if (user.getId() == session.getUserId()) return;
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Remover Membro")
+                        .setMessage("Deseja remover " + user.getName() + " do clube?")
+                        .setPositiveButton("Sim", (dialog, which) -> {
+                            if (dbHelper.removeClubMember(clubId, user.getId())) {
+                                com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).removeClubMemberFromCloud(clubId, user.getId());
+                                Toast.makeText(this, "Membro removido.", Toast.LENGTH_SHORT).show();
+                                List<com.bookmap.app.model.ClubMember> ms = dbHelper.getClubMembers(clubId);
+                                List<User> us = new ArrayList<>();
+                                for (com.bookmap.app.model.ClubMember cm : ms) {
+                                    User u = dbHelper.getUserById(cm.getUserId());
+                                    if (u != null) us.add(u);
+                                }
+                                memberAdapter.updateData(us);
+                            }
+                        })
+                        .setNegativeButton("Não", null)
+                        .show();
+            }
+        });
         recyclerMembers.setAdapter(memberAdapter);
 
         recyclerEvents.setLayoutManager(new LinearLayoutManager(this));
@@ -162,26 +186,50 @@ public class ClubActivity extends AppCompatActivity {
         }
 
         // Load events
-        List<Event> events = dbHelper.getClubEvents(clubId);
-        eventAdapter.updateData(events);
-        if (events.isEmpty()) {
+        boolean canViewEvents = club.isPublic();
+        if (!canViewEvents && session.isLoggedIn()) {
+            com.bookmap.app.model.ClubMember currentMember = dbHelper.getClubMember(clubId, session.getUserId());
+            canViewEvents = club.getCreatorId() == session.getUserId() || 
+                            (currentMember != null && "APPROVED".equals(currentMember.getStatus())) || 
+                            session.isAdmin();
+        }
+
+        if (!canViewEvents) {
+            recyclerEvents.setVisibility(View.GONE);
             tvNoEvents.setVisibility(View.VISIBLE);
+            tvNoEvents.setText("Este clube é privado. Somente membros podem ver os eventos.");
         } else {
-            tvNoEvents.setVisibility(View.GONE);
+            recyclerEvents.setVisibility(View.VISIBLE);
+            List<Event> events = dbHelper.getClubEvents(clubId);
+            eventAdapter.updateData(events);
+            if (events.isEmpty()) {
+                tvNoEvents.setVisibility(View.VISIBLE);
+                tvNoEvents.setText("Nenhum evento.");
+            } else {
+                tvNoEvents.setVisibility(View.GONE);
+            }
         }
 
         // Action buttons
         if (session.isLoggedIn()) {
             boolean isCreator = club.getCreatorId() == session.getUserId();
-            boolean isMember = dbHelper.getClubMember(clubId, session.getUserId()) != null;
+            com.bookmap.app.model.ClubMember currentMember = dbHelper.getClubMember(clubId, session.getUserId());
+            boolean isMember = currentMember != null && "APPROVED".equals(currentMember.getStatus());
+            boolean isPending = currentMember != null && "PENDING".equals(currentMember.getStatus());
 
             if (isCreator) {
                 btnJoinClub.setText("Organizador");
                 btnJoinClub.setEnabled(false);
                 btnCreateEvent.setVisibility(View.VISIBLE);
             } else if (isMember) {
-                btnJoinClub.setText("Membro");
-                btnJoinClub.setEnabled(false);
+                btnJoinClub.setText("Sair do Clube");
+                btnJoinClub.setEnabled(true);
+                btnJoinClub.setOnClickListener(v -> leaveClub());
+                btnCreateEvent.setVisibility(View.GONE);
+            } else if (isPending) {
+                btnJoinClub.setText("Cancelar Solicitação");
+                btnJoinClub.setEnabled(true);
+                btnJoinClub.setOnClickListener(v -> leaveClub());
                 btnCreateEvent.setVisibility(View.GONE);
             } else {
                 btnJoinClub.setVisibility(View.VISIBLE);
@@ -250,5 +298,20 @@ public class ClubActivity extends AppCompatActivity {
             btnCreateEvent.setVisibility(View.GONE);
             findViewById(R.id.layoutClubCreatorActions).setVisibility(View.GONE);
         }
+    }
+
+    private void leaveClub() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Sair do Clube")
+                .setMessage("Tem certeza que deseja sair deste clube?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    if (dbHelper.removeClubMember(clubId, session.getUserId())) {
+                        com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).removeClubMemberFromCloud(clubId, session.getUserId());
+                        Toast.makeText(this, "Você saiu do clube.", Toast.LENGTH_SHORT).show();
+                        recreate();
+                    }
+                })
+                .setNegativeButton("Não", null)
+                .show();
     }
 }

@@ -35,7 +35,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Event event = events.get(position);
         holder.tvTitle.setText(event.getTitle());
-        holder.tvDateTime.setText(event.getDateTime());
+        holder.tvDateTime.setText(event.getDateTime() != null ? com.bookmap.app.util.DateUtil.formatToBrazilian(event.getDateTime()) : "");
         holder.tvLocation.setText(event.getLocation());
         holder.tvDescription.setText(event.getDescription());
         holder.itemView.setOnClickListener(v -> {

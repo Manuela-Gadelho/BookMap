@@ -151,6 +151,34 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         loadBooks();
         loadCurrentReading();
+        updateBadges();
+    }
+
+    private void updateBadges() {
+        if (!session.isLoggedIn()) return;
+        
+        android.widget.TextView badgeNotifications = findViewById(R.id.badgeNotifications);
+        android.widget.TextView badgeInbox = findViewById(R.id.badgeInbox);
+        
+        if (badgeNotifications != null) {
+            int notifCount = dbHelper.getPendingMemberRequestsCount(session.getUserId());
+            if (notifCount > 0) {
+                badgeNotifications.setVisibility(android.view.View.VISIBLE);
+                badgeNotifications.setText(String.valueOf(notifCount));
+            } else {
+                badgeNotifications.setVisibility(android.view.View.GONE);
+            }
+        }
+        
+        if (badgeInbox != null) {
+            int inboxCount = dbHelper.getUnreadMessagesCount(session.getUserId());
+            if (inboxCount > 0) {
+                badgeInbox.setVisibility(android.view.View.VISIBLE);
+                badgeInbox.setText(String.valueOf(inboxCount));
+            } else {
+                badgeInbox.setVisibility(android.view.View.GONE);
+            }
+        }
     }
 
     private void setFilter(String filter) {
