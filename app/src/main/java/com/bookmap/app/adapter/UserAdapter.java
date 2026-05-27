@@ -21,6 +21,7 @@ import java.util.Set;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private final List<User> users;
     private OnUserClickListener listener;
+    private OnUserLongClickListener longClickListener;
     private boolean showCheckbox;
     private final Set<Long> selectedUserIds = new HashSet<>();
 
@@ -28,10 +29,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         void onUserClick(User user);
     }
 
+    public interface OnUserLongClickListener {
+        void onUserLongClick(User user);
+    }
+
     public UserAdapter(List<User> users, OnUserClickListener listener, boolean showCheckbox) {
         this.users = users;
         this.listener = listener;
         this.showCheckbox = showCheckbox;
+    }
+
+    public void setOnUserLongClickListener(OnUserLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     @NonNull
@@ -79,6 +88,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             } else if (listener != null) {
                 listener.onUserClick(user);
             }
+        });
+        holder.itemView.setOnLongClickListener(v -> {
+            if (longClickListener != null) {
+                longClickListener.onUserLongClick(user);
+                return true;
+            }
+            return false;
         });
     }
 

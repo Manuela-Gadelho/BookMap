@@ -1257,6 +1257,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update(TABLE_CLUBS, values, "id = ?", new String[] { String.valueOf(clubId) }) > 0;
     }
 
+    public boolean removeClubMember(long clubId, long userId) {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(TABLE_CLUB_MEMBERS, "club_id = ? AND user_id = ?",
+                new String[] { String.valueOf(clubId), String.valueOf(userId) }) > 0;
+    }
+
     public boolean deleteClub(long clubId) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_EVENTS, "club_id = ?", new String[] { String.valueOf(clubId) });
