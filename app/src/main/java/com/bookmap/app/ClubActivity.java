@@ -71,7 +71,8 @@ public class ClubActivity extends AppCompatActivity {
             }
         }, false);
         memberAdapter.setOnUserLongClickListener(user -> {
-            if (session.isLoggedIn() && (club.getCreatorId() == session.getUserId() || session.isAdmin())) {
+            com.bookmap.app.model.Club currentClub = dbHelper.getClubById(clubId);
+            if (session.isLoggedIn() && currentClub != null && (currentClub.getCreatorId() == session.getUserId() || session.isAdmin())) {
                 if (user.getId() == session.getUserId()) return;
                 new androidx.appcompat.app.AlertDialog.Builder(this)
                         .setTitle("Remover Membro")

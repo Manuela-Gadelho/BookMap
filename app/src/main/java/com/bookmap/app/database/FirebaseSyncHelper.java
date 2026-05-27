@@ -149,7 +149,7 @@ public class FirebaseSyncHelper {
         if (!isFirebaseAvailable())
             return;
         String docId = clubId + "_" + userId;
-        firestore.collection(COLLECTION_CLUB_MEMBERS)
+        firestore.collection("club_members")
                 .document(docId)
                 .delete()
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "ClubMember deleted from cloud"))
