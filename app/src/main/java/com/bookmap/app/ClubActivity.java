@@ -164,8 +164,9 @@ public class ClubActivity extends AppCompatActivity {
         // Load events
         boolean canViewEvents = club.isPublic();
         if (!canViewEvents && session.isLoggedIn()) {
+            com.bookmap.app.model.ClubMember currentMember = dbHelper.getClubMember(clubId, session.getUserId());
             canViewEvents = club.getCreatorId() == session.getUserId() || 
-                            dbHelper.getClubMember(clubId, session.getUserId()) != null || 
+                            (currentMember != null && "APPROVED".equals(currentMember.getStatus())) || 
                             session.isAdmin();
         }
 
@@ -188,7 +189,9 @@ public class ClubActivity extends AppCompatActivity {
         // Action buttons
         if (session.isLoggedIn()) {
             boolean isCreator = club.getCreatorId() == session.getUserId();
-            boolean isMember = dbHelper.getClubMember(clubId, session.getUserId()) != null;
+            com.bookmap.app.model.ClubMember currentMember = dbHelper.getClubMember(clubId, session.getUserId());
+            boolean isMember = currentMember != null && "APPROVED".equals(currentMember.getStatus());
+            boolean isPending = currentMember != null && "PENDING".equals(currentMember.getStatus());
 
             if (isCreator) {
                 btnJoinClub.setText("Organizador");
@@ -196,6 +199,10 @@ public class ClubActivity extends AppCompatActivity {
                 btnCreateEvent.setVisibility(View.VISIBLE);
             } else if (isMember) {
                 btnJoinClub.setText("Membro");
+                btnJoinClub.setEnabled(false);
+                btnCreateEvent.setVisibility(View.GONE);
+            } else if (isPending) {
+                btnJoinClub.setText("Pendente");
                 btnJoinClub.setEnabled(false);
                 btnCreateEvent.setVisibility(View.GONE);
             } else {
