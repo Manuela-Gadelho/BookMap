@@ -1012,7 +1012,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(
                 "SELECT cm.*, u.name as user_name, u.email as user_email FROM " +
                         TABLE_CLUB_MEMBERS + " cm INNER JOIN " + TABLE_USERS +
-                        " u ON cm.user_id = u.id WHERE cm.club_id = ? ORDER BY cm.role, u.name",
+                        " u ON cm.user_id = u.id WHERE cm.club_id = ? AND cm.status = 'APPROVED' ORDER BY cm.role, u.name",
                 new String[] { String.valueOf(clubId) });
         while (cursor.moveToNext()) {
             members.add(cursorToClubMember(cursor));
