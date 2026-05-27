@@ -34,24 +34,60 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <ImageView
-            android:id="@+id/btnNotifications"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_notifications"
-            android:layout_marginEnd="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp">
+            <ImageView
+                android:id="@+id/btnNotifications"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_notifications"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
+            <TextView
+                android:id="@+id/badgeNotifications"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_alignEnd="@id/btnNotifications"
+                android:layout_alignTop="@id/btnNotifications"
+                android:layout_marginTop="-2dp"
+                android:layout_marginEnd="-2dp"
+                android:background="@drawable/bg_badge"
+                android:textColor="@color/white"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:visibility="gone" />
+        </RelativeLayout>
             
-        <ImageView
-            android:id="@+id/btnInbox"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_mail"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/btnInbox"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_mail"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
+            <TextView
+                android:id="@+id/badgeInbox"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_alignEnd="@id/btnInbox"
+                android:layout_alignTop="@id/btnInbox"
+                android:layout_marginTop="-2dp"
+                android:layout_marginEnd="-2dp"
+                android:background="@drawable/bg_badge"
+                android:textColor="@color/white"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:visibility="gone" />
+        </RelativeLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

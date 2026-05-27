@@ -1147,6 +1147,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rows > 0;
     }
 
+    public int getPendingMemberRequestsCount(long organizerId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_CLUB_MEMBERS + " cm INNER JOIN " + TABLE_CLUBS +
+                        " c ON cm.club_id = c.id WHERE c.creator_id = ? AND cm.status = 'PENDING'",
+                new String[] { String.valueOf(organizerId) });
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+
+    public int getUnreadMessagesCount(long userId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_MESSAGES + " WHERE receiver_id = ? AND is_read = 0",
+                new String[] { String.valueOf(userId) });
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
+    }
+
     public List<ClubMember> getPendingMemberRequests(long organizerId) {
         SQLiteDatabase db = getReadableDatabase();
         List<ClubMember> members = new ArrayList<>();
@@ -1317,6 +1344,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         long result = db.insertWithOnConflict(TABLE_MESSAGES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         return result != -1;
+    }
+
+    public void markMessagesAsRead(long currentUserId, long senderId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("is_read", 1);
+        db.update(TABLE_MESSAGES, values, "receiver_id = ? AND sender_id = ? AND is_read = 0",
+                new String[] { String.valueOf(currentUserId), String.valueOf(senderId) });
     }
 
     public boolean deleteMessageLocal(String messageId) {

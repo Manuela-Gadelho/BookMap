@@ -106,6 +106,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
+        dbHelper.markMessagesAsRead(session.getUserId(), otherUserId);
         List<Message> messages = dbHelper.getMessagesBetween(session.getUserId(), otherUserId);
         messageAdapter.updateData(messages);
         if (!messages.isEmpty()) {
