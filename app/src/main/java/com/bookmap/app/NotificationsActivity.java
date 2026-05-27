@@ -59,6 +59,8 @@ public class NotificationsActivity extends AppCompatActivity {
                     @Override
                     public void onApprove(ClubMember member) {
                         dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "APPROVED");
+                        com.bookmap.app.database.FirebaseSyncHelper.getInstance(NotificationsActivity.this)
+                                .syncClubMemberToCloud(member.getClubId(), member.getUserId(), member.getRole(), "APPROVED");
                         Toast.makeText(NotificationsActivity.this,
                                 "Membro aprovado!", Toast.LENGTH_SHORT).show();
                         loadNotifications();
@@ -66,7 +68,9 @@ public class NotificationsActivity extends AppCompatActivity {
 
                     @Override
                     public void onReject(ClubMember member) {
-                        dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "REJECTED");
+                        dbHelper.removeClubMember(member.getClubId(), member.getUserId());
+                        com.bookmap.app.database.FirebaseSyncHelper.getInstance(NotificationsActivity.this)
+                                .removeClubMemberFromCloud(member.getClubId(), member.getUserId());
                         Toast.makeText(NotificationsActivity.this,
                                 "Solicitação rejeitada", Toast.LENGTH_SHORT).show();
                         loadNotifications();
