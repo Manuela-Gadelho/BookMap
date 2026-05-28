@@ -116,7 +116,8 @@ public class PublicProfileActivity extends AppCompatActivity {
             
             if (coverPath != null && !coverPath.isEmpty()) {
                 if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
-                    com.bumptech.glide.Glide.with(this).load(coverPath).error(com.bumptech.glide.Glide.with(this).load(fallbackAssetPath)).into(imgCurrentCover);
+                    String glidePath = coverPath.startsWith("asset:") ? coverPath.replaceFirst("^asset:", "file:///android_asset/") : coverPath;
+                    com.bumptech.glide.Glide.with(this).load(glidePath).error(com.bumptech.glide.Glide.with(this).load(fallbackAssetPath)).into(imgCurrentCover);
                 } else {
                     com.bumptech.glide.Glide.with(this).load(new java.io.File(coverPath)).error(com.bumptech.glide.Glide.with(this).load(fallbackAssetPath)).into(imgCurrentCover);
                 }
