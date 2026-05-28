@@ -177,8 +177,9 @@ public class BookDetailsActivity extends AppCompatActivity {
         
         if (coverPath != null && !coverPath.isEmpty()) {
             if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
+                String glidePath = coverPath.startsWith("asset:") ? coverPath.replaceFirst("^asset:", "file:///android_asset/") : coverPath;
                 Glide.with(this)
-                    .load(coverPath)
+                    .load(glidePath)
                     .transform(new CenterCrop(), new RoundedCorners(16))
                     .error(Glide.with(this).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(16)))
                     .into(imgCover);

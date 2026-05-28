@@ -53,8 +53,9 @@ public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHo
 
         if (coverPath != null && !coverPath.isEmpty()) {
             if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
+                String glidePath = coverPath.startsWith("asset:") ? coverPath.replaceFirst("^asset:", "file:///android_asset/") : coverPath;
                 Glide.with(holder.itemView.getContext())
-                    .load(coverPath)
+                    .load(glidePath)
                     .transform(new CenterCrop(), new RoundedCorners(8))
                     .error(Glide.with(holder.itemView.getContext()).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(8)))
                     .into(holder.imgCover);
