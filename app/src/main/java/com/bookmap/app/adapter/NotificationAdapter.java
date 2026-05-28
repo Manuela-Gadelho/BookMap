@@ -8,15 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bookmap.app.R;
 import com.bookmap.app.model.ClubMember;
+import com.bookmap.app.model.User;
 import java.util.List;
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
-    private final List<ClubMember> notifications;
+    private final List<Object> notifications;
     private final NotificationActionListener listener;
     public interface NotificationActionListener {
-        void onApprove(ClubMember member);
-        void onReject(ClubMember member);
+        void onApproveClubMember(ClubMember member);
+        void onRejectClubMember(ClubMember member);
+        void onApproveFollower(User follower);
+        void onRejectFollower(User follower);
     }
-    public NotificationAdapter(List<ClubMember> notifications, NotificationActionListener listener) {
+    public NotificationAdapter(List<Object> notifications, NotificationActionListener listener) {
         this.notifications = notifications;
         this.listener = listener;
     }
@@ -29,17 +32,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ClubMember member = notifications.get(position);
-        holder.tvUserName.setText(member.getUserName() != null ? member.getUserName() : "Usuário");
-        holder.tvClubName.setText("Clube: " + (member.getClubName() != null ? member.getClubName() : ""));
-
-        holder.tvStatus.setText("Solicitacao pendente");
-        holder.btnApprove.setOnClickListener(v -> {
-            if (listener != null) listener.onApprove(member);
-        });
-        holder.btnReject.setOnClickListener(v -> {
-            if (listener != null) listener.onReject(member);
-        });
+        Object item = notifications.get(position);
+        if (item instanceof ClubMember) {
+            ClubMember member = (ClubMember) item;
+            holder.tvUserName.setText(member.getUserName() != null ? member.getUserName() : "Usuário");
+            holder.tvClubName.setText("Clube: " + (member.getClubName() != null ? member.getClubName() : ""));
+            holder.tvStatus.setText("Solicitação pendente (Clube)");
+            holder.btnApprove.setOnClickListener(v -> {
+                if (listener != null) listener.onApproveClubMember(member);
+            });
+            holder.btnReject.setOnClickListener(v -> {
+                if (listener != null) listener.onRejectClubMember(member);
+            });
+        } else if (item instanceof User) {
+            User follower = (User) item;
+            holder.tvUserName.setText(follower.getName());
+            holder.tvClubName.setText("Quer seguir seu perfil");
+            holder.tvStatus.setText("Solicitação pendente (Perfil)");
+            holder.btnApprove.setOnClickListener(v -> {
+                if (listener != null) listener.onApproveFollower(follower);
+            });
+            holder.btnReject.setOnClickListener(v -> {
+                if (listener != null) listener.onRejectFollower(follower);
+            });
+        }
     }
     @Override
     public int getItemCount() {

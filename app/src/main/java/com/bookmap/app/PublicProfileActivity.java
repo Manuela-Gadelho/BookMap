@@ -24,7 +24,7 @@ public class PublicProfileActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private FirebaseSyncHelper syncHelper;
     private SessionManager session;
-    private boolean isFollowing = false;
+    private String followStatus = null;
     private long currentUserId;
     private long profileUserId;
     private TextView tvFollowersCount, tvFollowingCount;
@@ -71,10 +71,10 @@ public class PublicProfileActivity extends AppCompatActivity {
         updateFollowCounters();
         
         if (session.isLoggedIn() && currentUserId != profileUserId) {
-            isFollowing = dbHelper.isFollowing(currentUserId, profileUserId);
-            updateFollowButton();
+            followStatus = dbHelper.getFollowStatus(currentUserId, profileUserId);
+            updateFollowButton(user);
             
-            btnFollow.setOnClickListener(v -> toggleFollow());
+            btnFollow.setOnClickListener(v -> toggleFollow(user));
             
             btnMessage.setOnClickListener(v -> {
                 Intent intent = new Intent(this, ChatActivity.class);
@@ -86,7 +86,17 @@ public class PublicProfileActivity extends AppCompatActivity {
             btnMessage.setVisibility(View.GONE);
         }
         
-        LinearLayout layoutCurrentReading = findViewById(R.id.layoutCurrentReading);
+        LinearLayout layoutPublicContent = findViewById(R.id.layoutPublicContent);
+        LinearLayout layoutPrivateContent = findViewById(R.id.layoutPrivateContent);
+        
+        if (user.isPrivate() && currentUserId != profileUserId && !"APPROVED".equals(followStatus)) {
+            layoutPublicContent.setVisibility(View.GONE);
+            layoutPrivateContent.setVisibility(View.VISIBLE);
+        } else {
+            layoutPublicContent.setVisibility(View.VISIBLE);
+            layoutPrivateContent.setVisibility(View.GONE);
+            
+            LinearLayout layoutCurrentReading = findViewById(R.id.layoutCurrentReading);
         TextView tvCurrentBookTitle = findViewById(R.id.tvCurrentBookTitle);
         TextView tvCurrentBookAuthor = findViewById(R.id.tvCurrentBookAuthor);
         ProgressBar progressCurrentBook = findViewById(R.id.progressCurrentBook);
@@ -117,7 +127,8 @@ public class PublicProfileActivity extends AppCompatActivity {
             btnReport.setVisibility(View.GONE);
         }
         
-        setupReviews();
+            setupReviews();
+        }
     }
     
     private void updateFollowCounters() {
@@ -125,9 +136,13 @@ public class PublicProfileActivity extends AppCompatActivity {
         tvFollowingCount.setText(String.valueOf(dbHelper.getFollowingCount(profileUserId)));
     }
     
-    private void updateFollowButton() {
-        if (isFollowing) {
+    private void updateFollowButton(User user) {
+        if ("APPROVED".equals(followStatus)) {
             btnFollow.setText("SEGUINDO");
+            btnFollow.setBackgroundResource(R.drawable.edit_text_bg);
+            btnFollow.setTextColor(getResources().getColor(R.color.gray_text));
+        } else if ("PENDING".equals(followStatus)) {
+            btnFollow.setText("SOLICITADO");
             btnFollow.setBackgroundResource(R.drawable.edit_text_bg);
             btnFollow.setTextColor(getResources().getColor(R.color.gray_text));
         } else {
@@ -137,19 +152,20 @@ public class PublicProfileActivity extends AppCompatActivity {
         }
     }
     
-    private void toggleFollow() {
-        if (isFollowing) {
+    private void toggleFollow(User user) {
+        if (followStatus != null) {
             if (dbHelper.unfollowUser(currentUserId, profileUserId)) {
-                isFollowing = false;
-                syncHelper.syncFollowToCloud(currentUserId, profileUserId, false);
+                followStatus = null;
+                syncHelper.syncFollowToCloud(currentUserId, profileUserId, false, null);
             }
         } else {
-            if (dbHelper.followUser(currentUserId, profileUserId)) {
-                isFollowing = true;
-                syncHelper.syncFollowToCloud(currentUserId, profileUserId, true);
+            String newStatus = user.isPrivate() ? "PENDING" : "APPROVED";
+            if (dbHelper.followUser(currentUserId, profileUserId, newStatus)) {
+                followStatus = newStatus;
+                syncHelper.syncFollowToCloud(currentUserId, profileUserId, true, newStatus);
             }
         }
-        updateFollowButton();
+        updateFollowButton(user);
         updateFollowCounters();
     }
     

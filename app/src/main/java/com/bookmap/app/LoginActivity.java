@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         User adminUser = dbHelper.getUserByEmail("mmgsansung@gmail.com");
         if (adminUser == null) {
             String pwdHash = PasswordUtil.hashPassword("123456");
-            dbHelper.insertUser("Admin Manuela", "mmgsansung@gmail.com", pwdHash, "", "", "ADMIN");
+            dbHelper.insertUser("Admin Manuela", "mmgsansung@gmail.com", pwdHash, "", "", "ADMIN", false);
         }
         
         try {
@@ -249,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Bem-vindo de volta, " + existingUser.getName() + "!", Toast.LENGTH_SHORT).show();
             } else {
                 String passwordHash = PasswordUtil.hashPassword(UUID.randomUUID().toString());
-                long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER");
+                long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER", false);
                 if (userId > 0) {
                     session.createLoginSession(userId, name, email, "READER");
                     Toast.makeText(this, "Bem-vindo, " + name + "!", Toast.LENGTH_SHORT).show();
@@ -339,7 +339,7 @@ public class LoginActivity extends AppCompatActivity {
                             } else {
                                 String name = email.split("@")[0];
                                 String passwordHash = PasswordUtil.hashPassword(password);
-                                long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER");
+                                long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER", false);
                                 session.createLoginSession(userId, name, email, "READER");
                                 Toast.makeText(this, "Bem-vindo, " + name + "!", Toast.LENGTH_SHORT).show();
                                 navigateToHome();

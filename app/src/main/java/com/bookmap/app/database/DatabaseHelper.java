@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
@@ -64,7 +64,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "role TEXT DEFAULT 'READER', " +
                 "latitude REAL DEFAULT 0.0, " +
                 "longitude REAL DEFAULT 0.0, " +
-                "language TEXT DEFAULT 'Português', " +
+                "language TEXT DEFAULT 'pt_BR', " +
+                "is_private INTEGER DEFAULT 0, " +
                 "created_at TEXT DEFAULT (datetime('now')))");
         db.execSQL("CREATE TABLE " + TABLE_BOOKS + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -158,6 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "follower_id INTEGER NOT NULL, " +
                 "followed_id INTEGER NOT NULL, " +
+                "status TEXT DEFAULT 'APPROVED', " +
                 "created_at TEXT DEFAULT (datetime('now')), " +
                 "FOREIGN KEY (follower_id) REFERENCES " + TABLE_USERS + "(id), " +
                 "FOREIGN KEY (followed_id) REFERENCES " + TABLE_USERS + "(id), " +
@@ -176,6 +178,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion == 10 && newVersion == 11) {
+            db.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN is_private INTEGER DEFAULT 0");
+            db.execSQL("ALTER TABLE " + TABLE_FOLLOWERS + " ADD COLUMN status TEXT DEFAULT 'APPROVED'");
+            return;
+        }
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FOLLOWERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPORTS);
@@ -386,7 +393,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public long insertUser(String name, String email, String passwordHash,
-            String bio, String favoriteGenres, String role) {
+            String bio, String favoriteGenres, String role, boolean isPrivate) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name", name);
@@ -395,12 +402,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("bio", bio);
         values.put("favorite_genres", favoriteGenres);
         values.put("role", role);
+        values.put("is_private", isPrivate ? 1 : 0);
         return db.insert(TABLE_USERS, null, values);
     }
 
     public long insertUserWithId(long id, String name, String email, String passwordHash,
             String bio, String photoPath, String favoriteGenres, String role,
-            double latitude, double longitude, String language) {
+            double latitude, double longitude, String language, boolean isPrivate) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("id", id);
@@ -414,6 +422,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("latitude", latitude);
         values.put("longitude", longitude);
         values.put("language", language);
+        values.put("is_private", isPrivate ? 1 : 0);
         return db.insertWithOnConflict(TABLE_USERS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
@@ -451,6 +460,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("latitude", user.getLatitude());
         values.put("longitude", user.getLongitude());
         values.put("language", user.getLanguage());
+        values.put("is_private", user.isPrivate() ? 1 : 0);
         int rows = db.update(TABLE_USERS, values, "id = ?",
                 new String[] { String.valueOf(user.getId()) });
         return rows > 0;
@@ -524,6 +534,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         user.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow("longitude")));
         user.setLanguage(cursor.getString(cursor.getColumnIndexOrThrow("language")));
         user.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
+        int isPrivateIndex = cursor.getColumnIndex("is_private");
+        if (isPrivateIndex != -1) {
+            user.setPrivate(cursor.getInt(isPrivateIndex) > 0);
+        }
         return user;
     }
 
@@ -716,17 +730,72 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // --- FOLLOW SYSTEM METHODS ---
     
     public boolean followUser(long followerId, long followedId) {
+        return followUser(followerId, followedId, "APPROVED");
+    }
+
+    public boolean followUser(long followerId, long followedId, String status) {
         if (followerId == followedId) return false;
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("follower_id", followerId);
         values.put("followed_id", followedId);
+        values.put("status", status);
         try {
-            long result = db.insertWithOnConflict(TABLE_FOLLOWERS, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            long result = db.insertWithOnConflict(TABLE_FOLLOWERS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
             return result != -1;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getFollowStatus(long followerId, long followedId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_FOLLOWERS, new String[]{"status"},
+                "follower_id = ? AND followed_id = ?",
+                new String[]{String.valueOf(followerId), String.valueOf(followedId)},
+                null, null, null);
+        String status = null;
+        if (cursor.moveToFirst()) {
+            status = cursor.getString(0);
+        }
+        cursor.close();
+        return status;
+    }
+
+    public boolean updateFollowerStatus(long followerId, long followedId, String status) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("status", status);
+        int rows = db.update(TABLE_FOLLOWERS, values, "follower_id = ? AND followed_id = ?",
+                new String[]{String.valueOf(followerId), String.valueOf(followedId)});
+        return rows > 0;
+    }
+
+    public List<User> getPendingFollowerRequests(long followedId) {
+        SQLiteDatabase db = getReadableDatabase();
+        List<User> users = new ArrayList<>();
+        Cursor cursor = db.rawQuery(
+                "SELECT u.* FROM " + TABLE_FOLLOWERS + " f INNER JOIN " + TABLE_USERS +
+                        " u ON f.follower_id = u.id WHERE f.followed_id = ? AND f.status = 'PENDING'",
+                new String[] { String.valueOf(followedId) });
+        while (cursor.moveToNext()) {
+            users.add(cursorToUser(cursor));
+        }
+        cursor.close();
+        return users;
+    }
+
+    public int getPendingFollowerRequestsCount(long followedId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE followed_id = ? AND status = 'PENDING'",
+                new String[] { String.valueOf(followedId) });
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+        cursor.close();
+        return count;
     }
     
     public boolean unfollowUser(long followerId, long followedId) {
@@ -738,7 +807,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     public boolean isFollowing(long followerId, long followedId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ? AND followed_id = ?",
+        Cursor cursor = db.rawQuery("SELECT 1 FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ? AND followed_id = ? AND status = 'APPROVED'",
                 new String[]{String.valueOf(followerId), String.valueOf(followedId)});
         boolean following = cursor.moveToFirst();
         cursor.close();
@@ -747,7 +816,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     public int getFollowersCount(long userId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE followed_id = ?",
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE followed_id = ? AND status = 'APPROVED'",
                 new String[]{String.valueOf(userId)});
         int count = 0;
         if (cursor.moveToFirst()) {
@@ -759,7 +828,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     public int getFollowingCount(long userId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ?",
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ? AND status = 'APPROVED'",
                 new String[]{String.valueOf(userId)});
         int count = 0;
         if (cursor.moveToFirst()) {
@@ -767,6 +836,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return count;
+    }
+
+    public List<User> getFollowersList(long userId) {
+        List<User> followers = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT u.* FROM " + TABLE_USERS + " u " +
+                        "INNER JOIN " + TABLE_FOLLOWERS + " f ON u.id = f.follower_id " +
+                        "WHERE f.followed_id = ? AND f.status = 'APPROVED'",
+                new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                followers.add(cursorToUser(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return followers;
+    }
+
+    public List<User> getFollowingList(long userId) {
+        List<User> following = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT u.* FROM " + TABLE_USERS + " u " +
+                        "INNER JOIN " + TABLE_FOLLOWERS + " f ON u.id = f.followed_id " +
+                        "WHERE f.follower_id = ? AND f.status = 'APPROVED'",
+                new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                following.add(cursorToUser(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return following;
     }
     
     public List<Review> getUserReviews(long userId) {

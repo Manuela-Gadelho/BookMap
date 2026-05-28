@@ -86,6 +86,56 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:layout_marginTop="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp">
+                <LinearLayout
+                    android:id="@+id/layoutFollowers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginRight="32dp">
+                    <TextView
+                        android:id="@+id/tvFollowersCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seguidores"
+                        android:textColor="@color/gray_text"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layoutFollowing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/tvFollowingCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seguindo"
+                        android:textColor="@color/gray_text"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -132,6 +182,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:nestedScrollingEnabled="false"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchPrivateProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Perfil Privado (Exigir aprovação de seguidores)"
+                android:textColor="@color/blue_dark"
+                android:layout_marginBottom="24dp"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSave"

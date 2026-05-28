@@ -161,7 +161,8 @@ public class HomeActivity extends AppCompatActivity {
         android.widget.TextView badgeInbox = findViewById(R.id.badgeInbox);
         
         if (badgeNotifications != null) {
-            int notifCount = dbHelper.getPendingMemberRequestsCount(session.getUserId());
+            int notifCount = dbHelper.getPendingMemberRequestsCount(session.getUserId())
+                           + dbHelper.getPendingFollowerRequestsCount(session.getUserId());
             if (notifCount > 0) {
                 badgeNotifications.setVisibility(android.view.View.VISIBLE);
                 badgeNotifications.setText(String.valueOf(notifCount));
