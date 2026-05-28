@@ -20,12 +20,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes nao-funcionais de desempenho.
- * Valida que operacoes criticas do app completam dentro de limites aceitaveis.
- * Inclui testes de tempo de resposta para operacoes de banco de dados,
- * calculo de distancia e hash de senha.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34, manifest = Config.NONE)
 public class PerformanceTest {

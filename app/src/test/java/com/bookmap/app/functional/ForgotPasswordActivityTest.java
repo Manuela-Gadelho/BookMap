@@ -16,10 +16,7 @@ import org.robolectric.shadows.ShadowToast;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes funcionais para ForgotPasswordActivity.
- * Verifica o fluxo de recuperacao de senha (monografia secao 6.2).
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
 public class ForgotPasswordActivityTest {

@@ -3,10 +3,7 @@ package com.bookmap.app.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para o modelo UserBook (Estante Virtual).
- * Verifica getters/setters, campos de juncao e valores de status.
- */
+
 public class UserBookTest {
 
     @Test

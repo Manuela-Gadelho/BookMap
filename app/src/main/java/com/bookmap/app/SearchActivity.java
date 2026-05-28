@@ -48,7 +48,7 @@ public class SearchActivity extends AppCompatActivity {
             performSearch();
         });
         updateTabUI();
-        performSearch(); // Load initial alphabetical list of books
+        performSearch(); 
     }
     private void updateTabUI() {
         btnTabBooks.setTextColor(getResources().getColor(
@@ -60,7 +60,7 @@ public class SearchActivity extends AppCompatActivity {
         String query = editSearch.getText().toString().trim();
         if (showingBooks) {
             if (query.isEmpty()) {
-                searchBooks(""); // Empty query means all books
+                searchBooks(""); 
             } else {
                 searchBooks(query);
             }
@@ -75,7 +75,7 @@ public class SearchActivity extends AppCompatActivity {
     private void searchBooks(String query) {
         List<Book> books;
         if (query.isEmpty()) {
-            books = dbHelper.getAllBooks(); // Returns all books sorted alphabetically
+            books = dbHelper.getAllBooks(); 
         } else {
             books = dbHelper.searchBooks(query);
         }

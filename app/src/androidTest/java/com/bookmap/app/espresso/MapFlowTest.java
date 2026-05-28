@@ -23,10 +23,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the literary map flow.
- * Tests: map display, filters, location toggle, nearby users.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class MapFlowTest {
 
@@ -62,7 +59,7 @@ public class MapFlowTest {
         onView(withId(R.id.switchLocationVisible)).check(matches(isDisplayed()));
         onView(withId(R.id.switchLocationVisible)).perform(click());
         onView(withId(R.id.tvLocationStatus)).check(matches(isDisplayed()));
-        // Toggle back
+        
         onView(withId(R.id.switchLocationVisible)).perform(click());
         onView(withId(R.id.tvLocationStatus)).check(matches(isDisplayed()));
         scenario.close();

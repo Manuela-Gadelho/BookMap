@@ -34,10 +34,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import com.bookmap.app.R;
 
-/**
- * End-to-end Espresso test covering the complete user journey:
- * Login -> Home -> Search book -> View details -> Add to shelf -> Write review -> Update progress
- */
+
 @RunWith(AndroidJUnit4.class)
 public class FullE2EFlowTest {
 
@@ -69,12 +66,12 @@ public class FullE2EFlowTest {
     public void testCompleteLoginToHomeFlow() {
         ActivityScenario<LoginActivity> scenario = ActivityScenario.launch(LoginActivity.class);
 
-        // Step 1: Login
+        
         onView(withId(R.id.editEmail)).perform(replaceText("e2e@bookmap.com"), closeSoftKeyboard());
         onView(withId(R.id.editPassword)).perform(replaceText("senha123"), closeSoftKeyboard());
         onView(withId(R.id.btnLogin)).perform(click());
 
-        // Step 2: Verify we're on HomeActivity
+        
         intended(hasComponent(HomeActivity.class.getName()));
         scenario.close();
     }
@@ -82,23 +79,23 @@ public class FullE2EFlowTest {
     @Test
     public void testViewBookDetailsAndAddToShelf() {
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        // Login first
+        
         User user = dbHelper.getUserByEmail("e2e@bookmap.com");
         session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
 
-        // Get first seed book
+        
         long bookId = 1;
         Intent intent = new Intent(context, BookDetailsActivity.class);
         intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, bookId);
         ActivityScenario<BookDetailsActivity> scenario = ActivityScenario.launch(intent);
 
-        // Verify book details are displayed
+        
         onView(withId(R.id.tvTitle)).check(matches(isDisplayed()));
         onView(withId(R.id.tvAuthor)).check(matches(isDisplayed()));
         onView(withId(R.id.tvGenre)).check(matches(isDisplayed()));
         onView(withId(R.id.ratingBarAverage)).check(matches(isDisplayed()));
 
-        // Try to add to shelf
+        
         onView(withId(R.id.btnAddToShelf)).perform(scrollTo(), click());
 
         scenario.close();
@@ -110,12 +107,12 @@ public class FullE2EFlowTest {
         User user = dbHelper.getUserByEmail("e2e@bookmap.com");
         session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
 
-        long bookId = 2; // Second seed book
+        long bookId = 2; 
         Intent intent = new Intent(context, BookDetailsActivity.class);
         intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, bookId);
         ActivityScenario<BookDetailsActivity> scenario = ActivityScenario.launch(intent);
 
-        // Write review
+        
         onView(withId(R.id.editReviewText)).perform(scrollTo(),
                 replaceText("Otimo livro, recomendo!"), closeSoftKeyboard());
         onView(withId(R.id.ratingBar)).perform(scrollTo(), click());
@@ -126,7 +123,7 @@ public class FullE2EFlowTest {
 
     @Test
     public void testGuestModeRestrictions() {
-        // Enter as guest
+        
         ActivityScenario<LoginActivity> scenario = ActivityScenario.launch(LoginActivity.class);
         onView(withId(R.id.tvGuest)).perform(click());
         intended(hasComponent(HomeActivity.class.getName()));

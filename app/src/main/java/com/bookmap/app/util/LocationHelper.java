@@ -128,13 +128,10 @@ public class LocationHelper {
         }
     }
 
-    /**
-     * Start continuous location updates for real-time map tracking.
-     * Unlike requestLocationUpdates, this does NOT stop after a single update.
-     */
+    
     public void startContinuousUpdates(LocationUpdateListener listener) {
         this.listener = listener;
-        stopLocationUpdates(); // stop any previous callback
+        stopLocationUpdates(); 
         if (!hasLocationPermission()) {
             if (listener != null)
                 listener.onLocationError("Permissao de localização não concedida");

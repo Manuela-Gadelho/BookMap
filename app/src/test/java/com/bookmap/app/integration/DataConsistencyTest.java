@@ -22,11 +22,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes de integracao para consistencia de dados entre modulos.
- * Valida que operacoes em um modulo nao corrompem dados de outro.
- * Cobre fluxo completo: registro -> estante -> resenha -> clube.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34, manifest = Config.NONE)
 public class DataConsistencyTest {
@@ -42,36 +38,36 @@ public class DataConsistencyTest {
 
     @Test
     public void testFullUserFlow() {
-        // 1. Register user
+        
         String email = "flow_" + System.currentTimeMillis() + "@test.com";
         String hash = PasswordUtil.hashPassword("senha123");
         long userId = dbHelper.insertUser("FlowUser", email, hash, "", "Fantasia", "READER");
         assertTrue(userId > 0);
 
-        // 2. Authenticate
+        
         User user = dbHelper.getUserByEmail(email);
         assertNotNull(user);
         assertEquals(userId, user.getId());
         assertTrue(PasswordUtil.verifyPassword("senha123", user.getPasswordHash()));
 
-        // 3. Add book to shelf
+        
         List<Book> books = dbHelper.getAllBooks();
         long bookId = books.get(0).getId();
         long userBookId = dbHelper.insertUserBook(userId, bookId, "LENDO", 25);
         assertTrue(userBookId > 0);
 
-        // 4. Update progress
+        
         boolean updated = dbHelper.updateUserBookStatus(userId, bookId, "LENDO", 75);
         assertTrue(updated);
 
         UserBook ub = dbHelper.getUserBook(userId, bookId);
         assertEquals(75, ub.getProgress());
 
-        // 5. Write review
+        
         long reviewId = dbHelper.insertReview(userId, bookId, "Otimo livro!", 5);
         assertTrue(reviewId > 0);
 
-        // 6. Verify review appears
+        
         List<Review> reviews = dbHelper.getBookReviews(bookId);
         boolean found = false;
         for (Review r : reviews) {
@@ -83,32 +79,32 @@ public class DataConsistencyTest {
         }
         assertTrue("Review deve ser encontrada", found);
 
-        // 7. Average rating should reflect the review
+        
         double avg = dbHelper.getBookAverageRating(bookId);
         assertTrue("Media deve ser > 0 apos review", avg > 0);
     }
 
     @Test
     public void testClubMembershipFlow() {
-        // 1. Create organizer
+        
         String emailOrg = "org_flow_" + System.currentTimeMillis() + "@test.com";
         long orgId = dbHelper.insertUser("OrgFlow", emailOrg,
                 PasswordUtil.hashPassword("123"), "", "Fantasia", "ORGANIZER");
 
-        // 2. Create member
+        
         String emailMem = "mem_flow_" + System.currentTimeMillis() + "@test.com";
         long memId = dbHelper.insertUser("MemFlow", emailMem,
                 PasswordUtil.hashPassword("123"), "", "Fantasia", "READER");
 
-        // 3. Create club
+        
         long clubId = dbHelper.insertClub("Flow Club", "Desc", true, orgId);
         assertTrue(clubId > 0);
 
-        // 4. Request membership
+        
         long result = dbHelper.addClubMember(clubId, memId, "MEMBER", "PENDING");
         assertTrue(result > 0);
 
-        // 5. Verify pending
+        
         List<ClubMember> pending = dbHelper.getPendingMemberRequests(orgId);
         boolean foundPending = false;
         for (ClubMember m : pending) {
@@ -119,10 +115,10 @@ public class DataConsistencyTest {
         }
         assertTrue("Membro deve estar pendente", foundPending);
 
-        // 6. Approve
+        
         dbHelper.updateMemberStatus(clubId, memId, "APPROVED");
 
-        // 7. Verify no longer pending
+        
         List<ClubMember> afterApproval = dbHelper.getPendingMemberRequests(orgId);
         for (ClubMember m : afterApproval) {
             assertNotEquals("Membro aprovado nao deve estar pendente",
@@ -139,12 +135,12 @@ public class DataConsistencyTest {
         List<Book> books = dbHelper.getAllBooks();
         assertTrue(books.size() >= 3);
 
-        // Add 3 books with different statuses
+        
         dbHelper.insertUserBook(userId, books.get(0).getId(), "LENDO", 50);
         dbHelper.insertUserBook(userId, books.get(1).getId(), "LIDO", 100);
         dbHelper.insertUserBook(userId, books.get(2).getId(), "QUERO_LER", 0);
 
-        // Verify counts
+        
         int total = dbHelper.getUserBookCount(userId);
         assertEquals(3, total);
 
@@ -164,16 +160,16 @@ public class DataConsistencyTest {
         String oldHash = PasswordUtil.hashPassword("senhaAntiga");
         long userId = dbHelper.insertUser("ResetUser", email, oldHash, "", "Fantasia", "READER");
 
-        // Verify old password works
+        
         User userBefore = dbHelper.getUserByEmail(email);
         assertNotNull(userBefore);
         assertTrue(PasswordUtil.verifyPassword("senhaAntiga", userBefore.getPasswordHash()));
 
-        // Reset password
+        
         String newHash = PasswordUtil.hashPassword("senhaNova");
         assertTrue(dbHelper.updateUserPassword(userId, newHash));
 
-        // Old password should fail, new should work
+        
         User userAfter = dbHelper.getUserByEmail(email);
         assertFalse(PasswordUtil.verifyPassword("senhaAntiga", userAfter.getPasswordHash()));
         assertTrue(PasswordUtil.verifyPassword("senhaNova", userAfter.getPasswordHash()));

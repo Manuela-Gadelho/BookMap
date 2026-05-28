@@ -34,10 +34,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the login flow.
- * Tests: successful login, failed login, empty fields, navigation to register/forgot password.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class LoginFlowTest {
 
@@ -51,7 +48,7 @@ public class LoginFlowTest {
         session = new SessionManager(context);
         session.logout();
 
-        // Ensure test user exists
+        
         if (dbHelper.getUserByEmail("teste@bookmap.com") == null) {
             String hash = PasswordUtil.hashPassword("senha123");
             dbHelper.insertUser("Teste User", "teste@bookmap.com", hash, "", "Fantasia", "READER");
@@ -91,7 +88,7 @@ public class LoginFlowTest {
     public void testLoginWithEmptyFields() {
         ActivityScenario<LoginActivity> scenario = ActivityScenario.launch(LoginActivity.class);
         onView(withId(R.id.btnLogin)).perform(click());
-        // Should remain on LoginActivity (toast shown but activity doesn't navigate)
+        
         onView(withId(R.id.editEmail)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -102,7 +99,7 @@ public class LoginFlowTest {
         onView(withId(R.id.editEmail)).perform(replaceText("teste@bookmap.com"), closeSoftKeyboard());
         onView(withId(R.id.editPassword)).perform(replaceText("senhaerrada"), closeSoftKeyboard());
         onView(withId(R.id.btnLogin)).perform(click());
-        // Should remain on LoginActivity
+        
         onView(withId(R.id.editEmail)).check(matches(isDisplayed()));
         scenario.close();
     }

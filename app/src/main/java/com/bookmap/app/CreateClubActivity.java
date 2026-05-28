@@ -149,7 +149,7 @@ public class CreateClubActivity extends AppCompatActivity {
                 Toast.makeText(this, "Erro ao atualizar o clube.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            // Member invitation is optional
+            
             long newClubId = dbHelper.insertClub(name, description, isPublic, session.getUserId());
             if (newClubId > 0) {
                 dbHelper.addClubMember(newClubId, session.getUserId(), "ORGANIZER", "APPROVED");

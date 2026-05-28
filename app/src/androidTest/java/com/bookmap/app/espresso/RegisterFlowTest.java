@@ -31,10 +31,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the registration flow.
- * Tests: successful registration, validation errors, duplicate email, navigation.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class RegisterFlowTest {
 
@@ -85,7 +82,7 @@ public class RegisterFlowTest {
     public void testRegisterWithEmptyFields() {
         ActivityScenario<RegisterActivity> scenario = ActivityScenario.launch(RegisterActivity.class);
         onView(withId(R.id.btnRegister)).perform(scrollTo(), click());
-        // Should remain on RegisterActivity
+        
         onView(withId(R.id.editName)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -98,7 +95,7 @@ public class RegisterFlowTest {
         onView(withId(R.id.editPassword)).perform(replaceText("senha123"), closeSoftKeyboard());
         onView(withId(R.id.editConfirmPassword)).perform(replaceText("outrasenha"), closeSoftKeyboard());
         onView(withId(R.id.btnRegister)).perform(scrollTo(), click());
-        // Should remain on RegisterActivity
+        
         onView(withId(R.id.editName)).check(matches(isDisplayed()));
         scenario.close();
     }

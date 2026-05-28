@@ -42,7 +42,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
         SessionManager session = new SessionManager(holder.itemView.getContext());
         
-        // Regra de exclusão: se o comentário for da pessoa logada, ela pode excluir pressionando e segurando.
+        
         holder.itemView.setOnLongClickListener(v -> {
             if (comment.getUserId() == session.getUserId()) {
                 new AlertDialog.Builder(holder.itemView.getContext())

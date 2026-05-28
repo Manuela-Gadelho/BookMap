@@ -40,7 +40,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         long myUserId = session.getUserId();
         long reviewId = review.getId();
 
-        // Count logic
+        
         int likeCount = db.getReviewLikesCount(reviewId);
         int commentCount = db.getReviewCommentsCount(reviewId);
         boolean isLiked = db.hasUserLikedReview(reviewId, myUserId);

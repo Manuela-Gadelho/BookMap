@@ -3,11 +3,7 @@ package com.bookmap.app.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para o modelo Review.
- * Verifica getters/setters e o metodo getStars().
- * Restricao 1: WriteReview inclui RateBook (rating obrigatorio com resenha).
- */
+
 public class ReviewTest {
 
     @Test

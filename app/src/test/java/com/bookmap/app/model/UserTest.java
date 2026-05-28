@@ -3,10 +3,7 @@ package com.bookmap.app.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para o modelo User.
- * Verifica getters/setters, construtor e metodos de verificacao de papel.
- */
+
 public class UserTest {
 
     @Test

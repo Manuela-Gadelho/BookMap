@@ -17,10 +17,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes funcionais para UpdateProgressActivity.
- * Verifica atualizacao de progresso de leitura (monografia secao 6.3).
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
 public class UpdateProgressActivityTest {

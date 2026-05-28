@@ -6,11 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes nao-funcionais de seguranca.
- * Valida que senhas sao armazenadas de forma segura usando hash SHA-256.
- * Verifica que senhas em texto plano nao sao armazenadas.
- */
+
 public class SecurityTest {
 
     @Test

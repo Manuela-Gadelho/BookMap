@@ -3,10 +3,7 @@ package com.bookmap.app.util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para PasswordUtil.
- * Verifica hash SHA-256 e verificacao de senha.
- */
+
 public class PasswordUtilTest {
 
     @Test

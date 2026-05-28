@@ -3,10 +3,7 @@ package com.bookmap.app.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para o modelo Event.
- * Verifica getters/setters para eventos de clube.
- */
+
 public class EventTest {
 
     @Test

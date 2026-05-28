@@ -34,7 +34,7 @@ public class PhotoHelper {
 
     public static String getGenreAssetPath(String genre) {
         if (genre == null || genre.isEmpty()) {
-            return "file:///android_asset/covers/romance.jpg"; // Default fallback
+            return "file:///android_asset/covers/romance.jpg"; 
         }
         String cleanGenre = Normalizer.normalize(genre, Normalizer.Form.NFD)
                 .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")

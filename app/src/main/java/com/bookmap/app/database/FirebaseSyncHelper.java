@@ -421,7 +421,7 @@ public class FirebaseSyncHelper {
                 });
     }
 
-    // --- MESSAGING SYNC ---
+    
 
     public void pushMessageToCloud(com.bookmap.app.model.Message message, SyncCallback callback) {
         if (!isFirebaseAvailable()) {
@@ -435,7 +435,7 @@ public class FirebaseSyncHelper {
         data.put("content", message.getContent());
         data.put("timestamp", message.getTimestamp());
         data.put("is_read", message.isRead());
-        data.put("deletedFor", new java.util.ArrayList<Long>()); // New array for soft deletes
+        data.put("deletedFor", new java.util.ArrayList<Long>()); 
 
         firestore.collection("messages")
                 .document(message.getId())
@@ -504,7 +504,7 @@ public class FirebaseSyncHelper {
                 });
     }
 
-    // --- REVIEW INTERACTIONS SYNC ---
+    
     public void pushReviewLike(long reviewId, long userId, boolean isLike) {
         if (!isFirebaseAvailable()) return;
         String docId = reviewId + "_" + userId;

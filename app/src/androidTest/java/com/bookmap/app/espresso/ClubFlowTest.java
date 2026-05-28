@@ -35,10 +35,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the reading club flow.
- * Tests: list clubs, create club, view club details, join club, notifications.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class ClubFlowTest {
 
@@ -53,23 +50,23 @@ public class ClubFlowTest {
         dbHelper = DatabaseHelper.getInstance(context);
         session = new SessionManager(context);
 
-        // Create organizer user
+        
         if (dbHelper.getUserByEmail("organizer@bookmap.com") == null) {
             String hash = PasswordUtil.hashPassword("senha123");
             dbHelper.insertUser("Organizador", "organizer@bookmap.com", hash, "", "Fantasia", "ORGANIZER");
         }
         organizerUserId = dbHelper.getUserByEmail("organizer@bookmap.com").getId();
 
-        // Create a second user for club member tests
+        
         if (dbHelper.getUserByEmail("membro@bookmap.com") == null) {
             String hash = PasswordUtil.hashPassword("senha123");
             dbHelper.insertUser("Membro Teste", "membro@bookmap.com", hash, "", "Terror", "READER");
         }
 
-        // Login as organizer
+        
         session.createLoginSession(organizerUserId, "Organizador", "organizer@bookmap.com", "ORGANIZER");
 
-        // Create a test club
+        
         testClubId = dbHelper.insertClub("Clube Espresso", "Clube para testes", true, organizerUserId);
         if (testClubId > 0) {
             dbHelper.addClubMember(testClubId, organizerUserId, "ORGANIZER", "APPROVED");
@@ -126,7 +123,7 @@ public class ClubFlowTest {
     @Test
     public void testCreateClubValidation() {
         ActivityScenario<CreateClubActivity> scenario = ActivityScenario.launch(CreateClubActivity.class);
-        // Try creating without name
+        
         onView(withId(R.id.btnCreateClub)).perform(scrollTo(), click());
         onView(withId(R.id.editClubName)).check(matches(isDisplayed()));
         scenario.close();
@@ -148,20 +145,20 @@ public class ClubFlowTest {
 
     @Test
     public void testClubJoinButtonForMember() {
-        // Login as organizer (already a member)
+        
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         Intent intent = new Intent(context, ClubActivity.class);
         intent.putExtra(ClubActivity.EXTRA_CLUB_ID, testClubId);
         ActivityScenario<ClubActivity> scenario = ActivityScenario.launch(intent);
 
-        // Organizer should see "Membro" (disabled join button)
+        
         onView(withId(R.id.btnJoinClub)).check(matches(withText("Membro")));
         scenario.close();
     }
 
     @Test
     public void testClubJoinRequestAsNonMember() {
-        // Login as non-member
+        
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         long memberId = dbHelper.getUserByEmail("membro@bookmap.com").getId();
         session.createLoginSession(memberId, "Membro Teste", "membro@bookmap.com", "READER");
@@ -172,11 +169,11 @@ public class ClubFlowTest {
 
         onView(withId(R.id.btnJoinClub)).check(matches(isDisplayed()));
         onView(withId(R.id.btnJoinClub)).perform(click());
-        // Button should change to "Pendente"
+        
         onView(withId(R.id.btnJoinClub)).check(matches(withText("Pendente")));
         scenario.close();
 
-        // Restore organizer session
+        
         session.createLoginSession(organizerUserId, "Organizador", "organizer@bookmap.com", "ORGANIZER");
     }
 
@@ -184,7 +181,7 @@ public class ClubFlowTest {
     public void testNotificationsScreenDisplayed() {
         ActivityScenario<NotificationsActivity> scenario =
                 ActivityScenario.launch(NotificationsActivity.class);
-        // Either recycler or empty message should be visible
+        
         onView(withId(R.id.btnBack)).check(matches(isDisplayed()));
         scenario.close();
     }

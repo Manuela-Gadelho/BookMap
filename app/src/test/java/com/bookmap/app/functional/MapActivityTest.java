@@ -18,11 +18,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes funcionais para MapActivity.
- * Verifica mapa literario com geolocalizacao e controle de privacidade.
- * Monografia secao 6.4: controle de privacidade de localizacao.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
 public class MapActivityTest {
@@ -39,8 +35,8 @@ public class MapActivityTest {
     @Test
     public void testActivityCreation() {
         MapActivity activity = createActivity();
-        // MapActivity may fail to inflate due to SwitchCompat theme issues in test env
-        // The test validates the activity class is properly declared
+        
+        
         if (activity != null) {
             assertNotNull(activity);
         }
@@ -48,7 +44,7 @@ public class MapActivityTest {
 
     @Test
     public void testGenreFilterOptions() {
-        // Test that the expected genres are defined for filtering
+        
         String[] expectedGenres = {"Todos", "Fantasia", "Terror", "Romance",
                 "Ficcao Cientifica", "Tecnologia", "Literatura Brasileira"};
         assertEquals(7, expectedGenres.length);
@@ -64,7 +60,7 @@ public class MapActivityTest {
 
     @Test
     public void testDefaultDistanceIs50km() {
-        // Validates the default distance configuration
+        
         int defaultDistance = 50;
         assertEquals(50, defaultDistance);
     }
@@ -77,7 +73,7 @@ public class MapActivityTest {
 
     @Test
     public void testLocationPermissionCode() {
-        // Validates the permission request code constant
+        
         int LOCATION_PERMISSION_REQUEST = 1001;
         assertEquals(1001, LOCATION_PERMISSION_REQUEST);
     }

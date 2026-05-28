@@ -35,10 +35,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the profile flow.
- * Tests: view profile, edit profile, view public profile, logout.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class ProfileFlowTest {
 
@@ -99,7 +96,7 @@ public class ProfileFlowTest {
         ActivityScenario<ProfileActivity> scenario = ActivityScenario.launch(ProfileActivity.class);
         onView(withId(R.id.editName)).perform(replaceText(""), closeSoftKeyboard());
         onView(withId(R.id.btnSave)).perform(scrollTo(), click());
-        // Should remain on ProfileActivity (toast shown)
+        
         onView(withId(R.id.editName)).check(matches(isDisplayed()));
         scenario.close();
     }

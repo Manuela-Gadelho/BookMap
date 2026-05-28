@@ -125,9 +125,9 @@ public class ChatActivity extends AppCompatActivity {
         
         if (dbHelper.insertMessage(msg)) {
             editMessageContent.setText("");
-            loadMessages(); // Refresh UI instantly
+            loadMessages(); 
             
-            // Push to cloud
+            
             try {
                 FirebaseSyncHelper.getInstance(this).pushMessageToCloud(msg, success -> {
                     if (!success) {
