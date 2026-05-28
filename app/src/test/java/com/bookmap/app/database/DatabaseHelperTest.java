@@ -23,11 +23,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes de integracao para DatabaseHelper.
- * Usa Robolectric com SQLite em memoria para validar operacoes CRUD.
- * Cobre todos os 4 modulos: Auth, Library, Map, Clubs.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34, manifest = Config.NONE)
 public class DatabaseHelperTest {
@@ -46,7 +42,7 @@ public class DatabaseHelperTest {
         DatabaseHelper.resetInstance();
     }
 
-    // ==================== USER OPERATIONS ====================
+    
 
     @Test
     public void testInsertUser() {
@@ -114,7 +110,7 @@ public class DatabaseHelperTest {
                 PasswordUtil.verifyPassword("senhaNova", user.getPasswordHash()));
     }
 
-    // ==================== BOOK OPERATIONS ====================
+    
 
     @Test
     public void testInsertBook() {
@@ -146,8 +142,8 @@ public class DatabaseHelperTest {
         assertTrue("Busca por 'Engenharia' deve encontrar resultados", results.size() > 0);
     }
 
-    // ==================== USER_BOOK OPERATIONS (ESTANTE VIRTUAL)
-    // ====================
+    
+    
 
     @Test
     public void testInsertUserBook() {
@@ -243,7 +239,7 @@ public class DatabaseHelperTest {
         assertEquals(1, lido);
     }
 
-    // ==================== REVIEW OPERATIONS ====================
+    
 
     @Test
     public void testInsertReview() {
@@ -304,7 +300,7 @@ public class DatabaseHelperTest {
         assertEquals(1, countAfter);
     }
 
-    // ==================== CLUB OPERATIONS ====================
+    
 
     @Test
     public void testInsertClub() {
@@ -377,7 +373,7 @@ public class DatabaseHelperTest {
         }
     }
 
-    // ==================== DATA CONSISTENCY ====================
+    
 
     @Test
     public void testSeedDataCreatesBooks() {

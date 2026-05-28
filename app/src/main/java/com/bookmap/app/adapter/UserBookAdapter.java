@@ -46,7 +46,7 @@ public class UserBookAdapter extends RecyclerView.Adapter<UserBookAdapter.ViewHo
         holder.tvStatus.setText(statusLabel);
         holder.tvStatus.setVisibility(View.VISIBLE);
 
-        // Load cover dynamically
+        
         String isbn = ub.getBookIsbn();
         String coverPath = ub.getBookCoverPath();
         String fallbackAssetPath = PhotoHelper.getGenreAssetPath(ub.getBookGenre());

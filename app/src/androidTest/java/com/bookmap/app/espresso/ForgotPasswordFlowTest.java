@@ -27,10 +27,7 @@ import static org.hamcrest.Matchers.not;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the forgot password flow.
- * Tests: email verification, password reset, validation errors.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class ForgotPasswordFlowTest {
 
@@ -87,7 +84,7 @@ public class ForgotPasswordFlowTest {
         ActivityScenario<ForgotPasswordActivity> scenario =
                 ActivityScenario.launch(ForgotPasswordActivity.class);
         onView(withId(R.id.btnVerifyEmail)).perform(click());
-        // Should remain on screen with email field visible
+        
         onView(withId(R.id.editEmail)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -97,16 +94,16 @@ public class ForgotPasswordFlowTest {
         ActivityScenario<ForgotPasswordActivity> scenario =
                 ActivityScenario.launch(ForgotPasswordActivity.class);
 
-        // First verify email
+        
         onView(withId(R.id.editEmail)).perform(replaceText("reset@bookmap.com"), closeSoftKeyboard());
         onView(withId(R.id.btnVerifyEmail)).perform(click());
 
-        // Try reset with mismatched passwords
+        
         onView(withId(R.id.editNewPassword)).perform(replaceText("novasenha1"), closeSoftKeyboard());
         onView(withId(R.id.editConfirmPassword)).perform(replaceText("novasenha2"), closeSoftKeyboard());
         onView(withId(R.id.btnResetPassword)).perform(click());
 
-        // Should remain on ForgotPasswordActivity
+        
         onView(withId(R.id.editNewPassword)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -139,8 +136,8 @@ public class ForgotPasswordFlowTest {
         onView(withId(R.id.editConfirmPassword)).perform(replaceText("novasenha123"), closeSoftKeyboard());
         onView(withId(R.id.btnResetPassword)).perform(click());
 
-        // Activity should finish after successful reset (scenario becomes DESTROYED)
-        // No further assertions needed - if no exception, test passes
+        
+        
         scenario.close();
     }
 }

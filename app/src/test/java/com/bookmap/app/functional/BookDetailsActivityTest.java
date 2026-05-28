@@ -21,11 +21,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes funcionais para BookDetailsActivity.
- * Verifica exibicao de detalhes, media de avaliacao e botoes de acao.
- * Monografia secao 6.5: avaliacao media quantitativa.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
 public class BookDetailsActivityTest {
@@ -114,14 +110,14 @@ public class BookDetailsActivityTest {
 
     @Test
     public void testInvalidBookIdHandled() {
-        // Activity should either finish or handle gracefully
+        
         try {
             BookDetailsActivity activity = createActivity(-1);
             if (activity != null) {
                 assertTrue("Activity deve finalizar com bookId invalido", activity.isFinishing());
             }
         } catch (Exception e) {
-            // Expected - activity finishes before completing
+            
         }
     }
 }

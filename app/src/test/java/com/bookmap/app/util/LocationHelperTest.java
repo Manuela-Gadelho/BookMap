@@ -3,11 +3,7 @@ package com.bookmap.app.util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para LocationHelper.
- * Verifica o calculo de distancia usando a formula de Haversine.
- * Teste nao-funcional: valida a precisao do calculo de geolocalizacao.
- */
+
 public class LocationHelperTest {
 
     @Test
@@ -20,8 +16,8 @@ public class LocationHelperTest {
     @Test
     public void testCalculateDistanceSaoPauloToRio() {
         double distance = LocationHelper.calculateDistance(
-                -23.5505, -46.6333,  // Sao Paulo
-                -22.9068, -43.1729); // Rio de Janeiro
+                -23.5505, -46.6333,  
+                -22.9068, -43.1729); 
         assertTrue("Distancia SP-RJ deve ser ~360km", distance > 340 && distance < 380);
     }
 
@@ -36,8 +32,8 @@ public class LocationHelperTest {
     @Test
     public void testCalculateDistanceLong() {
         double distance = LocationHelper.calculateDistance(
-                -23.5505, -46.6333,  // Sao Paulo
-                48.8566, 2.3522);    // Paris
+                -23.5505, -46.6333,  
+                48.8566, 2.3522);    
         assertTrue("Distancia SP-Paris deve ser ~9400km", distance > 9300 && distance < 9500);
     }
 

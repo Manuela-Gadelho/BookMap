@@ -727,7 +727,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return reviews;
     }
     
-    // --- FOLLOW SYSTEM METHODS ---
+    
     
     public boolean followUser(long followerId, long followedId) {
         return followUser(followerId, followedId, "APPROVED");
@@ -1431,7 +1431,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return event;
     }
 
-    // --- Message Methods ---
+    
 
     public boolean insertMessage(com.bookmap.app.model.Message msg) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1517,7 +1517,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    // --- REVIEW INTERACTIONS ---
+    
     public boolean toggleReviewLike(long reviewId, long userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.query(TABLE_REVIEW_LIKES, new String[]{"id", "is_like"},
@@ -1530,7 +1530,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (isLikeIndex != -1) {
                 int isLike = cursor.getInt(isLikeIndex);
                 if (isLike == 1) {
-                    // Unlike
+                    
                     db.delete(TABLE_REVIEW_LIKES, "review_id = ? AND user_id = ?", new String[]{String.valueOf(reviewId), String.valueOf(userId)});
                 } else {
                     ContentValues values = new ContentValues();
@@ -1541,7 +1541,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             cursor.close();
         } else {
-            // Like
+            
             ContentValues values = new ContentValues();
             values.put("review_id", reviewId);
             values.put("user_id", userId);

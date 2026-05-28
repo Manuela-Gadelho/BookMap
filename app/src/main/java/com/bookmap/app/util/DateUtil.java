@@ -28,7 +28,7 @@ public class DateUtil {
                 return UI_FORMAT.format(date);
             }
         } catch (ParseException e) {
-            // fallback
+            
         }
         return dbDate;
     }

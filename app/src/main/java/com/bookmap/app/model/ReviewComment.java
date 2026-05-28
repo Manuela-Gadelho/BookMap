@@ -4,7 +4,7 @@ public class ReviewComment {
     private long id;
     private long reviewId;
     private long userId;
-    private String userName; // Join from users table
+    private String userName; 
     private String text;
     private String timestamp;
 

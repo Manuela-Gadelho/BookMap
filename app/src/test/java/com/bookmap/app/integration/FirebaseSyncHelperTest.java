@@ -18,12 +18,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes de integracao para FirebaseSyncHelper.
- * Valida que a sincronizacao funciona em modo offline
- * (quando Firebase nao esta configurado).
- * Arquitetura Local-First: Firebase e opcional.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
 public class FirebaseSyncHelperTest {
@@ -43,11 +38,11 @@ public class FirebaseSyncHelperTest {
 
     @Test
     public void testFirebaseAvailabilityCheck() {
-        // No test environment Firebase is not configured
-        // The method should gracefully handle this
+        
+        
         boolean available = syncHelper.isFirebaseAvailable();
-        // In test env, Firebase may or may not be available
-        // The important thing is it doesn't crash
+        
+        
         assertNotNull(syncHelper);
     }
 
@@ -57,7 +52,7 @@ public class FirebaseSyncHelperTest {
         user.setId(999);
         user.setLatitude(-23.5505);
         user.setLongitude(-46.6333);
-        // Should not throw any exception
+        
         syncHelper.syncUserToCloud(user);
     }
 

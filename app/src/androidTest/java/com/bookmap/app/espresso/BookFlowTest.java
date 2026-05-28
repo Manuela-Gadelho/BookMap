@@ -36,10 +36,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import com.bookmap.app.R;
 
-/**
- * Espresso instrumented tests for the book management flow.
- * Tests: add book, view details, search, update progress, write review.
- */
+
 @RunWith(AndroidJUnit4.class)
 public class BookFlowTest {
 
@@ -53,7 +50,7 @@ public class BookFlowTest {
         dbHelper = DatabaseHelper.getInstance(context);
         session = new SessionManager(context);
 
-        // Create and login test user
+        
         if (dbHelper.getUserByEmail("booktest@bookmap.com") == null) {
             String hash = PasswordUtil.hashPassword("senha123");
             dbHelper.insertUser("Book Tester", "booktest@bookmap.com", hash, "", "Fantasia", "READER");
@@ -61,11 +58,11 @@ public class BookFlowTest {
         long userId = dbHelper.getUserByEmail("booktest@bookmap.com").getId();
         session.createLoginSession(userId, "Book Tester", "booktest@bookmap.com", "READER");
 
-        // Ensure a test book exists
+        
         testBookId = dbHelper.insertBook("Livro Espresso", "Autor Teste",
                 "Sinopse do teste espresso", "", "Fantasia", "978-0000000001");
         if (testBookId <= 0) {
-            // Book may already exist from previous test run
+            
             testBookId = 1;
         }
 
@@ -93,7 +90,7 @@ public class BookFlowTest {
         onView(withId(R.id.btnLendo)).perform(click());
         onView(withId(R.id.btnQueroLer)).perform(click());
         onView(withId(R.id.btnLidos)).perform(click());
-        // Verify view still intact after filter toggles
+        
         onView(withId(R.id.recyclerBooks)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -127,9 +124,9 @@ public class BookFlowTest {
     @Test
     public void testAddBookValidation() {
         ActivityScenario<AddBookActivity> scenario = ActivityScenario.launch(AddBookActivity.class);
-        // Try saving without required fields
+        
         onView(withId(R.id.btnSaveBook)).perform(scrollTo(), click());
-        // Should remain on AddBookActivity
+        
         onView(withId(R.id.editTitle)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -142,7 +139,7 @@ public class BookFlowTest {
         onView(withId(R.id.editAuthor)).perform(replaceText("Autor Espresso"), closeSoftKeyboard());
         onView(withId(R.id.editSynopsis)).perform(replaceText("Sinopse de teste"), closeSoftKeyboard());
         onView(withId(R.id.btnSaveBook)).perform(scrollTo(), click());
-        // Activity should finish after successful add
+        
         scenario.close();
     }
 
@@ -165,9 +162,9 @@ public class BookFlowTest {
         intent.putExtra(BookDetailsActivity.EXTRA_BOOK_ID, testBookId);
         ActivityScenario<BookDetailsActivity> scenario = ActivityScenario.launch(intent);
 
-        // Try submitting empty review
+        
         onView(withId(R.id.btnSubmitReview)).perform(scrollTo(), click());
-        // Should remain on BookDetailsActivity
+        
         onView(withId(R.id.tvTitle)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -187,7 +184,7 @@ public class BookFlowTest {
         ActivityScenario<SearchActivity> scenario = ActivityScenario.launch(SearchActivity.class);
         onView(withId(R.id.editSearch)).perform(replaceText("Engenharia"), closeSoftKeyboard());
         onView(withId(R.id.btnSearch)).perform(click());
-        // Results should display
+        
         onView(withId(R.id.recyclerResults)).check(matches(isDisplayed()));
         scenario.close();
     }
@@ -198,7 +195,7 @@ public class BookFlowTest {
         onView(withId(R.id.btnTabUsers)).perform(click());
         onView(withId(R.id.editSearch)).perform(replaceText("Book Tester"), closeSoftKeyboard());
         onView(withId(R.id.btnSearch)).perform(click());
-        // Should display results or no results message
+        
         scenario.close();
     }
 
@@ -206,7 +203,7 @@ public class BookFlowTest {
     public void testSearchEmptyQuery() {
         ActivityScenario<SearchActivity> scenario = ActivityScenario.launch(SearchActivity.class);
         onView(withId(R.id.btnSearch)).perform(click());
-        // Should remain on search with toast
+        
         onView(withId(R.id.editSearch)).check(matches(isDisplayed()));
         scenario.close();
     }

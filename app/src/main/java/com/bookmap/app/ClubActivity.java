@@ -127,7 +127,7 @@ public class ClubActivity extends AppCompatActivity {
         tvClubDescription.setText(club.getDescription());
         tvClubType.setText(club.isPublic() ? "Público" : "Privado");
 
-        // Load Creator
+        
         View layoutClubCreator = findViewById(R.id.layoutClubCreator);
         android.widget.ImageView imgCreatorPhoto = findViewById(R.id.imgCreatorPhoto);
         TextView tvCreatorName = findViewById(R.id.tvCreatorName);
@@ -151,7 +151,7 @@ public class ClubActivity extends AppCompatActivity {
             layoutClubCreator.setVisibility(View.GONE);
         }
 
-        // Load members
+        
         List<ClubMember> clubMembers = dbHelper.getClubMembers(clubId);
         List<User> memberUsers = new ArrayList<>();
         for (ClubMember cm : clubMembers) {
@@ -161,7 +161,7 @@ public class ClubActivity extends AppCompatActivity {
         }
         memberAdapter.updateData(memberUsers);
 
-        // Sync cloud members
+        
         try {
             com.bookmap.app.database.FirebaseSyncHelper syncHelper = com.bookmap.app.database.FirebaseSyncHelper
                     .getInstance(this);
@@ -185,7 +185,7 @@ public class ClubActivity extends AppCompatActivity {
             android.util.Log.w("ClubActivity", "Could not sync club members", e);
         }
 
-        // Load events
+        
         boolean canViewEvents = club.isPublic();
         if (!canViewEvents && session.isLoggedIn()) {
             com.bookmap.app.model.ClubMember currentMember = dbHelper.getClubMember(clubId, session.getUserId());
@@ -210,7 +210,7 @@ public class ClubActivity extends AppCompatActivity {
             }
         }
 
-        // Action buttons
+        
         if (session.isLoggedIn()) {
             boolean isCreator = club.getCreatorId() == session.getUserId();
             com.bookmap.app.model.ClubMember currentMember = dbHelper.getClubMember(clubId, session.getUserId());
@@ -262,7 +262,7 @@ public class ClubActivity extends AppCompatActivity {
                 }
             });
 
-            // Edit / Delete actions
+            
             View layoutClubCreatorActions = findViewById(R.id.layoutClubCreatorActions);
             Button btnEditClub = findViewById(R.id.btnEditClub);
             Button btnDeleteClub = findViewById(R.id.btnDeleteClub);

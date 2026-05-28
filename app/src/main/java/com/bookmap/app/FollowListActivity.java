@@ -19,7 +19,7 @@ import java.util.List;
 public class FollowListActivity extends AppCompatActivity implements FollowListAdapter.FollowActionListener {
     public static final String EXTRA_LIST_TYPE = "list_type";
     
-    private String listType; // "followers" or "following"
+    private String listType; 
     private DatabaseHelper dbHelper;
     private FirebaseSyncHelper syncHelper;
     private SessionManager session;
@@ -95,7 +95,7 @@ public class FollowListActivity extends AppCompatActivity implements FollowListA
                 .setMessage(message)
                 .setPositiveButton("Sim", (dialog, which) -> {
                     if ("followers".equals(type)) {
-                        // The current user removes a follower (targetUser is following currentUser)
+                        
                         if (dbHelper.unfollowUser(targetUser.getId(), currentUserId)) {
                             syncHelper.syncFollowToCloud(targetUser.getId(), currentUserId, false, null);
                             Toast.makeText(this, "Seguidor removido.", Toast.LENGTH_SHORT).show();
@@ -104,7 +104,7 @@ public class FollowListActivity extends AppCompatActivity implements FollowListA
                             Toast.makeText(this, "Erro ao remover seguidor.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        // The current user unfollows someone (currentUser is following targetUser)
+                        
                         if (dbHelper.unfollowUser(currentUserId, targetUser.getId())) {
                             syncHelper.syncFollowToCloud(currentUserId, targetUser.getId(), false, null);
                             Toast.makeText(this, "Você deixou de seguir " + targetUser.getName() + ".", Toast.LENGTH_SHORT).show();

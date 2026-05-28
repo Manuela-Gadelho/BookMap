@@ -17,10 +17,7 @@ import org.robolectric.shadows.ShadowToast;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes funcionais para LoginActivity.
- * Verifica o fluxo de login, navegacao e validacao de campos.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34)
 public class LoginActivityTest {

@@ -19,14 +19,7 @@ public class GenreUIHelper {
         void onChange(List<String> selectedGenres);
     }
 
-    /**
-     * Configura um RecyclerView de gêneros com chips estilizados selecionáveis.
-     * @param context       contexto
-     * @param rv            RecyclerView onde a lista será exibida
-     * @param preSelected   gêneros já selecionados (para modo edição)
-     * @param listener      callback chamado sempre que a seleção muda
-     * @return              lista mutável de gêneros selecionados (referência viva)
-     */
+    
     public static List<String> setupGenreRecycler(Context context, RecyclerView rv,
                                                    List<String> preSelected,
                                                    OnGenreSelectionChanged listener) {
@@ -43,9 +36,9 @@ public class GenreUIHelper {
         return selected;
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  Adapter interno de chips de gênero                                  */
-    /* ------------------------------------------------------------------ */
+    
+    
+    
     private static class GenreChipAdapter
             extends RecyclerView.Adapter<GenreChipAdapter.VH> {
 
@@ -88,7 +81,7 @@ public class GenreUIHelper {
             GradientDrawable bg = new GradientDrawable();
             bg.setCornerRadius(50f);
             if (sel) {
-                bg.setColor(0xFF1565C0);   // azul escuro (blue_dark)
+                bg.setColor(0xFF1565C0);   
                 tv.setTextColor(Color.WHITE);
             } else {
                 bg.setColor(Color.WHITE);

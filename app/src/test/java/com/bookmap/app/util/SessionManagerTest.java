@@ -12,10 +12,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para SessionManager usando Robolectric.
- * Verifica login/logout e gerenciamento de sessao com SharedPreferences.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = 34, manifest = Config.NONE)
 public class SessionManagerTest {

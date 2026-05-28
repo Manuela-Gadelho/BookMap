@@ -46,7 +46,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         Message msg = messages.get(position);
         holder.tvMessageContent.setText(msg.getContent());
         
-        // Format timestamp (just extracting time part for simplicity)
+        
         String time = msg.getTimestamp();
         holder.tvMessageTime.setText(com.bookmap.app.util.DateUtil.formatToBrazilian(time));
 
@@ -56,14 +56,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.layoutMessageBubble.getLayoutParams();
 
         if (msg.getSenderId() == currentUserId) {
-            // Sent by me -> Blue bubble on the right
+            
             bgShape.setColor(holder.itemView.getContext().getResources().getColor(R.color.blue_primary));
             holder.tvMessageContent.setTextColor(Color.WHITE);
             holder.tvMessageTime.setTextColor(Color.WHITE);
             holder.itemView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
             layoutParams.gravity = Gravity.END;
         } else {
-            // Received -> Gray bubble on the left
+            
             bgShape.setColor(holder.itemView.getContext().getResources().getColor(R.color.gray_bg));
             holder.tvMessageContent.setTextColor(Color.BLACK);
             holder.tvMessageTime.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.gray_text));

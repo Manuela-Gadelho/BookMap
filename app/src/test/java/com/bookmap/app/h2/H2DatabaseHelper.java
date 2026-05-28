@@ -7,11 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * H2 in-memory database helper for testing.
- * Mirrors the SQLite schema from DatabaseHelper to validate SQL operations
- * in a pure JVM environment without Android dependencies.
- */
+
 public class H2DatabaseHelper {
 
     private Connection connection;
@@ -124,7 +120,7 @@ public class H2DatabaseHelper {
         stmt.close();
     }
 
-    // ==================== USER OPERATIONS ====================
+    
 
     public long insertUser(String name, String email, String passwordHash,
                            String bio, String favoriteGenres, String role) throws SQLException {
@@ -164,7 +160,7 @@ public class H2DatabaseHelper {
         return ps.executeUpdate() > 0;
     }
 
-    // ==================== BOOK OPERATIONS ====================
+    
 
     public long insertBook(String title, String author, String synopsis,
                            String coverPath, String genre, String isbn) throws SQLException {
@@ -192,7 +188,7 @@ public class H2DatabaseHelper {
         return ps.executeQuery();
     }
 
-    // ==================== USER_BOOKS OPERATIONS ====================
+    
 
     public long insertUserBook(long userId, long bookId, String status, int progress)
             throws SQLException {
@@ -219,7 +215,7 @@ public class H2DatabaseHelper {
         return ps.executeUpdate() > 0;
     }
 
-    // ==================== REVIEW OPERATIONS ====================
+    
 
     public long insertReview(long userId, long bookId, String text, int rating)
             throws SQLException {
@@ -253,7 +249,7 @@ public class H2DatabaseHelper {
         return 0;
     }
 
-    // ==================== CLUB OPERATIONS ====================
+    
 
     public long insertClub(String name, String description, boolean isPublic, long creatorId)
             throws SQLException {
@@ -293,7 +289,7 @@ public class H2DatabaseHelper {
         return ps.executeUpdate() > 0;
     }
 
-    // ==================== CLEANUP ====================
+    
 
     public void close() throws SQLException {
         if (connection != null && !connection.isClosed()) {

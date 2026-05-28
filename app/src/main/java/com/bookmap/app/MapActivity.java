@@ -41,7 +41,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String TAG = "MapActivity";
     private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
-    private static final long CLOUD_REFRESH_INTERVAL_MS = 30000; // 30 seconds
+    private static final long CLOUD_REFRESH_INTERVAL_MS = 30000; 
 
     private DatabaseHelper dbHelper;
     private SessionManager session;
@@ -76,7 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
-    // Random instance for location fuzzing (privacy)
+    
     private final Random fuzzRandom = new Random();
 
     @Override
@@ -169,18 +169,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        // Start continuous location updates for real-time tracking
+        
         startContinuousLocationTracking();
-        // Start periodic cloud refresh
+        
         cloudRefreshHandler.postDelayed(cloudRefreshRunnable, CLOUD_REFRESH_INTERVAL_MS);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Stop continuous updates to save battery
+        
         locationHelper.stopLocationUpdates();
-        // Stop periodic cloud refresh
+        
         cloudRefreshHandler.removeCallbacks(cloudRefreshRunnable);
     }
 
@@ -251,7 +251,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 currentLat = locationHelper.getLastLatitude();
                 currentLng = locationHelper.getLastLongitude();
                 if (currentLat == 0.0 && currentLng == 0.0) {
-                    // Default: Guarulhos, SP
+                    
                     currentLat = -23.4626;
                     currentLng = -46.5322;
                 }
@@ -326,16 +326,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap = googleMap;
         isMapReady = true;
 
-        // Configure map UI
+        
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setPadding(0, 0, 0, 16);
 
-        // Enable the blue dot for own location
+        
         enableMyLocation();
 
-        // Handle marker clicks to show info window
+        
         mMap.setOnMarkerClickListener(marker -> {
             marker.showInfoWindow();
             return true;
@@ -353,18 +353,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    /**
-     * Apply a random offset of 200-500 meters in a random direction
-     * to protect user privacy. This ensures the map never shows
-     * the exact location of another user.
-     */
+    
     private LatLng fuzzLocation(double lat, double lng) {
-        // Random distance between 200m and 500m
+        
         double distanceMeters = 200 + fuzzRandom.nextDouble() * 300;
-        // Random angle 0-360 degrees
+        
         double angle = fuzzRandom.nextDouble() * 2 * Math.PI;
 
-        // Convert to lat/lng offset
+        
         double latOffset = (distanceMeters * Math.cos(angle)) / 111111.0;
         double lngOffset = (distanceMeters * Math.sin(angle)) / (111111.0 * Math.cos(Math.toRadians(lat)));
 
@@ -378,7 +374,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
         boolean hasMarkers = false;
 
-        // Add own location marker with distinct color
+        
         if (currentLat != 0.0 && currentLng != 0.0) {
             LatLng myLocation = new LatLng(currentLat, currentLng);
             mMap.addMarker(new MarkerOptions()
@@ -388,21 +384,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             boundsBuilder.include(myLocation);
             hasMarkers = true;
 
-            // On first load, zoom to user's location
+            
             if (isFirstCameraMove) {
                 isFirstCameraMove = false;
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, getZoomForRadius()));
             }
         }
 
-        // Add nearby users with fuzzed locations and distance info
+        
         if (users != null) {
             for (User u : users) {
                 if (u.getLatitude() != 0.0 && u.getLongitude() != 0.0) {
-                    // Apply privacy fuzzing
+                    
                     LatLng fuzzedPos = fuzzLocation(u.getLatitude(), u.getLongitude());
 
-                    // Calculate approximate distance
+                    
                     double distKm = LocationHelper.calculateDistance(
                             currentLat, currentLng, u.getLatitude(), u.getLongitude());
                     String distText;
@@ -428,7 +424,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         }
 
-        // Adjust camera to show all markers if we have more than just ourselves
+        
         if (hasMarkers && users != null && !users.isEmpty() && !isFirstCameraMove) {
             try {
                 LatLngBounds bounds = boundsBuilder.build();
@@ -439,9 +435,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    /**
-     * Calculate an appropriate zoom level based on the distance radius selected.
-     */
+    
     private float getZoomForRadius() {
         if (currentDistance <= 5) return 14f;
         if (currentDistance <= 10) return 13f;

@@ -3,10 +3,7 @@ package com.bookmap.app.model;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- * Testes unitarios para o modelo Report.
- * Verifica getters/setters e valores de status.
- */
+
 public class ReportTest {
 
     @Test

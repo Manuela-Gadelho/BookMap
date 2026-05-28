@@ -15,7 +15,7 @@ import java.util.List;
 
 public class FollowListAdapter extends RecyclerView.Adapter<FollowListAdapter.ViewHolder> {
     private final List<User> users;
-    private final String listType; // "followers" or "following"
+    private final String listType; 
     private final FollowActionListener listener;
 
     public interface FollowActionListener {

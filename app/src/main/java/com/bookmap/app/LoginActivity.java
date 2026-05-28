@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
         
-        // Inject admin user if missing
+        
         User adminUser = dbHelper.getUserByEmail("mmgsansung@gmail.com");
         if (adminUser == null) {
             String pwdHash = PasswordUtil.hashPassword("123456");

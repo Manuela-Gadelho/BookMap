@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         dbHelper = DatabaseHelper.getInstance(this);
         session = new SessionManager(this);
         
-        // Sync review interactions in background
+        
         if (session.isLoggedIn()) {
             com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).pullReviewInteractions(null);
         }

@@ -81,10 +81,10 @@ public class ReviewCommentsActivity extends AppCompatActivity {
         if (insertedId != -1) {
             editCommentText.setText("");
             
-            // Re-load comments
+            
             loadComments();
             
-            // Fetch the newly inserted comment fully to push to cloud
+            
             List<ReviewComment> all = dbHelper.getReviewComments(reviewId);
             for (ReviewComment rc : all) {
                 if (rc.getId() == insertedId) {
