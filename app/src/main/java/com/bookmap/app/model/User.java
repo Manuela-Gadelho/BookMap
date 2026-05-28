@@ -12,6 +12,7 @@ public class User {
     private double longitude;
     private String language;
     private String createdAt;
+    private boolean isPrivate;
     public User() {}
     public User(String name, String email, String passwordHash, String favoriteGenres, String role) {
         this.name = name;
@@ -19,6 +20,7 @@ public class User {
         this.passwordHash = passwordHash;
         this.favoriteGenres = favoriteGenres;
         this.role = role;
+        this.isPrivate = false;
     }
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -44,6 +46,8 @@ public class User {
     public void setLanguage(String language) { this.language = language; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public boolean isPrivate() { return isPrivate; }
+    public void setPrivate(boolean aPrivate) { isPrivate = aPrivate; }
     public boolean isGuest() { return "GUEST".equals(role); }
     public boolean isReader() { return "READER".equals(role); }
     public boolean isOrganizer() { return "ORGANIZER".equals(role); }

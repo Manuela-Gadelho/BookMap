@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import androidx.appcompat.widget.SwitchCompat;
+import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bookmap.app.util.GenreUIHelper;
-import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.Toast;
@@ -25,12 +25,12 @@ import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.model.User;
 import com.bookmap.app.util.PhotoHelper;
 import com.bookmap.app.util.SessionManager;
-import android.widget.EditText;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CAMERA = 3001;
     private EditText editName, editBio;
     private RecyclerView recyclerGenres;
+    private SwitchCompat switchPrivateProfile;
     private List<String> selectedGenres = new ArrayList<>();
     private TextView tvUserName, tvUserEmail, tvUserRole;
     private ImageView imgAvatar;
@@ -58,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvUserEmail = findViewById(R.id.tvUserEmail);
         tvUserRole = findViewById(R.id.tvUserRole);
         imgAvatar = findViewById(R.id.imgAvatar);
+        switchPrivateProfile = findViewById(R.id.switchPrivateProfile);
         Button btnSave = findViewById(R.id.btnSave);
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnLogout = findViewById(R.id.btnLogout);
@@ -221,6 +222,9 @@ public class ProfileActivity extends AppCompatActivity {
         if (user.getPhotoPath() != null && !user.getPhotoPath().isEmpty()) {
             PhotoHelper.loadImageIntoView(imgAvatar, user.getPhotoPath());
         }
+        if (switchPrivateProfile != null) {
+            switchPrivateProfile.setChecked(user.isPrivate());
+        }
     }
 
     private void saveProfile() {
@@ -242,6 +246,9 @@ public class ProfileActivity extends AppCompatActivity {
         user.setBio(bio);
         user.setFavoriteGenres(genres);
         user.setLanguage("Português");
+        if (switchPrivateProfile != null) {
+            user.setPrivate(switchPrivateProfile.isChecked());
+        }
         if (dbHelper.updateUser(user)) {
             session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
             tvUserName.setText(name);

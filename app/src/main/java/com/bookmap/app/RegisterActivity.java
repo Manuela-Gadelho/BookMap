@@ -15,12 +15,14 @@ import com.bookmap.app.util.SessionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.bookmap.app.util.FirebaseErrorTranslator;
 import android.widget.EditText;
+import androidx.appcompat.widget.SwitchCompat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editName, editEmail, editPassword, editConfirmPassword;
     private TextView tvGenreSelection;
+    private SwitchCompat switchPrivateProfile;
     private List<String> selectedGenres = new ArrayList<>();
     private boolean[] checkedItems;
     private DatabaseHelper dbHelper;
@@ -38,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
         tvGenreSelection = findViewById(R.id.tvGenreSelection);
+        switchPrivateProfile = findViewById(R.id.switchPrivateProfile);
         
         String[] genres = com.bookmap.app.util.GenreUtil.getGenresArray();
         checkedItems = new boolean[genres.length];
@@ -106,6 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         String favoriteGenres = String.join(", ", selectedGenres);
         String passwordHash = PasswordUtil.hashPassword(password);
+        boolean isPrivate = switchPrivateProfile.isChecked();
 
         Toast.makeText(this, "Criando conta...", Toast.LENGTH_SHORT).show();
 
@@ -127,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         }
                                     });
                         }
-                        long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER");
+                        long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER", isPrivate);
                         if (userId > 0) {
                             new android.app.AlertDialog.Builder(RegisterActivity.this)
                                     .setTitle("Conta Criada!")

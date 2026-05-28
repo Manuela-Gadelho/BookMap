@@ -45,19 +45,23 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void loadNotifications() {
-        List<ClubMember> pendingRequests = dbHelper.getPendingMemberRequests(session.getUserId());
-        if (pendingRequests.isEmpty()) {
+        List<Object> combinedNotifications = new ArrayList<>();
+        combinedNotifications.addAll(dbHelper.getPendingMemberRequests(session.getUserId()));
+        combinedNotifications.addAll(dbHelper.getPendingFollowerRequests(session.getUserId()));
+
+        if (combinedNotifications.isEmpty()) {
             tvEmpty.setVisibility(View.VISIBLE);
             recyclerNotifications.setVisibility(View.GONE);
         } else {
             tvEmpty.setVisibility(View.GONE);
             recyclerNotifications.setVisibility(View.VISIBLE);
         }
+
         com.bookmap.app.adapter.NotificationAdapter adapter = new com.bookmap.app.adapter.NotificationAdapter(
-                pendingRequests,
+                combinedNotifications,
                 new com.bookmap.app.adapter.NotificationAdapter.NotificationActionListener() {
                     @Override
-                    public void onApprove(ClubMember member) {
+                    public void onApproveClubMember(ClubMember member) {
                         dbHelper.updateMemberStatus(member.getClubId(), member.getUserId(), "APPROVED");
                         com.bookmap.app.database.FirebaseSyncHelper.getInstance(NotificationsActivity.this)
                                 .syncClubMemberToCloud(member.getClubId(), member.getUserId(), member.getRole(), "APPROVED");
@@ -67,10 +71,30 @@ public class NotificationsActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onReject(ClubMember member) {
+                    public void onRejectClubMember(ClubMember member) {
                         dbHelper.removeClubMember(member.getClubId(), member.getUserId());
                         com.bookmap.app.database.FirebaseSyncHelper.getInstance(NotificationsActivity.this)
                                 .removeClubMemberFromCloud(member.getClubId(), member.getUserId());
+                        Toast.makeText(NotificationsActivity.this,
+                                "Solicitação rejeitada", Toast.LENGTH_SHORT).show();
+                        loadNotifications();
+                    }
+
+                    @Override
+                    public void onApproveFollower(com.bookmap.app.model.User follower) {
+                        dbHelper.updateFollowerStatus(follower.getId(), session.getUserId(), "APPROVED");
+                        com.bookmap.app.database.FirebaseSyncHelper.getInstance(NotificationsActivity.this)
+                                .syncFollowToCloud(follower.getId(), session.getUserId(), true, "APPROVED");
+                        Toast.makeText(NotificationsActivity.this,
+                                "Seguidor aprovado!", Toast.LENGTH_SHORT).show();
+                        loadNotifications();
+                    }
+
+                    @Override
+                    public void onRejectFollower(com.bookmap.app.model.User follower) {
+                        dbHelper.unfollowUser(follower.getId(), session.getUserId());
+                        com.bookmap.app.database.FirebaseSyncHelper.getInstance(NotificationsActivity.this)
+                                .syncFollowToCloud(follower.getId(), session.getUserId(), false, null);
                         Toast.makeText(NotificationsActivity.this,
                                 "Solicitação rejeitada", Toast.LENGTH_SHORT).show();
                         loadNotifications();

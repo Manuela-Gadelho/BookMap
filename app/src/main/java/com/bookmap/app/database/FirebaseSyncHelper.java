@@ -66,8 +66,9 @@ public class FirebaseSyncHelper {
         userData.put("role", user.getRole());
         userData.put("latitude", user.getLatitude());
         userData.put("longitude", user.getLongitude());
-        userData.put("language", user.getLanguage() != null ? user.getLanguage() : "Português");
+        userData.put("language", user.getLanguage() != null ? user.getLanguage() : "pt_BR");
         userData.put("photo_path", user.getPhotoPath() != null ? user.getPhotoPath() : "");
+        userData.put("is_private", user.isPrivate());
         firestore.collection(COLLECTION_USERS)
                 .document(String.valueOf(user.getId()))
                 .set(userData, SetOptions.merge())
@@ -172,13 +173,14 @@ public class FirebaseSyncHelper {
                 .addOnFailureListener(e -> Log.w(TAG, "Failed to sync user book to cloud", e));
     }
     
-    public void syncFollowToCloud(long followerId, long followedId, boolean isFollowing) {
+    public void syncFollowToCloud(long followerId, long followedId, boolean isFollowing, String status) {
         if (!isFirebaseAvailable()) return;
         String docId = followerId + "_" + followedId;
         if (isFollowing) {
             Map<String, Object> data = new HashMap<>();
             data.put("follower_id", followerId);
             data.put("followed_id", followedId);
+            data.put("status", status);
             data.put("timestamp", FieldValue.serverTimestamp());
             firestore.collection(COLLECTION_FOLLOWERS).document(docId).set(data, SetOptions.merge())
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "Follow synced to cloud"))
@@ -294,6 +296,8 @@ public class FirebaseSyncHelper {
                             Double longitude = doc.getDouble("longitude");
                             String language = doc.getString("language");
                             String photoPath = doc.getString("photo_path");
+                            Boolean isPrivateObj = doc.getBoolean("is_private");
+                            boolean isPrivate = isPrivateObj != null ? isPrivateObj : false;
                             if (name != null && email != null) {
                                 dbHelper.insertUserWithId(id, name, email, "google_or_synced_pass",
                                         bio != null ? bio : "",
@@ -302,7 +306,8 @@ public class FirebaseSyncHelper {
                                         role != null ? role : "READER",
                                         latitude != null ? latitude : 0.0,
                                         longitude != null ? longitude : 0.0,
-                                        language != null ? language : "Português");
+                                        language != null ? language : "pt_BR",
+                                        isPrivate);
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Error parsing synced user", e);

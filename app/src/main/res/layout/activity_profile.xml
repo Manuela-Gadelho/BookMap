@@ -133,6 +133,14 @@
                 android:layout_marginBottom="16dp"
                 android:nestedScrollingEnabled="false"/>
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switchPrivateProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Perfil Privado (Exigir aprovação de seguidores)"
+                android:textColor="@color/blue_dark"
+                android:layout_marginBottom="24dp"/>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
