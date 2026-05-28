@@ -62,6 +62,16 @@ public class ProfileActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnLogout = findViewById(R.id.btnLogout);
+        
+        android.widget.LinearLayout layoutFollowers = findViewById(R.id.layoutFollowers);
+        android.widget.LinearLayout layoutFollowing = findViewById(R.id.layoutFollowing);
+        if (layoutFollowers != null) {
+            layoutFollowers.setOnClickListener(v -> openFollowList("followers"));
+        }
+        if (layoutFollowing != null) {
+            layoutFollowing.setOnClickListener(v -> openFollowList("following"));
+        }
+        
         loadUserData();
         selectedGenres = GenreUIHelper.setupGenreRecycler(this, recyclerGenres, selectedGenres, null);
         imgAvatar.setOnClickListener(v -> showPhotoOptions());
@@ -91,6 +101,12 @@ public class ProfileActivity extends AppCompatActivity {
         if (photoHelper.getCurrentPhotoPath() != null) {
             outState.putString("photo_path", photoHelper.getCurrentPhotoPath());
         }
+    }
+
+    private void openFollowList(String type) {
+        Intent intent = new Intent(this, FollowListActivity.class);
+        intent.putExtra(FollowListActivity.EXTRA_LIST_TYPE, type);
+        startActivity(intent);
     }
 
     private void showPhotoOptions() {
@@ -224,6 +240,13 @@ public class ProfileActivity extends AppCompatActivity {
         }
         if (switchPrivateProfile != null) {
             switchPrivateProfile.setChecked(user.isPrivate());
+        }
+        
+        TextView tvFollowersCount = findViewById(R.id.tvFollowersCount);
+        TextView tvFollowingCount = findViewById(R.id.tvFollowingCount);
+        if (tvFollowersCount != null && tvFollowingCount != null) {
+            tvFollowersCount.setText(String.valueOf(dbHelper.getFollowersCount(user.getId())));
+            tvFollowingCount.setText(String.valueOf(dbHelper.getFollowingCount(user.getId())));
         }
     }
 

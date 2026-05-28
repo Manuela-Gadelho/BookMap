@@ -816,7 +816,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     public int getFollowersCount(long userId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE followed_id = ?",
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE followed_id = ? AND status = 'APPROVED'",
                 new String[]{String.valueOf(userId)});
         int count = 0;
         if (cursor.moveToFirst()) {
@@ -828,7 +828,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     public int getFollowingCount(long userId) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ?",
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOLLOWERS + " WHERE follower_id = ? AND status = 'APPROVED'",
                 new String[]{String.valueOf(userId)});
         int count = 0;
         if (cursor.moveToFirst()) {
@@ -836,6 +836,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return count;
+    }
+
+    public List<User> getFollowersList(long userId) {
+        List<User> followers = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT u.* FROM " + TABLE_USERS + " u " +
+                        "INNER JOIN " + TABLE_FOLLOWERS + " f ON u.id = f.follower_id " +
+                        "WHERE f.followed_id = ? AND f.status = 'APPROVED'",
+                new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                followers.add(cursorToUser(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return followers;
+    }
+
+    public List<User> getFollowingList(long userId) {
+        List<User> following = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT u.* FROM " + TABLE_USERS + " u " +
+                        "INNER JOIN " + TABLE_FOLLOWERS + " f ON u.id = f.followed_id " +
+                        "WHERE f.follower_id = ? AND f.status = 'APPROVED'",
+                new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                following.add(cursorToUser(cursor));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return following;
     }
     
     public List<Review> getUserReviews(long userId) {
