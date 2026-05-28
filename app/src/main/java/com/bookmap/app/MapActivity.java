@@ -4,13 +4,12 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -28,16 +27,22 @@ import com.bookmap.app.util.LocationHelper;
 import com.bookmap.app.util.SessionManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private static final String TAG = "MapActivity";
     private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    private static final long CLOUD_REFRESH_INTERVAL_MS = 30000; // 30 seconds
+
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private LocationHelper locationHelper;
@@ -51,6 +56,28 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private double currentLat = 0.0;
     private double currentLng = 0.0;
     private int currentDistance = 50;
+    private boolean isFirstCameraMove = true;
+    private boolean isMapReady = false;
+
+    private final Handler cloudRefreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable cloudRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                FirebaseSyncHelper.getInstance(MapActivity.this).pullUsersFromCloud(success -> {
+                    if (success) {
+                        runOnUiThread(() -> loadNearbyUsers());
+                    }
+                });
+            } catch (Exception e) {
+                Log.w(TAG, "Periodic cloud pull failed", e);
+            }
+            cloudRefreshHandler.postDelayed(this, CLOUD_REFRESH_INTERVAL_MS);
+        }
+    };
+
+    // Random instance for location fuzzing (privacy)
+    private final Random fuzzRandom = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +93,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         seekDistance = findViewById(R.id.seekDistance);
         switchLocationVisible = findViewById(R.id.switchLocationVisible);
         tvGenreSelection = findViewById(R.id.tvGenreSelection);
-        
+
         List<String> genreList = new java.util.ArrayList<>();
         genreList.add("Todos");
         genreList.addAll(com.bookmap.app.util.GenreUtil.getGenres());
         String[] genres = genreList.toArray(new String[0]);
-        
+
         tvGenreSelection.setOnClickListener(v -> {
             androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
             builder.setTitle("Filtrar por Gênero");
-            
+
             int checkedItem = 0;
             for (int i = 0; i < genres.length; i++) {
                 if (genres[i].equalsIgnoreCase(selectedGenre)) {
@@ -83,7 +110,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     break;
                 }
             }
-            
+
             builder.setSingleChoiceItems(genres, checkedItem, (dialog, which) -> {
                 selectedGenre = genres[which];
                 tvGenreSelection.setText(selectedGenre);
@@ -93,9 +120,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             builder.setNegativeButton("Cancelar", null);
             builder.show();
         });
-        
+
         recyclerUsers.setLayoutManager(new LinearLayoutManager(this));
-        
+
         seekDistance.setMax(100);
         seekDistance.setProgress(currentDistance);
         tvDistance.setText(currentDistance + " km");
@@ -115,16 +142,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 loadNearbyUsers();
             }
         });
-        AdapterView.OnItemSelectedListener filterListener = new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                loadNearbyUsers();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        };
 
         switchLocationVisible.setChecked(locationHelper.isLocationVisible());
         switchLocationVisible.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -137,21 +154,55 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 clearUserLocationInDb();
             }
         });
+
         setupBottomNav();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
         requestLocationAndLoad();
-        try {
-            FirebaseSyncHelper.getInstance(this).pullUsersFromCloud(success -> {
-                if (success) {
-                    runOnUiThread(this::loadNearbyUsers);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Start continuous location updates for real-time tracking
+        startContinuousLocationTracking();
+        // Start periodic cloud refresh
+        cloudRefreshHandler.postDelayed(cloudRefreshRunnable, CLOUD_REFRESH_INTERVAL_MS);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop continuous updates to save battery
+        locationHelper.stopLocationUpdates();
+        // Stop periodic cloud refresh
+        cloudRefreshHandler.removeCallbacks(cloudRefreshRunnable);
+    }
+
+    private void startContinuousLocationTracking() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationHelper.startContinuousUpdates(new LocationHelper.LocationUpdateListener() {
+                @Override
+                public void onLocationUpdated(double latitude, double longitude) {
+                    currentLat = latitude;
+                    currentLng = longitude;
+                    tvLocationStatus.setText(String.format(java.util.Locale.US,
+                            "Localização atualizada: %.4f, %.4f", latitude, longitude));
+                    updateUserLocationInDb();
+                    loadNearbyUsers();
+                }
+
+                @Override
+                public void onLocationError(String error) {
+                    Log.w(TAG, "Continuous location error: " + error);
                 }
             });
-        } catch (Exception e) {
-            Log.w("MapActivity", "Could not start user cloud pull", e);
         }
     }
 
@@ -173,6 +224,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation();
+                enableMyLocation();
+                startContinuousLocationTracking();
             } else {
                 tvLocationStatus.setText("Permissão de localização negada");
                 loadNearbyUsers();
@@ -198,6 +251,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 currentLat = locationHelper.getLastLatitude();
                 currentLng = locationHelper.getLastLongitude();
                 if (currentLat == 0.0 && currentLng == 0.0) {
+                    // Default: Guarulhos, SP
                     currentLat = -23.4626;
                     currentLng = -46.5322;
                 }
@@ -260,7 +314,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 intent.putExtra(PublicProfileActivity.EXTRA_USER_ID, user.getId());
                 startActivity(intent);
             } catch (Exception e) {
-                Log.e("MapActivity", "Error opening PublicProfile", e);
+                Log.e(TAG, "Error opening PublicProfile", e);
             }
         }, false);
         recyclerUsers.setAdapter(userAdapter);
@@ -270,28 +324,130 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        loadNearbyUsers(); // initial update if location was already ready
+        isMapReady = true;
+
+        // Configure map UI
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.setPadding(0, 0, 0, 16);
+
+        // Enable the blue dot for own location
+        enableMyLocation();
+
+        // Handle marker clicks to show info window
+        mMap.setOnMarkerClickListener(marker -> {
+            marker.showInfoWindow();
+            return true;
+        });
+
+        loadNearbyUsers();
+    }
+
+    private void enableMyLocation() {
+        if (mMap == null) return;
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        }
+    }
+
+    /**
+     * Apply a random offset of 200-500 meters in a random direction
+     * to protect user privacy. This ensures the map never shows
+     * the exact location of another user.
+     */
+    private LatLng fuzzLocation(double lat, double lng) {
+        // Random distance between 200m and 500m
+        double distanceMeters = 200 + fuzzRandom.nextDouble() * 300;
+        // Random angle 0-360 degrees
+        double angle = fuzzRandom.nextDouble() * 2 * Math.PI;
+
+        // Convert to lat/lng offset
+        double latOffset = (distanceMeters * Math.cos(angle)) / 111111.0;
+        double lngOffset = (distanceMeters * Math.sin(angle)) / (111111.0 * Math.cos(Math.toRadians(lat)));
+
+        return new LatLng(lat + latOffset, lng + lngOffset);
     }
 
     private void updateMapMarkers(List<User> users) {
-        if (mMap == null)
-            return;
+        if (mMap == null) return;
         mMap.clear();
 
+        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+        boolean hasMarkers = false;
+
+        // Add own location marker with distinct color
         if (currentLat != 0.0 && currentLng != 0.0) {
             LatLng myLocation = new LatLng(currentLat, currentLng);
-            mMap.addMarker(new MarkerOptions().position(myLocation).title("Você"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 12f));
+            mMap.addMarker(new MarkerOptions()
+                    .position(myLocation)
+                    .title("Você está aqui")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            boundsBuilder.include(myLocation);
+            hasMarkers = true;
+
+            // On first load, zoom to user's location
+            if (isFirstCameraMove) {
+                isFirstCameraMove = false;
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, getZoomForRadius()));
+            }
         }
 
+        // Add nearby users with fuzzed locations and distance info
         if (users != null) {
             for (User u : users) {
                 if (u.getLatitude() != 0.0 && u.getLongitude() != 0.0) {
-                    LatLng pos = new LatLng(u.getLatitude(), u.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(pos).title(u.getName()));
+                    // Apply privacy fuzzing
+                    LatLng fuzzedPos = fuzzLocation(u.getLatitude(), u.getLongitude());
+
+                    // Calculate approximate distance
+                    double distKm = LocationHelper.calculateDistance(
+                            currentLat, currentLng, u.getLatitude(), u.getLongitude());
+                    String distText;
+                    if (distKm < 1.0) {
+                        distText = String.format(java.util.Locale.US, "~%dm de você", (int)(distKm * 1000));
+                    } else {
+                        distText = String.format(java.util.Locale.US, "~%.1f km de você", distKm);
+                    }
+
+                    String snippet = distText;
+                    if (u.getFavoriteGenres() != null && !u.getFavoriteGenres().isEmpty()) {
+                        snippet += " • " + u.getFavoriteGenres();
+                    }
+
+                    mMap.addMarker(new MarkerOptions()
+                            .position(fuzzedPos)
+                            .title(u.getName())
+                            .snippet(snippet)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                    boundsBuilder.include(fuzzedPos);
+                    hasMarkers = true;
                 }
             }
         }
+
+        // Adjust camera to show all markers if we have more than just ourselves
+        if (hasMarkers && users != null && !users.isEmpty() && !isFirstCameraMove) {
+            try {
+                LatLngBounds bounds = boundsBuilder.build();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+            } catch (Exception e) {
+                Log.w(TAG, "Could not adjust camera to bounds", e);
+            }
+        }
+    }
+
+    /**
+     * Calculate an appropriate zoom level based on the distance radius selected.
+     */
+    private float getZoomForRadius() {
+        if (currentDistance <= 5) return 14f;
+        if (currentDistance <= 10) return 13f;
+        if (currentDistance <= 25) return 11f;
+        if (currentDistance <= 50) return 10f;
+        return 8f;
     }
 
     @Override
@@ -300,6 +456,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (locationHelper != null) {
             locationHelper.stopLocationUpdates();
         }
+        cloudRefreshHandler.removeCallbacks(cloudRefreshRunnable);
     }
 
     private void setupBottomNav() {
@@ -317,7 +474,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
-                Log.e("MapActivity", "Error navigating to HomeActivity", e);
+                Log.e(TAG, "Error navigating to HomeActivity", e);
             }
         });
         navFeed.setOnClickListener(v -> {
@@ -327,7 +484,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
-                Log.e("MapActivity", "Error navigating to FeedActivity", e);
+                Log.e(TAG, "Error navigating to FeedActivity", e);
             }
         });
         navClubs.setOnClickListener(v -> {
@@ -337,7 +494,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             } catch (Exception e) {
-                Log.e("MapActivity", "Error navigating to ClubListActivity", e);
+                Log.e(TAG, "Error navigating to ClubListActivity", e);
             }
         });
         navProfile.setOnClickListener(v -> {
@@ -348,7 +505,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     startActivity(new Intent(this, LoginActivity.class));
                 }
             } catch (Exception e) {
-                Log.e("MapActivity", "Error navigating to ProfileActivity", e);
+                Log.e(TAG, "Error navigating to ProfileActivity", e);
             }
         });
     }

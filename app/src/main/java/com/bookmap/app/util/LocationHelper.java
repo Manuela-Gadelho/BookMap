@@ -128,6 +128,43 @@ public class LocationHelper {
         }
     }
 
+    /**
+     * Start continuous location updates for real-time map tracking.
+     * Unlike requestLocationUpdates, this does NOT stop after a single update.
+     */
+    public void startContinuousUpdates(LocationUpdateListener listener) {
+        this.listener = listener;
+        stopLocationUpdates(); // stop any previous callback
+        if (!hasLocationPermission()) {
+            if (listener != null)
+                listener.onLocationError("Permissao de localização não concedida");
+            return;
+        }
+        try {
+            LocationRequest locationRequest = new LocationRequest.Builder(
+                    Priority.PRIORITY_BALANCED_POWER_ACCURACY, 10000)
+                    .setMinUpdateIntervalMillis(5000)
+                    .build();
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(@NonNull LocationResult locationResult) {
+                    Location location = locationResult.getLastLocation();
+                    if (location != null) {
+                        saveLastLocation(location.getLatitude(), location.getLongitude());
+                        if (listener != null) {
+                            listener.onLocationUpdated(location.getLatitude(), location.getLongitude());
+                        }
+                    }
+                }
+            };
+            fusedLocationClient.requestLocationUpdates(locationRequest,
+                    locationCallback, Looper.getMainLooper());
+        } catch (Exception e) {
+            Log.w(TAG, "Exception starting continuous updates", e);
+            useLocationManagerFallback(listener);
+        }
+    }
+
     private void useLocationManagerFallback(LocationUpdateListener listener) {
         try {
             android.location.LocationManager locationManager = (android.location.LocationManager) context
