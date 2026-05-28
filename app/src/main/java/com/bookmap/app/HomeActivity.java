@@ -231,7 +231,23 @@ public class HomeActivity extends AppCompatActivity {
             tvCurrentTitle.setText(current.getBookTitle());
             tvCurrentAuthor.setText(current.getBookAuthor());
             progressCurrent.setProgress(current.getProgress());
-            tvCurrentProgress.setText(current.getProgress() + "% Concluído");
+            android.widget.ImageView imgCurrentCover = findViewById(R.id.imgCurrentCover);
+            String coverPath = current.getBookCoverPath();
+            String isbn = current.getBookIsbn();
+            String fallbackAssetPath = com.bookmap.app.util.PhotoHelper.getGenreAssetPath(current.getBookGenre());
+            
+            if (coverPath != null && !coverPath.isEmpty()) {
+                if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
+                    com.bumptech.glide.Glide.with(this).load(coverPath).error(com.bumptech.glide.Glide.with(this).load(fallbackAssetPath)).into(imgCurrentCover);
+                } else {
+                    com.bumptech.glide.Glide.with(this).load(new java.io.File(coverPath)).error(com.bumptech.glide.Glide.with(this).load(fallbackAssetPath)).into(imgCurrentCover);
+                }
+            } else if (isbn != null && !isbn.isEmpty()) {
+                String url = "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg?default=false";
+                com.bumptech.glide.Glide.with(this).load(url).error(com.bumptech.glide.Glide.with(this).load(fallbackAssetPath)).into(imgCurrentCover);
+            } else {
+                com.bumptech.glide.Glide.with(this).load(fallbackAssetPath).into(imgCurrentCover);
+            }
             layoutCurrentReading.setOnClickListener(v -> {
                 try {
                     Intent intent = new Intent(this, BookDetailsActivity.class);
