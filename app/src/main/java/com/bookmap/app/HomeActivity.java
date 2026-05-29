@@ -231,6 +231,9 @@ public class HomeActivity extends AppCompatActivity {
             tvCurrentTitle.setText(current.getBookTitle());
             tvCurrentAuthor.setText(current.getBookAuthor());
             progressCurrent.setProgress(current.getProgress());
+            if (tvCurrentProgress != null) {
+                tvCurrentProgress.setText(current.getProgress() + "% Concluído");
+            }
             android.widget.ImageView imgCurrentCover = findViewById(R.id.imgCurrentCover);
             String coverPath = current.getBookCoverPath();
             String isbn = current.getBookIsbn();

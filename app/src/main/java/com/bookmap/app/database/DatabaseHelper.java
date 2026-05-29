@@ -18,7 +18,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "bookmap.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     public static final String TABLE_USERS = "users";
     public static final String TABLE_BOOKS = "books";
     public static final String TABLE_USER_BOOKS = "user_books";
@@ -84,6 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "status TEXT NOT NULL DEFAULT 'QUERO_LER', " +
                 "progress INTEGER DEFAULT 0, " +
                 "created_at TEXT DEFAULT (datetime('now')), " +
+                "updated_at TEXT DEFAULT (datetime('now')), " +
                 "FOREIGN KEY (user_id) REFERENCES " + TABLE_USERS + "(id), " +
                 "FOREIGN KEY (book_id) REFERENCES " + TABLE_BOOKS + "(id), " +
                 "UNIQUE(user_id, book_id))");
@@ -178,9 +179,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 10 && newVersion == 11) {
-            db.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN is_private INTEGER DEFAULT 0");
-            db.execSQL("ALTER TABLE " + TABLE_FOLLOWERS + " ADD COLUMN status TEXT DEFAULT 'APPROVED'");
+        if (oldVersion < 12) {
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_USER_BOOKS + " ADD COLUMN updated_at TEXT");
+                db.execSQL("UPDATE " + TABLE_USER_BOOKS + " SET updated_at = created_at");
+            } catch (Exception e) {}
+            if (oldVersion == 10) {
+                db.execSQL("ALTER TABLE " + TABLE_USERS + " ADD COLUMN is_private INTEGER DEFAULT 0");
+                db.execSQL("ALTER TABLE " + TABLE_FOLLOWERS + " ADD COLUMN status TEXT DEFAULT 'APPROVED'");
+            }
             return;
         }
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
@@ -634,6 +641,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("status", status);
         values.put("progress", progress);
+        values.put("updated_at", new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault()).format(new java.util.Date()));
         int rows = db.update(TABLE_USER_BOOKS, values,
                 "user_id = ? AND book_id = ?",
                 new String[] { String.valueOf(userId), String.valueOf(bookId) });
@@ -1340,7 +1348,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "FROM " + TABLE_USER_BOOKS + " ub " +
                         "INNER JOIN " + TABLE_BOOKS + " b ON ub.book_id = b.id " +
                         "WHERE ub.user_id = ? AND ub.status = 'LENDO' " +
-                        "ORDER BY ub.created_at DESC LIMIT 1",
+                        "ORDER BY COALESCE(ub.updated_at, ub.created_at) DESC LIMIT 1",
                 new String[] { String.valueOf(userId) });
         UserBook userBook = null;
         if (cursor.moveToFirst()) {
