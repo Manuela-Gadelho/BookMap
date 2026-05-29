@@ -244,7 +244,8 @@ public class AddBookActivity extends AppCompatActivity {
                     com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncBookToCloud(newBook);
                 }
                 if (session.isLoggedIn()) {
-                    dbHelper.insertUserBook(session.getUserId(), newBookId, status, 0);
+                    int initialProgress = "LIDO".equals(status) ? 100 : 0;
+                    dbHelper.insertUserBook(session.getUserId(), newBookId, status, initialProgress);
                 }
                 Toast.makeText(this, "Livro adicionado com sucesso!", Toast.LENGTH_SHORT).show();
                 finish();

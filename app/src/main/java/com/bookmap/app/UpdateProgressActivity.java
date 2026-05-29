@@ -95,6 +95,8 @@ public class UpdateProgressActivity extends AppCompatActivity {
         }
         if ("LIDO".equals(status)) {
             progress = 100;
+        } else if ("QUERO_LER".equals(status)) {
+            progress = 0;
         }
         boolean updated = dbHelper.updateUserBookStatus(session.getUserId(), bookId, status, progress);
         if (updated) {
