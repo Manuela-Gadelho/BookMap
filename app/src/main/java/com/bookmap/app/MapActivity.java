@@ -41,8 +41,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final String TAG = "MapActivity";
     private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
-    private static final long CLOUD_REFRESH_INTERVAL_MS = 30000; 
-
     private DatabaseHelper dbHelper;
     private SessionManager session;
     private LocationHelper locationHelper;
@@ -59,24 +57,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean isFirstCameraMove = true;
     private boolean isMapReady = false;
 
-    private final Handler cloudRefreshHandler = new Handler(Looper.getMainLooper());
-    private final Runnable cloudRefreshRunnable = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                FirebaseSyncHelper.getInstance(MapActivity.this).pullUsersFromCloud(success -> {
-                    if (success) {
-                        runOnUiThread(() -> loadNearbyUsers());
-                    }
-                });
-            } catch (Exception e) {
-                Log.w(TAG, "Periodic cloud pull failed", e);
-            }
-            cloudRefreshHandler.postDelayed(this, CLOUD_REFRESH_INTERVAL_MS);
-        }
-    };
-
-    
     private final Random fuzzRandom = new Random();
 
     @Override
@@ -172,7 +152,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         
         startContinuousLocationTracking();
         
-        cloudRefreshHandler.postDelayed(cloudRefreshRunnable, CLOUD_REFRESH_INTERVAL_MS);
+        FirebaseSyncHelper.getInstance(this).startListeningToUsers(success -> {
+            if (success) {
+                runOnUiThread(() -> loadNearbyUsers());
+            }
+        });
     }
 
     @Override
@@ -181,7 +165,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         
         locationHelper.stopLocationUpdates();
         
-        cloudRefreshHandler.removeCallbacks(cloudRefreshRunnable);
+        FirebaseSyncHelper.getInstance(this).stopListeningToUsers();
     }
 
     private void startContinuousLocationTracking() {
@@ -450,7 +434,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (locationHelper != null) {
             locationHelper.stopLocationUpdates();
         }
-        cloudRefreshHandler.removeCallbacks(cloudRefreshRunnable);
     }
 
     private void setupBottomNav() {

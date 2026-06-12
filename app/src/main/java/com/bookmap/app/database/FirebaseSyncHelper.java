@@ -11,6 +11,7 @@ import com.bookmap.app.model.User;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ public class FirebaseSyncHelper {
     private final DatabaseHelper dbHelper;
     private boolean isFirebaseAvailable;
     private static FirebaseSyncHelper instance;
+    private ListenerRegistration usersListener;
 
     public static synchronized FirebaseSyncHelper getInstance(Context context) {
         if (instance == null) {
@@ -577,6 +579,71 @@ public class FirebaseSyncHelper {
         }).addOnFailureListener(e -> {
             if (callback != null) callback.onComplete(false);
         });
+    }
+
+    public void startListeningToUsers(SyncCallback callback) {
+        if (!isFirebaseAvailable()) {
+            if (callback != null) callback.onComplete(false);
+            return;
+        }
+        if (usersListener != null) {
+            return; // Already listening
+        }
+        usersListener = firestore.collection(COLLECTION_USERS)
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.w(TAG, "Users listen failed.", e);
+                        if (callback != null) callback.onComplete(false);
+                        return;
+                    }
+                    if (querySnapshot != null) {
+                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            try {
+                                String docId = doc.getId();
+                                long id;
+                                try {
+                                    id = Long.parseLong(docId);
+                                } catch (NumberFormatException ex) {
+                                    continue;
+                                }
+                                String name = doc.getString("name");
+                                String email = doc.getString("email");
+                                String bio = doc.getString("bio");
+                                String favoriteGenres = doc.getString("favorite_genres");
+                                String role = doc.getString("role");
+                                Double latitude = doc.getDouble("latitude");
+                                Double longitude = doc.getDouble("longitude");
+                                String language = doc.getString("language");
+                                String photoPath = doc.getString("photo_path");
+                                Boolean isPrivateObj = doc.getBoolean("is_private");
+                                boolean isPrivate = isPrivateObj != null ? isPrivateObj : false;
+                                if (name != null && email != null) {
+                                    dbHelper.insertUserWithId(id, name, email, "google_or_synced_pass",
+                                            bio != null ? bio : "",
+                                            photoPath != null ? photoPath : "",
+                                            favoriteGenres != null ? favoriteGenres : "",
+                                            role != null ? role : "READER",
+                                            latitude != null ? latitude : 0.0,
+                                            longitude != null ? longitude : 0.0,
+                                            language != null ? language : "pt_BR",
+                                            isPrivate);
+                                }
+                            } catch (Exception ex) {
+                                Log.e(TAG, "Error parsing synced user", ex);
+                            }
+                        }
+                        if (callback != null) {
+                            callback.onComplete(true);
+                        }
+                    }
+                });
+    }
+
+    public void stopListeningToUsers() {
+        if (usersListener != null) {
+            usersListener.remove();
+            usersListener = null;
+        }
     }
 
     public interface SyncCallback {
