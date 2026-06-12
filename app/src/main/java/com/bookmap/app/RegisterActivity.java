@@ -133,6 +133,10 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                         long userId = dbHelper.insertUser(name, email, passwordHash, "", favoriteGenres, "READER", isPrivate);
                         if (userId > 0) {
+                            com.bookmap.app.model.User createdUser = dbHelper.getUserById(userId);
+                            if (createdUser != null) {
+                                com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncUserToCloud(createdUser);
+                            }
                             new android.app.AlertDialog.Builder(RegisterActivity.this)
                                     .setTitle("Conta Criada!")
                                     .setMessage(

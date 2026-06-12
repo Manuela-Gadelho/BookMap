@@ -154,6 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
             PhotoHelper.deletePhoto(user.getPhotoPath());
             user.setPhotoPath("");
             dbHelper.updateUser(user);
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncUserToCloud(user);
             imgAvatar.setImageResource(0);
             imgAvatar.setBackgroundColor(getResources().getColor(R.color.gray_text));
             Toast.makeText(this, "Foto removida!", Toast.LENGTH_SHORT).show();
@@ -193,6 +194,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 user.setPhotoPath(photoPath);
                 dbHelper.updateUser(user);
+                com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncUserToCloud(user);
             }
             PhotoHelper.loadImageIntoView(imgAvatar, photoPath);
             Toast.makeText(this, "Foto atualizada!", Toast.LENGTH_SHORT).show();
@@ -273,6 +275,7 @@ public class ProfileActivity extends AppCompatActivity {
             user.setPrivate(switchPrivateProfile.isChecked());
         }
         if (dbHelper.updateUser(user)) {
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncUserToCloud(user);
             session.createLoginSession(user.getId(), user.getName(), user.getEmail(), user.getRole());
             tvUserName.setText(name);
             Toast.makeText(this, "Perfil atualizado!", Toast.LENGTH_SHORT).show();

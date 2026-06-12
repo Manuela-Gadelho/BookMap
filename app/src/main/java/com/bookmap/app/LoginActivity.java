@@ -251,6 +251,10 @@ public class LoginActivity extends AppCompatActivity {
                 String passwordHash = PasswordUtil.hashPassword(UUID.randomUUID().toString());
                 long userId = dbHelper.insertUser(name, email, passwordHash, "", "", "READER", false);
                 if (userId > 0) {
+                    com.bookmap.app.model.User createdUser = dbHelper.getUserById(userId);
+                    if (createdUser != null) {
+                        com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncUserToCloud(createdUser);
+                    }
                     session.createLoginSession(userId, name, email, "READER");
                     Toast.makeText(this, "Bem-vindo, " + name + "!", Toast.LENGTH_SHORT).show();
                 } else {
