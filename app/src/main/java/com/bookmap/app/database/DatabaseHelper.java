@@ -724,8 +724,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         List<Review> reviews = new ArrayList<>();
         Cursor cursor = db.rawQuery(
-                "SELECT r.*, u.name as user_name FROM " + TABLE_REVIEWS + " r " +
+                "SELECT r.*, u.name as user_name, b.title as book_title, b.cover_path as book_cover, b.genre as book_genre FROM " + TABLE_REVIEWS + " r " +
                         "INNER JOIN " + TABLE_USERS + " u ON r.user_id = u.id " +
+                        "INNER JOIN " + TABLE_BOOKS + " b ON r.book_id = b.id " +
                         "WHERE r.book_id = ? ORDER BY r.created_at DESC",
                 new String[] { String.valueOf(bookId) });
         while (cursor.moveToNext()) {
@@ -881,7 +882,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Review> getUserReviews(long userId) {
         List<Review> reviews = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT r.*, u.name as user_name, u.photo_path as user_photo, b.title as book_title " +
+        Cursor cursor = db.rawQuery("SELECT r.*, u.name as user_name, u.photo_path as user_photo, b.title as book_title, b.cover_path as book_cover, b.genre as book_genre " +
                 "FROM " + TABLE_REVIEWS + " r " +
                 "INNER JOIN " + TABLE_USERS + " u ON r.user_id = u.id " +
                 "INNER JOIN " + TABLE_BOOKS + " b ON r.book_id = b.id " +
@@ -899,6 +900,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 r.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("user_name")));
                 r.setUserPhotoPath(cursor.getString(cursor.getColumnIndexOrThrow("user_photo")));
                 r.setBookTitle(cursor.getString(cursor.getColumnIndexOrThrow("book_title")));
+                r.setBookCoverPath(cursor.getString(cursor.getColumnIndexOrThrow("book_cover")));
+                r.setBookGenre(cursor.getString(cursor.getColumnIndexOrThrow("book_genre")));
                 reviews.add(r);
             } while (cursor.moveToNext());
         }
@@ -974,6 +977,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         review.setRating(cursor.getInt(cursor.getColumnIndexOrThrow("rating")));
         review.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("user_name")));
         review.setCreatedAt(cursor.getString(cursor.getColumnIndexOrThrow("created_at")));
+        
+        int titleIndex = cursor.getColumnIndex("book_title");
+        if (titleIndex >= 0) review.setBookTitle(cursor.getString(titleIndex));
+        
+        int coverIndex = cursor.getColumnIndex("book_cover");
+        if (coverIndex >= 0) review.setBookCoverPath(cursor.getString(coverIndex));
+        
+        int genreIndex = cursor.getColumnIndex("book_genre");
+        if (genreIndex >= 0) review.setBookGenre(cursor.getString(genreIndex));
+
         return review;
     }
 
