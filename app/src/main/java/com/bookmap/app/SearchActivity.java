@@ -119,6 +119,15 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
     private void searchUsers(String query) {
+        tvNoResults.setVisibility(View.GONE);
+        recyclerResults.setVisibility(View.GONE);
+
+        com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).pullUsersFromCloud(success -> {
+            runOnUiThread(() -> displayUserList(query));
+        });
+    }
+
+    private void displayUserList(String query) {
         List<User> users;
         long currentUserId = new SessionManager(this).getUserId();
         User currentUser = dbHelper.getUserById(currentUserId);
