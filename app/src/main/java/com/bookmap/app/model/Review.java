@@ -10,6 +10,7 @@ public class Review {
     private String userPhotoPath;
     private String bookTitle;
     private String bookCoverPath;
+    private String bookGenre;
     public Review() {}
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -31,6 +32,8 @@ public class Review {
     public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
     public String getBookCoverPath() { return bookCoverPath; }
     public void setBookCoverPath(String bookCoverPath) { this.bookCoverPath = bookCoverPath; }
+    public String getBookGenre() { return bookGenre; }
+    public void setBookGenre(String bookGenre) { this.bookGenre = bookGenre; }
     public String getStars() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 5; i++) {

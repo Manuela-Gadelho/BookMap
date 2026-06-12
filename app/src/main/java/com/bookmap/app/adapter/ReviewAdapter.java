@@ -11,10 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bookmap.app.R;
 import com.bookmap.app.ReviewCommentsActivity;
 import com.bookmap.app.model.Review;
+import com.bookmap.app.util.PhotoHelper;
 import com.bookmap.app.util.SessionManager;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.database.FirebaseSyncHelper;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import java.io.File;
 import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
@@ -47,14 +51,31 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             holder.tvBookTitle.setVisibility(View.GONE);
         }
 
-        if (review.getBookCoverPath() != null && !review.getBookCoverPath().isEmpty()) {
+        String coverPath = review.getBookCoverPath();
+        String fallbackAssetPath = PhotoHelper.getGenreAssetPath(review.getBookGenre());
+
+        if (coverPath != null && !coverPath.isEmpty()) {
             holder.ivBookCover.setVisibility(View.VISIBLE);
-            Glide.with(holder.itemView.getContext())
-                 .load(review.getBookCoverPath())
-                 .into(holder.ivBookCover);
+            if (coverPath.startsWith("http") || coverPath.startsWith("asset:")) {
+                String glidePath = coverPath.startsWith("asset:") ? coverPath.replaceFirst("^asset:", "file:///android_asset/") : coverPath;
+                Glide.with(holder.itemView.getContext())
+                     .load(glidePath)
+                     .transform(new CenterCrop(), new RoundedCorners(8))
+                     .error(Glide.with(holder.itemView.getContext()).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(8)))
+                     .into(holder.ivBookCover);
+            } else {
+                Glide.with(holder.itemView.getContext())
+                     .load(new File(coverPath))
+                     .transform(new CenterCrop(), new RoundedCorners(8))
+                     .error(Glide.with(holder.itemView.getContext()).load(fallbackAssetPath).transform(new CenterCrop(), new RoundedCorners(8)))
+                     .into(holder.ivBookCover);
+            }
         } else {
             holder.ivBookCover.setVisibility(View.VISIBLE);
-            holder.ivBookCover.setImageResource(0);
+            Glide.with(holder.itemView.getContext())
+                 .load(fallbackAssetPath)
+                 .transform(new CenterCrop(), new RoundedCorners(8))
+                 .into(holder.ivBookCover);
         }
 
         holder.ivBookCover.setOnClickListener(v -> {
