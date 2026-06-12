@@ -909,7 +909,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Review> getTimelineReviews(long currentUserId) {
         List<Review> reviews = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT r.*, u.name as user_name, u.photo_path as user_photo, b.title as book_title " +
+        String query = "SELECT r.*, u.name as user_name, u.photo_path as user_photo, b.title as book_title, b.cover_path as book_cover " +
                 "FROM " + TABLE_REVIEWS + " r " +
                 "INNER JOIN " + TABLE_USERS + " u ON r.user_id = u.id " +
                 "INNER JOIN " + TABLE_BOOKS + " b ON r.book_id = b.id " +
@@ -929,6 +929,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 r.setUserName(cursor.getString(cursor.getColumnIndexOrThrow("user_name")));
                 r.setUserPhotoPath(cursor.getString(cursor.getColumnIndexOrThrow("user_photo")));
                 r.setBookTitle(cursor.getString(cursor.getColumnIndexOrThrow("book_title")));
+                r.setBookCoverPath(cursor.getString(cursor.getColumnIndexOrThrow("book_cover")));
                 reviews.add(r);
             } while (cursor.moveToNext());
         }

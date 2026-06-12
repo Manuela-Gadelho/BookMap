@@ -9,6 +9,7 @@ public class Review {
     private String createdAt;
     private String userPhotoPath;
     private String bookTitle;
+    private String bookCoverPath;
     public Review() {}
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
@@ -28,6 +29,8 @@ public class Review {
     public void setUserPhotoPath(String userPhotoPath) { this.userPhotoPath = userPhotoPath; }
     public String getBookTitle() { return bookTitle; }
     public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
+    public String getBookCoverPath() { return bookCoverPath; }
+    public void setBookCoverPath(String bookCoverPath) { this.bookCoverPath = bookCoverPath; }
     public String getStars() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 5; i++) {
