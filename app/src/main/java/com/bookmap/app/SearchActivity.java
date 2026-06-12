@@ -16,6 +16,8 @@ import com.bookmap.app.model.Book;
 import com.bookmap.app.model.User;
 import java.util.Collections;
 import java.util.List;
+import com.bookmap.app.util.SessionManager;
+import com.bookmap.app.util.LocationHelper;
 public class SearchActivity extends AppCompatActivity {
     private EditText editSearch;
     private RecyclerView recyclerResults;
@@ -118,11 +120,36 @@ public class SearchActivity extends AppCompatActivity {
     }
     private void searchUsers(String query) {
         List<User> users;
+        long currentUserId = new SessionManager(this).getUserId();
+        User currentUser = dbHelper.getUserById(currentUserId);
+
         if (query.isEmpty()) {
             users = dbHelper.getAllUsers();
-            Collections.sort(users, (u1, u2) -> u1.getName().compareToIgnoreCase(u2.getName()));
         } else {
             users = dbHelper.searchUsers(query);
+        }
+
+        if (currentUser != null && currentUser.getLatitude() != 0.0 && currentUser.getLongitude() != 0.0) {
+            double curLat = currentUser.getLatitude();
+            double curLng = currentUser.getLongitude();
+            Collections.sort(users, (u1, u2) -> {
+                boolean u1HasLoc = (u1.getLatitude() != 0.0 && u1.getLongitude() != 0.0 && u1.getId() != currentUserId);
+                boolean u2HasLoc = (u2.getLatitude() != 0.0 && u2.getLongitude() != 0.0 && u2.getId() != currentUserId);
+
+                if (u1HasLoc && u2HasLoc) {
+                    double dist1 = LocationHelper.calculateDistance(curLat, curLng, u1.getLatitude(), u1.getLongitude());
+                    double dist2 = LocationHelper.calculateDistance(curLat, curLng, u2.getLatitude(), u2.getLongitude());
+                    return Double.compare(dist1, dist2);
+                } else if (u1HasLoc) {
+                    return -1;
+                } else if (u2HasLoc) {
+                    return 1;
+                } else {
+                    return u1.getName().compareToIgnoreCase(u2.getName());
+                }
+            });
+        } else {
+            Collections.sort(users, (u1, u2) -> u1.getName().compareToIgnoreCase(u2.getName()));
         }
         if (users.isEmpty()) {
             tvNoResults.setVisibility(View.VISIBLE);
@@ -139,6 +166,7 @@ public class SearchActivity extends AppCompatActivity {
                     android.util.Log.e("SearchActivity", "Error opening PublicProfile", e);
                 }
             }, false);
+            adapter.setCurrentUser(currentUser);
             recyclerResults.setAdapter(adapter);
         }
     }

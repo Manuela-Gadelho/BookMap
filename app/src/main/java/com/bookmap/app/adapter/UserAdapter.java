@@ -24,6 +24,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private OnUserLongClickListener longClickListener;
     private boolean showCheckbox;
     private final Set<Long> selectedUserIds = new HashSet<>();
+    private User currentUser;
 
     public interface OnUserClickListener {
         void onUserClick(User user);
@@ -41,6 +42,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     public void setOnUserLongClickListener(OnUserLongClickListener longClickListener) {
         this.longClickListener = longClickListener;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -64,6 +70,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                  .into(holder.imgUserPhoto);
         } else {
             holder.imgUserPhoto.setImageResource(R.drawable.ic_default_user);
+        }
+        
+        if (currentUser != null && currentUser.getLatitude() != 0.0 && currentUser.getLongitude() != 0.0
+                && user.getLatitude() != 0.0 && user.getLongitude() != 0.0 && user.getId() != currentUser.getId()) {
+            double dist = com.bookmap.app.util.LocationHelper.calculateDistance(
+                    currentUser.getLatitude(), currentUser.getLongitude(),
+                    user.getLatitude(), user.getLongitude());
+            holder.tvDistance.setVisibility(View.VISIBLE);
+            holder.tvDistance.setText(String.format(java.util.Locale.getDefault(), "%.1f km", dist));
+            holder.tvDistance.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_location, 0, 0, 0);
+        } else {
+            holder.tvDistance.setVisibility(View.GONE);
         }
         
         if (showCheckbox) {
@@ -118,7 +136,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvGenres;
+        TextView tvName, tvGenres, tvDistance;
         CheckBox checkSelect;
         ImageView imgUserPhoto;
 
@@ -126,6 +144,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvUserName);
             tvGenres = itemView.findViewById(R.id.tvUserGenres);
+            tvDistance = itemView.findViewById(R.id.tvDistance);
             checkSelect = itemView.findViewById(R.id.checkSelect);
             imgUserPhoto = itemView.findViewById(R.id.imgUserPhoto);
         }

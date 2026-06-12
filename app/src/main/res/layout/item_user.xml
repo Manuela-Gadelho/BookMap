@@ -34,10 +34,19 @@
             android:textColor="@color/gray_text"
             android:textSize="12sp"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/gray_text"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"/>
     <CheckBox
         android:id="@+id/checkSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 </LinearLayout>
-
