@@ -65,10 +65,8 @@ public class HomeActivity extends AppCompatActivity {
         
         if (session.isLoggedIn()) {
             com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).pullReviewInteractions(null);
-            com.bookmap.app.model.User currentUser = dbHelper.getUserById(session.getUserId());
-            if (currentUser != null) {
-                com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncUserToCloud(currentUser);
-            }
+            // Sincroniza todos os usuários, livros e clubes que estavam apenas no banco local (legado) para o Firebase
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).syncAllDataToCloud();
         }
 
         btnLendo = findViewById(R.id.btnLendo);
