@@ -152,7 +152,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         
         startContinuousLocationTracking();
         
-        FirebaseSyncHelper.getInstance(this).startListeningToUsers(success -> {
+        FirebaseSyncHelper.getInstance(this).setUsersCallback(success -> {
             if (success) {
                 runOnUiThread(() -> loadNearbyUsers());
             }
@@ -165,7 +165,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         
         locationHelper.stopLocationUpdates();
         
-        FirebaseSyncHelper.getInstance(this).stopListeningToUsers();
+        FirebaseSyncHelper.getInstance(this).setUsersCallback(null);
     }
 
     private void startContinuousLocationTracking() {

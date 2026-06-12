@@ -31,6 +31,11 @@ public class FirebaseSyncHelper {
     private boolean isFirebaseAvailable;
     private static FirebaseSyncHelper instance;
     private ListenerRegistration usersListener;
+    private SyncCallback usersCallback;
+
+    public void setUsersCallback(SyncCallback callback) {
+        this.usersCallback = callback;
+    }
 
     public static synchronized FirebaseSyncHelper getInstance(Context context) {
         if (instance == null) {
@@ -581,9 +586,8 @@ public class FirebaseSyncHelper {
         });
     }
 
-    public void startListeningToUsers(SyncCallback callback) {
+    public void startListeningToUsers() {
         if (!isFirebaseAvailable()) {
-            if (callback != null) callback.onComplete(false);
             return;
         }
         if (usersListener != null) {
@@ -593,7 +597,7 @@ public class FirebaseSyncHelper {
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.w(TAG, "Users listen failed.", e);
-                        if (callback != null) callback.onComplete(false);
+                        if (usersCallback != null) usersCallback.onComplete(false);
                         return;
                     }
                     if (querySnapshot != null) {
@@ -632,8 +636,8 @@ public class FirebaseSyncHelper {
                                 Log.e(TAG, "Error parsing synced user", ex);
                             }
                         }
-                        if (callback != null) {
-                            callback.onComplete(true);
+                        if (usersCallback != null) {
+                            usersCallback.onComplete(true);
                         }
                     }
                 });

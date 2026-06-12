@@ -50,6 +50,23 @@ public class SearchActivity extends AppCompatActivity {
         updateTabUI();
         performSearch(); 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).setUsersCallback(success -> {
+            if (success) {
+                runOnUiThread(() -> performSearch());
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).setUsersCallback(null);
+    }
+
     private void updateTabUI() {
         btnTabBooks.setTextColor(getResources().getColor(
                 showingBooks ? R.color.blue_primary : R.color.gray_text));

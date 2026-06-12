@@ -35,7 +35,7 @@ public class LocationHelper {
     }
 
     public boolean isLocationVisible() {
-        return prefs.getBoolean(KEY_LOCATION_VISIBLE, true);
+        return prefs.getBoolean(KEY_LOCATION_VISIBLE, false);
     }
 
     public void setLocationVisible(boolean visible) {

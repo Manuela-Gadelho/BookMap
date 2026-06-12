@@ -31,6 +31,7 @@ public class BookMapApplication extends Application {
         try {
             FirebaseApp.initializeApp(this);
             Log.d(TAG, "Firebase initialized successfully");
+            com.bookmap.app.database.FirebaseSyncHelper.getInstance(this).startListeningToUsers();
         } catch (Exception e) {
             Log.w(TAG, "Firebase initialization failed - running in offline mode", e);
         }
