@@ -14,6 +14,7 @@ import com.bookmap.app.adapter.UserAdapter;
 import com.bookmap.app.database.DatabaseHelper;
 import com.bookmap.app.model.Book;
 import com.bookmap.app.model.User;
+import java.util.Collections;
 import java.util.List;
 public class SearchActivity extends AppCompatActivity {
     private EditText editSearch;
@@ -83,7 +84,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         } else {
             if (query.isEmpty()) {
-                Toast.makeText(this, "Digite algo para buscar usuários", Toast.LENGTH_SHORT).show();
+                searchUsers("");
             } else {
                 searchUsers(query);
             }
@@ -116,7 +117,13 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
     private void searchUsers(String query) {
-        List<User> users = dbHelper.searchUsers(query);
+        List<User> users;
+        if (query.isEmpty()) {
+            users = dbHelper.getAllUsers();
+            Collections.sort(users, (u1, u2) -> u1.getName().compareToIgnoreCase(u2.getName()));
+        } else {
+            users = dbHelper.searchUsers(query);
+        }
         if (users.isEmpty()) {
             tvNoResults.setVisibility(View.VISIBLE);
             recyclerResults.setVisibility(View.GONE);
